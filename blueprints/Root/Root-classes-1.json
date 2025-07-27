@@ -1,0 +1,667 @@
+[
+    {
+        "name": "UserServiceClient",
+        "package": "com.ecommerce.root.service",
+        "type": "service",
+        "description": "Client service for communicating with User Service module with circuit breaker and retry logic",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "userServiceUrl",
+                "type": "String",
+                "description": "Base URL for User Service API calls"
+            },
+            {
+                "name": "restTemplate",
+                "type": "RestTemplate",
+                "description": "REST template for HTTP communication"
+            },
+            {
+                "name": "circuitBreaker",
+                "type": "CircuitBreaker",
+                "description": "Circuit breaker for fault tolerance"
+            },
+            {
+                "name": "retryTemplate",
+                "type": "RetryTemplate",
+                "description": "Retry template for failed requests"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getUserById",
+                "returnType": "UserDto",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Get user information by user ID from User Service"
+            },
+            {
+                "name": "authenticateUser",
+                "returnType": "AuthenticationResponse",
+                "parameters": [
+                    {
+                        "name": "credentials",
+                        "type": "LoginRequest"
+                    }
+                ],
+                "description": "Authenticate user credentials via User Service"
+            },
+            {
+                "name": "createUser",
+                "returnType": "UserDto",
+                "parameters": [
+                    {
+                        "name": "userRequest",
+                        "type": "CreateUserRequest"
+                    }
+                ],
+                "description": "Create new user via User Service"
+            },
+            {
+                "name": "checkServiceHealth",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Check if User Service is healthy and responsive"
+            }
+        ]
+    },
+    {
+        "name": "ProductServiceClient",
+        "package": "com.ecommerce.root.service",
+        "type": "service",
+        "description": "Client service for communicating with Product Catalog module with circuit breaker and retry logic",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "productServiceUrl",
+                "type": "String",
+                "description": "Base URL for Product Service API calls"
+            },
+            {
+                "name": "restTemplate",
+                "type": "RestTemplate",
+                "description": "REST template for HTTP communication"
+            },
+            {
+                "name": "circuitBreaker",
+                "type": "CircuitBreaker",
+                "description": "Circuit breaker for fault tolerance"
+            },
+            {
+                "name": "retryTemplate",
+                "type": "RetryTemplate",
+                "description": "Retry template for failed requests"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getProductById",
+                "returnType": "ProductDto",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Get product information by product ID from Product Service"
+            },
+            {
+                "name": "searchProducts",
+                "returnType": "List<ProductDto>",
+                "parameters": [
+                    {
+                        "name": "searchCriteria",
+                        "type": "ProductSearchRequest"
+                    }
+                ],
+                "description": "Search products based on criteria via Product Service"
+            },
+            {
+                "name": "getProductsByCategory",
+                "returnType": "List<ProductDto>",
+                "parameters": [
+                    {
+                        "name": "categoryId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Get products by category from Product Service"
+            },
+            {
+                "name": "checkServiceHealth",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Check if Product Service is healthy and responsive"
+            }
+        ]
+    },
+    {
+        "name": "OrderServiceClient",
+        "package": "com.ecommerce.root.service",
+        "type": "service",
+        "description": "Client service for communicating with Order Processing module with circuit breaker and retry logic",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "orderServiceUrl",
+                "type": "String",
+                "description": "Base URL for Order Service API calls"
+            },
+            {
+                "name": "restTemplate",
+                "type": "RestTemplate",
+                "description": "REST template for HTTP communication"
+            },
+            {
+                "name": "circuitBreaker",
+                "type": "CircuitBreaker",
+                "description": "Circuit breaker for fault tolerance"
+            },
+            {
+                "name": "retryTemplate",
+                "type": "RetryTemplate",
+                "description": "Retry template for failed requests"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getOrderById",
+                "returnType": "OrderDto",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Get order information by order ID from Order Service"
+            },
+            {
+                "name": "createOrder",
+                "returnType": "OrderDto",
+                "parameters": [
+                    {
+                        "name": "orderRequest",
+                        "type": "CreateOrderRequest"
+                    }
+                ],
+                "description": "Create new order via Order Service"
+            },
+            {
+                "name": "getOrdersByUser",
+                "returnType": "List<OrderDto>",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Get orders for a specific user from Order Service"
+            },
+            {
+                "name": "checkServiceHealth",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Check if Order Service is healthy and responsive"
+            }
+        ]
+    },
+    {
+        "name": "MetricsService",
+        "package": "com.ecommerce.root.service",
+        "type": "service",
+        "description": "Metrics collection and aggregation service providing system performance statistics",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "meterRegistry",
+                "type": "MeterRegistry",
+                "description": "Micrometer meter registry for metrics collection"
+            },
+            {
+                "name": "customCounters",
+                "type": "Map<String, Counter>",
+                "description": "Map of custom counter metrics"
+            },
+            {
+                "name": "customTimers",
+                "type": "Map<String, Timer>",
+                "description": "Map of custom timer metrics"
+            }
+        ],
+        "methods": [
+            {
+                "name": "incrementCounter",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "metricName",
+                        "type": "String"
+                    },
+                    {
+                        "name": "tags",
+                        "type": "String..."
+                    }
+                ],
+                "description": "Increment a counter metric with optional tags"
+            },
+            {
+                "name": "recordTimer",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "metricName",
+                        "type": "String"
+                    },
+                    {
+                        "name": "duration",
+                        "type": "Duration"
+                    }
+                ],
+                "description": "Record a timer metric duration"
+            },
+            {
+                "name": "getMetricsSnapshot",
+                "returnType": "Map<String, Object>",
+                "parameters": [],
+                "description": "Get current snapshot of all metrics"
+            },
+            {
+                "name": "registerCustomGauge",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "type": "String"
+                    },
+                    {
+                        "name": "supplier",
+                        "type": "Supplier<Number>"
+                    }
+                ],
+                "description": "Register a custom gauge metric"
+            }
+        ]
+    },
+    {
+        "name": "HealthService",
+        "package": "com.ecommerce.root.service",
+        "type": "service",
+        "description": "Health monitoring service checking the status of all dependent services and system components",
+        "dependencies": ["com.ecommerce.root.service.UserServiceClient", "com.ecommerce.root.service.ProductServiceClient", "com.ecommerce.root.service.OrderServiceClient"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "userServiceClient",
+                "type": "UserServiceClient",
+                "description": "Client for checking User Service health"
+            },
+            {
+                "name": "productServiceClient",
+                "type": "ProductServiceClient",
+                "description": "Client for checking Product Service health"
+            },
+            {
+                "name": "orderServiceClient",
+                "type": "OrderServiceClient",
+                "description": "Client for checking Order Service health"
+            },
+            {
+                "name": "healthCache",
+                "type": "Map<String, HealthStatus>",
+                "description": "Cache for service health statuses"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getOverallHealth",
+                "returnType": "HealthStatus",
+                "parameters": [],
+                "description": "Get overall system health by checking all dependent services"
+            },
+            {
+                "name": "getServiceHealth",
+                "returnType": "HealthStatus",
+                "parameters": [
+                    {
+                        "name": "serviceName",
+                        "type": "String"
+                    }
+                ],
+                "description": "Get health status for a specific service"
+            },
+            {
+                "name": "refreshHealthCache",
+                "returnType": "void",
+                "parameters": [],
+                "description": "Refresh the health status cache for all services"
+            },
+            {
+                "name": "checkDatabaseHealth",
+                "returnType": "HealthStatus",
+                "parameters": [],
+                "description": "Check database connectivity and health"
+            }
+        ]
+    },
+    {
+        "name": "ApiGatewayService",
+        "package": "com.ecommerce.root.service",
+        "type": "service",
+        "description": "Service layer for API gateway functionality including request routing, load balancing, and service orchestration",
+        "dependencies": ["com.ecommerce.root.service.UserServiceClient", "com.ecommerce.root.service.ProductServiceClient", "com.ecommerce.root.service.OrderServiceClient"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "userServiceClient",
+                "type": "UserServiceClient",
+                "description": "Client for User Service communication"
+            },
+            {
+                "name": "productServiceClient",
+                "type": "ProductServiceClient",
+                "description": "Client for Product Service communication"
+            },
+            {
+                "name": "orderServiceClient",
+                "type": "OrderServiceClient",
+                "description": "Client for Order Service communication"
+            },
+            {
+                "name": "requestCounter",
+                "type": "Counter",
+                "description": "Metrics counter for tracking API requests"
+            }
+        ],
+        "methods": [
+            {
+                "name": "routeRequest",
+                "returnType": "Object",
+                "parameters": [
+                    {
+                        "name": "serviceName",
+                        "type": "String"
+                    },
+                    {
+                        "name": "endpoint",
+                        "type": "String"
+                    },
+                    {
+                        "name": "payload",
+                        "type": "Object"
+                    }
+                ],
+                "description": "Route request to appropriate microservice based on service name"
+            },
+            {
+                "name": "aggregateUserOrderData",
+                "returnType": "UserOrderSummary",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Aggregate user data with their order history from multiple services"
+            },
+            {
+                "name": "processCompositeRequest",
+                "returnType": "CompositeResponse",
+                "parameters": [
+                    {
+                        "name": "request",
+                        "type": "CompositeRequest"
+                    }
+                ],
+                "description": "Process requests that require data from multiple services"
+            },
+            {
+                "name": "validateRequest",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "request",
+                        "type": "Object"
+                    }
+                ],
+                "description": "Validate incoming requests before routing to services"
+            }
+        ]
+    },
+    {
+        "name": "MetricsController",
+        "package": "com.ecommerce.root.controller",
+        "type": "controller",
+        "description": "Metrics and monitoring controller exposing system metrics and performance data",
+        "dependencies": ["com.ecommerce.root.service.MetricsService"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "metricsService",
+                "type": "MetricsService",
+                "description": "Injected metrics service for collecting system metrics"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getMetrics",
+                "returnType": "Map<String, Object>",
+                "parameters": [],
+                "description": "Get current system metrics including counters, timers, and gauges"
+            },
+            {
+                "name": "getCustomMetrics",
+                "returnType": "Map<String, Object>",
+                "parameters": [
+                    {
+                        "name": "category",
+                        "type": "String"
+                    }
+                ],
+                "description": "Get custom metrics filtered by category"
+            },
+            {
+                "name": "exportMetrics",
+                "returnType": "String",
+                "parameters": [
+                    {
+                        "name": "format",
+                        "type": "String"
+                    }
+                ],
+                "description": "Export metrics in specified format (Prometheus, JSON, etc.)"
+            },
+            {
+                "name": "resetMetrics",
+                "returnType": "void",
+                "parameters": [],
+                "description": "Reset resettable metrics counters and timers"
+            }
+        ]
+    },
+    {
+        "name": "HealthController",
+        "package": "com.ecommerce.root.controller",
+        "type": "controller",
+        "description": "Health check controller providing system health status and dependency checks",
+        "dependencies": ["com.ecommerce.root.service.HealthService"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "healthService",
+                "type": "HealthService",
+                "description": "Injected health service for checking system health"
+            }
+        ],
+        "methods": [
+            {
+                "name": "health",
+                "returnType": "HealthStatus",
+                "parameters": [],
+                "description": "Get overall system health status including all dependencies"
+            },
+            {
+                "name": "healthCheck",
+                "returnType": "HealthStatus",
+                "parameters": [
+                    {
+                        "name": "serviceName",
+                        "type": "String"
+                    }
+                ],
+                "description": "Get health status for a specific service or component"
+            },
+            {
+                "name": "liveness",
+                "returnType": "Map<String, String>",
+                "parameters": [],
+                "description": "Liveness probe endpoint for Kubernetes health checks"
+            },
+            {
+                "name": "readiness",
+                "returnType": "Map<String, String>",
+                "parameters": [],
+                "description": "Readiness probe endpoint for Kubernetes health checks"
+            }
+        ]
+    },
+    {
+        "name": "ApiGatewayController",
+        "package": "com.ecommerce.root.controller",
+        "type": "controller",
+        "description": "Main API gateway controller that aggregates and routes requests to various microservices",
+        "dependencies": ["com.ecommerce.root.service.ApiGatewayService"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "apiGatewayService",
+                "type": "ApiGatewayService",
+                "description": "Injected API gateway service for request routing and orchestration"
+            },
+            {
+                "name": "requestLogger",
+                "type": "Logger",
+                "description": "Logger for tracking API gateway requests"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getUserProfile",
+                "returnType": "UserProfileResponse",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Get comprehensive user profile including order history"
+            },
+            {
+                "name": "searchProducts",
+                "returnType": "ProductSearchResponse",
+                "parameters": [
+                    {
+                        "name": "searchRequest",
+                        "type": "ProductSearchRequest"
+                    }
+                ],
+                "description": "Search products through Product Service"
+            },
+            {
+                "name": "placeOrder",
+                "returnType": "OrderResponse",
+                "parameters": [
+                    {
+                        "name": "orderRequest",
+                        "type": "CreateOrderRequest"
+                    }
+                ],
+                "description": "Place order through Order Service with validation"
+            },
+            {
+                "name": "getDashboardData",
+                "returnType": "DashboardResponse",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Aggregate data from multiple services for user dashboard"
+            }
+        ]
+    },
+    {
+        "name": "Application",
+        "package": "com.ecommerce.root",
+        "type": "main",
+        "description": "Main application class providing the entry point for the Spring Boot application with @SpringBootApplication annotation",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "logger",
+                "type": "Logger",
+                "description": "Logger instance for application startup logging"
+            },
+            {
+                "name": "applicationContext",
+                "type": "ApplicationContext",
+                "description": "Spring application context for accessing beans"
+            }
+        ],
+        "methods": [
+            {
+                "name": "main",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "args",
+                        "type": "String[]"
+                    }
+                ],
+                "description": "Main method to start the Spring Boot application"
+            },
+            {
+                "name": "run",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "args",
+                        "type": "String..."
+                    }
+                ],
+                "description": "CommandLineRunner implementation for post-startup initialization"
+            },
+            {
+                "name": "initializeApplicationData",
+                "returnType": "void",
+                "parameters": [],
+                "description": "Initialize application data and perform startup checks"
+            },
+            {
+                "name": "configureShutdownHook",
+                "returnType": "void",
+                "parameters": [],
+                "description": "Configure graceful shutdown hook for the application"
+            }
+        ]
+    }
+]

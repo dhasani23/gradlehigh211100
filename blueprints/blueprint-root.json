@@ -1,0 +1,247 @@
+{
+    "module": "Root",
+    "description": "The main orchestration module serving as the application entry point and central coordinator for all microservices. This root module provides the main application configuration, service discovery setup, API gateway functionality, and cross-cutting concerns like monitoring, logging, and health checks. It implements the primary REST API endpoints that aggregate functionality from various services, handles global exception handling, and provides unified API documentation using Swagger. The module includes application startup configuration, database connection pooling, caching strategies, and integration with external monitoring systems. It serves as the deployment artifact and provides the main method for application bootstrap.",
+    "file_count": 20,
+    "module_path": ".",
+    "internal_dependencies": ["Common", "UserService", "ProductCatalog", "OrderProcessing"],
+    "external_dependencies": {
+        "spring-boot-starter": "1.5.22.RELEASE",
+        "spring-boot-starter-web": "1.5.22.RELEASE",
+        "spring-boot-starter-actuator": "1.5.22.RELEASE",
+        "spring-cloud-starter-config": "1.4.7.RELEASE",
+        "spring-cloud-starter-eureka": "1.4.7.RELEASE",
+        "micronaut-core": "1.3.7",
+        "micronaut-http-server-netty": "1.3.7",
+        "micronaut-runtime": "1.3.7",
+        "micrometer-registry-prometheus": "1.1.6",
+        "swagger": "2.9.2",
+        "h2": "1.4.197",
+        "postgresql": "42.2.5"
+    },
+    "classes": [
+        {
+            "name": "Application",
+            "package": "com.ecommerce.root",
+            "type": "main",
+            "description": "Main application class providing the entry point for the Spring Boot application with @SpringBootApplication annotation",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "WebConfig",
+            "package": "com.ecommerce.root.config",
+            "type": "configuration",
+            "description": "Web configuration class for CORS, interceptors, and MVC settings",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "DatabaseConfig",
+            "package": "com.ecommerce.root.config",
+            "type": "configuration",
+            "description": "Database configuration for connection pooling, transaction management, and multiple datasource setup",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "SecurityConfig",
+            "package": "com.ecommerce.root.config",
+            "type": "configuration",
+            "description": "Security configuration for authentication, authorization, and JWT token handling",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "SwaggerConfig",
+            "package": "com.ecommerce.root.config",
+            "type": "configuration",
+            "description": "Swagger configuration for API documentation and testing interface",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "CacheConfig",
+            "package": "com.ecommerce.root.config",
+            "type": "configuration",
+            "description": "Caching configuration for Redis and in-memory cache management",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "MonitoringConfig",
+            "package": "com.ecommerce.root.config",
+            "type": "configuration",
+            "description": "Monitoring and metrics configuration using Micrometer and Prometheus",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ServiceDiscoveryConfig",
+            "package": "com.ecommerce.root.config",
+            "type": "configuration",
+            "description": "Service discovery configuration using Eureka for microservices registration",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ApiGatewayController",
+            "package": "com.ecommerce.root.controller",
+            "type": "controller",
+            "description": "Main API gateway controller that aggregates and routes requests to various microservices",
+            "dependencies": ["com.ecommerce.root.service.ApiGatewayService"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "HealthController",
+            "package": "com.ecommerce.root.controller",
+            "type": "controller",
+            "description": "Health check controller providing system health status and dependency checks",
+            "dependencies": ["com.ecommerce.root.service.HealthService"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "MetricsController",
+            "package": "com.ecommerce.root.controller",
+            "type": "controller",
+            "description": "Metrics and monitoring controller exposing system metrics and performance data",
+            "dependencies": ["com.ecommerce.root.service.MetricsService"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ApiGatewayService",
+            "package": "com.ecommerce.root.service",
+            "type": "service",
+            "description": "Service layer for API gateway functionality including request routing, load balancing, and service orchestration",
+            "dependencies": ["com.ecommerce.root.service.UserServiceClient", "com.ecommerce.root.service.ProductServiceClient", "com.ecommerce.root.service.OrderServiceClient"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "HealthService",
+            "package": "com.ecommerce.root.service",
+            "type": "service",
+            "description": "Health monitoring service checking the status of all dependent services and system components",
+            "dependencies": ["com.ecommerce.root.service.UserServiceClient", "com.ecommerce.root.service.ProductServiceClient", "com.ecommerce.root.service.OrderServiceClient"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "MetricsService",
+            "package": "com.ecommerce.root.service",
+            "type": "service",
+            "description": "Metrics collection and aggregation service providing system performance statistics",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "UserServiceClient",
+            "package": "com.ecommerce.root.service",
+            "type": "service",
+            "description": "Client service for communicating with User Service module with circuit breaker and retry logic",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ProductServiceClient",
+            "package": "com.ecommerce.root.service",
+            "type": "service",
+            "description": "Client service for communicating with Product Catalog module with circuit breaker and retry logic",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "OrderServiceClient",
+            "package": "com.ecommerce.root.service",
+            "type": "service",
+            "description": "Client service for communicating with Order Processing module with circuit breaker and retry logic",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "GlobalExceptionHandler",
+            "package": "com.ecommerce.root.exception",
+            "type": "exception",
+            "description": "Global exception handler providing centralized error handling and response formatting",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ApiResponse",
+            "package": "com.ecommerce.root.dto",
+            "type": "model",
+            "description": "Standard API response wrapper for consistent response format across all endpoints",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ApplicationProperties",
+            "package": "com.ecommerce.root.config",
+            "type": "configuration",
+            "description": "Application properties configuration holder for externalized configuration management",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        }
+    ],
+    "configFiles": [
+        {
+            "path": "./build.gradle",
+            "description": "Gradle build file for the Root module with dependencies and build configuration"
+        },
+        {
+            "path": "./src/main/resources/application.yml",
+            "description": "Main application configuration file with Spring Boot properties"
+        },
+        {
+            "path": "./src/main/resources/application-dev.yml",
+            "description": "Development environment specific configuration"
+        },
+        {
+            "path": "./src/main/resources/application-prod.yml",
+            "description": "Production environment specific configuration"
+        },
+        {
+            "path": "./src/main/resources/logback-spring.xml",
+            "description": "Logging configuration for different environments"
+        }
+    ],
+    "generationOrder": [
+        "com.ecommerce.root.dto.ApiResponse",
+        "com.ecommerce.root.config.ApplicationProperties",
+        "com.ecommerce.root.exception.GlobalExceptionHandler",
+        "com.ecommerce.root.config.WebConfig",
+        "com.ecommerce.root.config.DatabaseConfig",
+        "com.ecommerce.root.config.SecurityConfig",
+        "com.ecommerce.root.config.SwaggerConfig",
+        "com.ecommerce.root.config.CacheConfig",
+        "com.ecommerce.root.config.MonitoringConfig",
+        "com.ecommerce.root.config.ServiceDiscoveryConfig",
+        "com.ecommerce.root.service.UserServiceClient",
+        "com.ecommerce.root.service.ProductServiceClient",
+        "com.ecommerce.root.service.OrderServiceClient",
+        "com.ecommerce.root.service.MetricsService",
+        "com.ecommerce.root.service.HealthService",
+        "com.ecommerce.root.service.ApiGatewayService",
+        "com.ecommerce.root.controller.MetricsController",
+        "com.ecommerce.root.controller.HealthController",
+        "com.ecommerce.root.controller.ApiGatewayController",
+        "com.ecommerce.root.Application"
+    ]
+}

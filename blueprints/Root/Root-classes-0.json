@@ -1,0 +1,606 @@
+[
+    {
+        "name": "ApiResponse",
+        "package": "com.ecommerce.root.dto",
+        "type": "model",
+        "description": "Standard API response wrapper for consistent response format across all endpoints",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "success",
+                "type": "boolean",
+                "description": "Indicates if the request was successful"
+            },
+            {
+                "name": "message",
+                "type": "String",
+                "description": "Response message providing additional information"
+            },
+            {
+                "name": "data",
+                "type": "Object",
+                "description": "Response payload containing the actual data"
+            },
+            {
+                "name": "timestamp",
+                "type": "long",
+                "description": "Timestamp when the response was generated"
+            },
+            {
+                "name": "errors",
+                "type": "List<String>",
+                "description": "List of error messages if any validation or processing errors occurred"
+            }
+        ],
+        "methods": [
+            {
+                "name": "success",
+                "returnType": "ApiResponse",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "type": "Object"
+                    }
+                ],
+                "description": "Static method to create a successful response with data"
+            },
+            {
+                "name": "error",
+                "returnType": "ApiResponse",
+                "parameters": [
+                    {
+                        "name": "message",
+                        "type": "String"
+                    }
+                ],
+                "description": "Static method to create an error response with message"
+            },
+            {
+                "name": "getSuccess",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Getter for success field"
+            },
+            {
+                "name": "setSuccess",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "success",
+                        "type": "boolean"
+                    }
+                ],
+                "description": "Setter for success field"
+            }
+        ]
+    },
+    {
+        "name": "ApplicationProperties",
+        "package": "com.ecommerce.root.config",
+        "type": "configuration",
+        "description": "Application properties configuration holder for externalized configuration management",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "serverPort",
+                "type": "int",
+                "description": "Server port configuration"
+            },
+            {
+                "name": "dbUrl",
+                "type": "String",
+                "description": "Database connection URL"
+            },
+            {
+                "name": "dbUsername",
+                "type": "String",
+                "description": "Database username"
+            },
+            {
+                "name": "dbPassword",
+                "type": "String",
+                "description": "Database password"
+            },
+            {
+                "name": "jwtSecret",
+                "type": "String",
+                "description": "JWT token secret key"
+            },
+            {
+                "name": "cacheEnabled",
+                "type": "boolean",
+                "description": "Whether caching is enabled"
+            },
+            {
+                "name": "monitoringEnabled",
+                "type": "boolean",
+                "description": "Whether monitoring is enabled"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getServerPort",
+                "returnType": "int",
+                "parameters": [],
+                "description": "Get server port configuration"
+            },
+            {
+                "name": "setServerPort",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "serverPort",
+                        "type": "int"
+                    }
+                ],
+                "description": "Set server port configuration"
+            },
+            {
+                "name": "getDbUrl",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Get database URL"
+            },
+            {
+                "name": "setDbUrl",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "dbUrl",
+                        "type": "String"
+                    }
+                ],
+                "description": "Set database URL"
+            }
+        ]
+    },
+    {
+        "name": "GlobalExceptionHandler",
+        "package": "com.ecommerce.root.exception",
+        "type": "exception",
+        "description": "Global exception handler providing centralized error handling and response formatting",
+        "dependencies": ["com.ecommerce.root.dto.ApiResponse"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "logger",
+                "type": "Logger",
+                "description": "Logger instance for logging exceptions"
+            }
+        ],
+        "methods": [
+            {
+                "name": "handleValidationException",
+                "returnType": "ApiResponse",
+                "parameters": [
+                    {
+                        "name": "ex",
+                        "type": "ValidationException"
+                    }
+                ],
+                "description": "Handle validation exceptions and return standardized error response"
+            },
+            {
+                "name": "handleRuntimeException",
+                "returnType": "ApiResponse",
+                "parameters": [
+                    {
+                        "name": "ex",
+                        "type": "RuntimeException"
+                    }
+                ],
+                "description": "Handle runtime exceptions and return standardized error response"
+            },
+            {
+                "name": "handleGeneralException",
+                "returnType": "ApiResponse",
+                "parameters": [
+                    {
+                        "name": "ex",
+                        "type": "Exception"
+                    }
+                ],
+                "description": "Handle general exceptions and return standardized error response"
+            },
+            {
+                "name": "logException",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "ex",
+                        "type": "Exception"
+                    },
+                    {
+                        "name": "message",
+                        "type": "String"
+                    }
+                ],
+                "description": "Log exception details for debugging and monitoring"
+            }
+        ]
+    },
+    {
+        "name": "WebConfig",
+        "package": "com.ecommerce.root.config",
+        "type": "configuration",
+        "description": "Web configuration class for CORS, interceptors, and MVC settings",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "corsEnabled",
+                "type": "boolean",
+                "description": "Whether CORS is enabled"
+            },
+            {
+                "name": "allowedOrigins",
+                "type": "List<String>",
+                "description": "List of allowed origins for CORS"
+            }
+        ],
+        "methods": [
+            {
+                "name": "corsConfigurer",
+                "returnType": "WebMvcConfigurer",
+                "parameters": [],
+                "description": "Configure CORS settings for cross-origin requests"
+            },
+            {
+                "name": "addInterceptors",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "registry",
+                        "type": "InterceptorRegistry"
+                    }
+                ],
+                "description": "Add custom interceptors for request processing"
+            },
+            {
+                "name": "addResourceHandlers",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "registry",
+                        "type": "ResourceHandlerRegistry"
+                    }
+                ],
+                "description": "Configure static resource handling"
+            },
+            {
+                "name": "messageConverter",
+                "returnType": "HttpMessageConverter",
+                "parameters": [],
+                "description": "Configure HTTP message converters"
+            }
+        ]
+    },
+    {
+        "name": "DatabaseConfig",
+        "package": "com.ecommerce.root.config",
+        "type": "configuration",
+        "description": "Database configuration for connection pooling, transaction management, and multiple datasource setup",
+        "dependencies": ["com.ecommerce.root.config.ApplicationProperties"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "applicationProperties",
+                "type": "ApplicationProperties",
+                "description": "Injected application properties"
+            },
+            {
+                "name": "maxPoolSize",
+                "type": "int",
+                "description": "Maximum database connection pool size"
+            },
+            {
+                "name": "minPoolSize",
+                "type": "int",
+                "description": "Minimum database connection pool size"
+            }
+        ],
+        "methods": [
+            {
+                "name": "primaryDataSource",
+                "returnType": "DataSource",
+                "parameters": [],
+                "description": "Configure primary database datasource with connection pooling"
+            },
+            {
+                "name": "transactionManager",
+                "returnType": "PlatformTransactionManager",
+                "parameters": [
+                    {
+                        "name": "dataSource",
+                        "type": "DataSource"
+                    }
+                ],
+                "description": "Configure transaction manager for database operations"
+            },
+            {
+                "name": "entityManagerFactory",
+                "returnType": "LocalContainerEntityManagerFactoryBean",
+                "parameters": [
+                    {
+                        "name": "dataSource",
+                        "type": "DataSource"
+                    }
+                ],
+                "description": "Configure JPA entity manager factory"
+            },
+            {
+                "name": "configureConnectionPool",
+                "returnType": "HikariConfig",
+                "parameters": [],
+                "description": "Configure HikariCP connection pool settings"
+            }
+        ]
+    },
+    {
+        "name": "SecurityConfig",
+        "package": "com.ecommerce.root.config",
+        "type": "configuration",
+        "description": "Security configuration for authentication, authorization, and JWT token handling",
+        "dependencies": ["com.ecommerce.root.config.ApplicationProperties"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "applicationProperties",
+                "type": "ApplicationProperties",
+                "description": "Injected application properties for JWT configuration"
+            },
+            {
+                "name": "jwtSecret",
+                "type": "String",
+                "description": "JWT secret key for token signing"
+            }
+        ],
+        "methods": [
+            {
+                "name": "configure",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "http",
+                        "type": "HttpSecurity"
+                    }
+                ],
+                "description": "Configure HTTP security settings including CSRF, session management, and authorization rules"
+            },
+            {
+                "name": "jwtAuthenticationEntryPoint",
+                "returnType": "AuthenticationEntryPoint",
+                "parameters": [],
+                "description": "Configure JWT authentication entry point for handling unauthorized access"
+            },
+            {
+                "name": "jwtAuthenticationFilter",
+                "returnType": "JwtAuthenticationFilter",
+                "parameters": [],
+                "description": "Configure JWT authentication filter for token validation"
+            },
+            {
+                "name": "passwordEncoder",
+                "returnType": "PasswordEncoder",
+                "parameters": [],
+                "description": "Configure BCrypt password encoder for password hashing"
+            }
+        ]
+    },
+    {
+        "name": "SwaggerConfig",
+        "package": "com.ecommerce.root.config",
+        "type": "configuration",
+        "description": "Swagger configuration for API documentation and testing interface",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "apiTitle",
+                "type": "String",
+                "description": "API documentation title"
+            },
+            {
+                "name": "apiDescription",
+                "type": "String",
+                "description": "API documentation description"
+            },
+            {
+                "name": "apiVersion",
+                "type": "String",
+                "description": "API version for documentation"
+            }
+        ],
+        "methods": [
+            {
+                "name": "api",
+                "returnType": "Docket",
+                "parameters": [],
+                "description": "Configure Swagger Docket for API documentation generation"
+            },
+            {
+                "name": "apiInfo",
+                "returnType": "ApiInfo",
+                "parameters": [],
+                "description": "Configure API information including title, description, and version"
+            },
+            {
+                "name": "securityContext",
+                "returnType": "SecurityContext",
+                "parameters": [],
+                "description": "Configure security context for Swagger UI authentication"
+            },
+            {
+                "name": "apiKey",
+                "returnType": "ApiKey",
+                "parameters": [],
+                "description": "Configure API key security scheme for Swagger"
+            }
+        ]
+    },
+    {
+        "name": "CacheConfig",
+        "package": "com.ecommerce.root.config",
+        "type": "configuration",
+        "description": "Caching configuration for Redis and in-memory cache management",
+        "dependencies": ["com.ecommerce.root.config.ApplicationProperties"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "applicationProperties",
+                "type": "ApplicationProperties",
+                "description": "Injected application properties for cache configuration"
+            },
+            {
+                "name": "defaultTtl",
+                "type": "long",
+                "description": "Default time-to-live for cache entries"
+            }
+        ],
+        "methods": [
+            {
+                "name": "cacheManager",
+                "returnType": "CacheManager",
+                "parameters": [],
+                "description": "Configure cache manager with multiple cache configurations"
+            },
+            {
+                "name": "redisTemplate",
+                "returnType": "RedisTemplate",
+                "parameters": [],
+                "description": "Configure Redis template for cache operations"
+            },
+            {
+                "name": "connectionFactory",
+                "returnType": "JedisConnectionFactory",
+                "parameters": [],
+                "description": "Configure Redis connection factory"
+            },
+            {
+                "name": "cacheConfiguration",
+                "returnType": "RedisCacheConfiguration",
+                "parameters": [
+                    {
+                        "name": "ttl",
+                        "type": "Duration"
+                    }
+                ],
+                "description": "Create cache configuration with custom TTL settings"
+            }
+        ]
+    },
+    {
+        "name": "MonitoringConfig",
+        "package": "com.ecommerce.root.config",
+        "type": "configuration",
+        "description": "Monitoring and metrics configuration using Micrometer and Prometheus",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "applicationName",
+                "type": "String",
+                "description": "Application name for metrics identification"
+            },
+            {
+                "name": "metricsEnabled",
+                "type": "boolean",
+                "description": "Whether metrics collection is enabled"
+            }
+        ],
+        "methods": [
+            {
+                "name": "meterRegistry",
+                "returnType": "MeterRegistry",
+                "parameters": [],
+                "description": "Configure Prometheus meter registry for metrics collection"
+            },
+            {
+                "name": "timerConfig",
+                "returnType": "TimerConfig",
+                "parameters": [],
+                "description": "Configure timer metrics for performance monitoring"
+            },
+            {
+                "name": "customMetrics",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "registry",
+                        "type": "MeterRegistry"
+                    }
+                ],
+                "description": "Register custom metrics for business logic monitoring"
+            },
+            {
+                "name": "healthIndicator",
+                "returnType": "HealthIndicator",
+                "parameters": [],
+                "description": "Configure custom health indicator for system monitoring"
+            }
+        ]
+    },
+    {
+        "name": "ServiceDiscoveryConfig",
+        "package": "com.ecommerce.root.config",
+        "type": "configuration",
+        "description": "Service discovery configuration using Eureka for microservices registration",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "eurekaServerUrl",
+                "type": "String",
+                "description": "Eureka server URL for service registration"
+            },
+            {
+                "name": "serviceName",
+                "type": "String",
+                "description": "Service name for registration in Eureka"
+            },
+            {
+                "name": "instanceId",
+                "type": "String",
+                "description": "Unique instance identifier for this service"
+            }
+        ],
+        "methods": [
+            {
+                "name": "eurekaClient",
+                "returnType": "EurekaClient",
+                "parameters": [],
+                "description": "Configure Eureka client for service discovery"
+            },
+            {
+                "name": "instanceInfo",
+                "returnType": "InstanceInfo",
+                "parameters": [],
+                "description": "Configure instance information for service registration"
+            },
+            {
+                "name": "discoveryClientConfig",
+                "returnType": "EurekaClientConfig",
+                "parameters": [],
+                "description": "Configure Eureka client settings for service discovery"
+            },
+            {
+                "name": "healthCheckHandler",
+                "returnType": "HealthCheckHandler",
+                "parameters": [],
+                "description": "Configure health check handler for service status monitoring"
+            }
+        ]
+    }
+]
