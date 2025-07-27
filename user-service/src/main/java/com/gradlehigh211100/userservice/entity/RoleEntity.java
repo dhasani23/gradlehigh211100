@@ -1,22 +1,13 @@
 package com.gradlehigh211100.userservice.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 /**
- * Entity representing a user role in the system.
- * Roles are used for authorization and access control.
+ * Entity representing a role in the system.
+ * Roles define sets of permissions and are organized in a hierarchical structure.
  */
 @Entity
 @Table(name = "roles")
@@ -26,133 +17,146 @@ public class RoleEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Role name cannot be empty")
-    @Size(min = 2, max = 50, message = "Role name must be between 2 and 50 characters")
-    @Column(nullable = false, unique = true)
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    @Column
+    @Column(name = "description")
     private String description;
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<UserEntity> users = new HashSet<>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "role_permissions", joinColumns = @JoinColumn(name = "role_id"))
+    @Column(name = "permission")
+    private Set<String> permissions = new HashSet<>();
 
-    /**
-     * Default constructor required by JPA
-     */
-    public RoleEntity() {
-        // Required empty constructor
+    @Column(name = "level")
+    private Integer level;
+
+    @Column(name = "active")
+    private boolean active = true;
+
+    @Column(name = "created_date", nullable = false, updatable = false)
+    private LocalDateTime createdDate;
+
+    @Column(name = "modified_date")
+    private LocalDateTime modifiedDate;
+
+    @PrePersist
+    protected void onCreate() {
+        createdDate = LocalDateTime.now();
     }
 
-    /**
-     * Constructor with role name
-     *
-     * @param name the name of the role
-     */
-    public RoleEntity(String name) {
-        this.name = name;
+    @PreUpdate
+    protected void onUpdate() {
+        modifiedDate = LocalDateTime.now();
     }
 
-    /**
-     * Constructor with role name and description
-     *
-     * @param name the name of the role
-     * @param description the description of the role
-     */
-    public RoleEntity(String name, String description) {
-        this.name = name;
-        this.description = description;
-    }
+    // Getters and Setters
 
-    /**
-     * Gets the role ID
-     * 
-     * @return the role's unique identifier
-     */
     public Long getId() {
         return id;
     }
 
-    /**
-     * Sets the role ID
-     * 
-     * @param id the role's unique identifier
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * Gets the role name
-     * 
-     * @return the name of the role
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets the role name
-     * 
-     * @param name the name to set
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Gets the role description
-     * 
-     * @return the description of the role
-     */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * Sets the role description
-     * 
-     * @param description the description to set
-     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    public Set<String> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(Set<String> permissions) {
+        this.permissions = permissions;
+    }
+
+    public Integer getLevel() {
+        return level;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public LocalDateTime getModifiedDate() {
+        return modifiedDate;
+    }
+
+    public void setModifiedDate(LocalDateTime modifiedDate) {
+        this.modifiedDate = modifiedDate;
+    }
+
+    // Helper methods
+
     /**
-     * Gets the users associated with this role
-     * 
-     * @return set of users with this role
+     * Adds a permission to this role.
+     *
+     * @param permission the permission to add
+     * @return true if the permission was added, false if it was already present
      */
-    public Set<UserEntity> getUsers() {
-        return users;
+    public boolean addPermission(String permission) {
+        return permissions.add(permission);
     }
 
     /**
-     * Sets the users for this role
-     * 
-     * @param users the set of users to assign
+     * Removes a permission from this role.
+     *
+     * @param permission the permission to remove
+     * @return true if the permission was removed, false if it was not present
      */
-    public void setUsers(Set<UserEntity> users) {
-        this.users = users;
+    public boolean removePermission(String permission) {
+        return permissions.remove(permission);
+    }
+
+    /**
+     * Checks if this role has the specified permission.
+     *
+     * @param permission the permission to check for
+     * @return true if the role has the permission
+     */
+    public boolean hasPermission(String permission) {
+        return permissions.contains(permission);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        
+
         RoleEntity that = (RoleEntity) o;
-        
-        if (id != null) {
-            return id.equals(that.id);
-        }
-        
-        return name.equals(that.name);
+
+        return id != null ? id.equals(that.id) : that.id == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id != null ? id : 0, name);
+        return id != null ? id.hashCode() : 0;
     }
 
     @Override
@@ -160,7 +164,8 @@ public class RoleEntity {
         return "RoleEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
+                ", level=" + level +
+                ", active=" + active +
                 '}';
     }
 }
