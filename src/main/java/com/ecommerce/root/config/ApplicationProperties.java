@@ -4,204 +4,134 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * Application properties configuration class that reads from application.yml or application.properties
- * Handles all configuration properties for the application.
+ * Application properties wrapper for various configuration properties.
+ * Captures values from application.yml or application.properties file.
  */
 @Component
 @ConfigurationProperties(prefix = "application")
 public class ApplicationProperties {
-
-    private final Database database = new Database();
-
-    public Database getDatabase() {
-        return database;
+    
+    private final Jwt jwt = new Jwt();
+    private final Cors cors = new Cors();
+    private final Cache cache = new Cache();
+    
+    public Jwt getJwt() {
+        return jwt;
     }
-
+    
+    public Cors getCors() {
+        return cors;
+    }
+    
+    public Cache getCache() {
+        return cache;
+    }
+    
     /**
-     * Database specific configuration properties
+     * JWT token configuration properties
      */
-    public static class Database {
-        private String url;
-        private String username;
-        private String password;
-        private String type = "mysql"; // default database type
-        private String dialect;
-        private boolean showSql = false;
-        private boolean generateDdl = false;
-        private String ddlAuto;
-        private boolean readOnly = false;
-        private boolean cacheEnabled = false;
-        private boolean debugEnabled = false;
-        private String isolationLevel;
-        private boolean loadTestingMode = false;
-        private boolean optimisticLocking = false;
-        private boolean setTimezone = false;
-        private boolean statisticsEnabled = false;
+    public static class Jwt {
+        private String secret;
+        private long tokenValidityInSeconds = 86400; // 24 hours by default
+        private long tokenValidityInSecondsForRememberMe = 2592000; // 30 days
         
-        // Read replica configuration
-        private boolean replicaEnabled = false;
-        private String replicaUrl;
-        private String replicaUsername;
-        private String replicaPassword;
-
-        public String getUrl() {
-            return url;
+        public String getSecret() {
+            return secret;
         }
-
-        public void setUrl(String url) {
-            this.url = url;
+        
+        public void setSecret(String secret) {
+            this.secret = secret;
         }
-
-        public String getUsername() {
-            return username;
+        
+        public long getTokenValidityInSeconds() {
+            return tokenValidityInSeconds;
         }
-
-        public void setUsername(String username) {
-            this.username = username;
+        
+        public void setTokenValidityInSeconds(long tokenValidityInSeconds) {
+            this.tokenValidityInSeconds = tokenValidityInSeconds;
         }
-
-        public String getPassword() {
-            return password;
+        
+        public long getTokenValidityInSecondsForRememberMe() {
+            return tokenValidityInSecondsForRememberMe;
         }
-
-        public void setPassword(String password) {
-            this.password = password;
+        
+        public void setTokenValidityInSecondsForRememberMe(long tokenValidityInSecondsForRememberMe) {
+            this.tokenValidityInSecondsForRememberMe = tokenValidityInSecondsForRememberMe;
         }
-
-        public String getType() {
-            return type;
+    }
+    
+    /**
+     * CORS configuration properties
+     */
+    public static class Cors {
+        private String[] allowedOrigins = {"*"};
+        private String[] allowedMethods = {"*"};
+        private String[] allowedHeaders = {"*"};
+        private boolean allowCredentials = true;
+        private long maxAge = 1800;
+        
+        public String[] getAllowedOrigins() {
+            return allowedOrigins;
         }
-
-        public void setType(String type) {
-            this.type = type;
+        
+        public void setAllowedOrigins(String[] allowedOrigins) {
+            this.allowedOrigins = allowedOrigins;
         }
-
-        public String getDialect() {
-            return dialect;
+        
+        public String[] getAllowedMethods() {
+            return allowedMethods;
         }
-
-        public void setDialect(String dialect) {
-            this.dialect = dialect;
+        
+        public void setAllowedMethods(String[] allowedMethods) {
+            this.allowedMethods = allowedMethods;
         }
-
-        public boolean isShowSql() {
-            return showSql;
+        
+        public String[] getAllowedHeaders() {
+            return allowedHeaders;
         }
-
-        public void setShowSql(boolean showSql) {
-            this.showSql = showSql;
+        
+        public void setAllowedHeaders(String[] allowedHeaders) {
+            this.allowedHeaders = allowedHeaders;
         }
-
-        public boolean isGenerateDdl() {
-            return generateDdl;
+        
+        public boolean isAllowCredentials() {
+            return allowCredentials;
         }
-
-        public void setGenerateDdl(boolean generateDdl) {
-            this.generateDdl = generateDdl;
+        
+        public void setAllowCredentials(boolean allowCredentials) {
+            this.allowCredentials = allowCredentials;
         }
-
-        public String getDdlAuto() {
-            return ddlAuto;
+        
+        public long getMaxAge() {
+            return maxAge;
         }
-
-        public void setDdlAuto(String ddlAuto) {
-            this.ddlAuto = ddlAuto;
+        
+        public void setMaxAge(long maxAge) {
+            this.maxAge = maxAge;
         }
-
-        public boolean isReadOnly() {
-            return readOnly;
+    }
+    
+    /**
+     * Cache configuration properties
+     */
+    public static class Cache {
+        private int timeToLiveSeconds = 3600;
+        private int maxEntries = 1000;
+        
+        public int getTimeToLiveSeconds() {
+            return timeToLiveSeconds;
         }
-
-        public void setReadOnly(boolean readOnly) {
-            this.readOnly = readOnly;
+        
+        public void setTimeToLiveSeconds(int timeToLiveSeconds) {
+            this.timeToLiveSeconds = timeToLiveSeconds;
         }
-
-        public boolean isCacheEnabled() {
-            return cacheEnabled;
+        
+        public int getMaxEntries() {
+            return maxEntries;
         }
-
-        public void setCacheEnabled(boolean cacheEnabled) {
-            this.cacheEnabled = cacheEnabled;
-        }
-
-        public boolean isDebugEnabled() {
-            return debugEnabled;
-        }
-
-        public void setDebugEnabled(boolean debugEnabled) {
-            this.debugEnabled = debugEnabled;
-        }
-
-        public String getIsolationLevel() {
-            return isolationLevel;
-        }
-
-        public void setIsolationLevel(String isolationLevel) {
-            this.isolationLevel = isolationLevel;
-        }
-
-        public boolean isLoadTestingMode() {
-            return loadTestingMode;
-        }
-
-        public void setLoadTestingMode(boolean loadTestingMode) {
-            this.loadTestingMode = loadTestingMode;
-        }
-
-        public boolean isOptimisticLocking() {
-            return optimisticLocking;
-        }
-
-        public void setOptimisticLocking(boolean optimisticLocking) {
-            this.optimisticLocking = optimisticLocking;
-        }
-
-        public boolean isSetTimezone() {
-            return setTimezone;
-        }
-
-        public void setSetTimezone(boolean setTimezone) {
-            this.setTimezone = setTimezone;
-        }
-
-        public boolean isStatisticsEnabled() {
-            return statisticsEnabled;
-        }
-
-        public void setStatisticsEnabled(boolean statisticsEnabled) {
-            this.statisticsEnabled = statisticsEnabled;
-        }
-
-        public boolean isReplicaEnabled() {
-            return replicaEnabled;
-        }
-
-        public void setReplicaEnabled(boolean replicaEnabled) {
-            this.replicaEnabled = replicaEnabled;
-        }
-
-        public String getReplicaUrl() {
-            return replicaUrl;
-        }
-
-        public void setReplicaUrl(String replicaUrl) {
-            this.replicaUrl = replicaUrl;
-        }
-
-        public String getReplicaUsername() {
-            return replicaUsername;
-        }
-
-        public void setReplicaUsername(String replicaUsername) {
-            this.replicaUsername = replicaUsername;
-        }
-
-        public String getReplicaPassword() {
-            return replicaPassword;
-        }
-
-        public void setReplicaPassword(String replicaPassword) {
-            this.replicaPassword = replicaPassword;
+        
+        public void setMaxEntries(int maxEntries) {
+            this.maxEntries = maxEntries;
         }
     }
 }
