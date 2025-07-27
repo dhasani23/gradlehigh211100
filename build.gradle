@@ -1,18 +1,33 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
-group = 'com.ecommerce'
+group = 'com.ecommerce.root'
 version = '1.0-SNAPSHOT'
 sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    // Add your dependencies here
+    // Standard Java dependencies
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+    
+    // Testing dependencies
     testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:3.12.4'
+}
+
+application {
+    mainClassName = 'com.ecommerce.root.Application'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
 
 test {
