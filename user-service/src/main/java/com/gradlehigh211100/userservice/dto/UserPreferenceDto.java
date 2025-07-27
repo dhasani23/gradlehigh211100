@@ -1,174 +1,125 @@
 package com.gradlehigh211100.userservice.dto;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.Objects;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 
 /**
- * Data Transfer Object for User Preference information
- * Used for transferring preference data between layers
+ * Data Transfer Object for User Preferences.
+ * Used for transferring user preference data between layers.
  */
-public class UserPreferenceDto implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class UserPreferenceDto {
     
     private Long id;
+    
     private Long userId;
-    private String preferenceKey;
-    private String preferenceValue;
+    
+    @NotBlank(message = "Preference key is required")
+    private String key;
+    
+    @NotBlank(message = "Preference value is required")
+    private String value;
+    
     private String category;
-    private String dataType;
-    private Date lastModified;
-    private boolean isEncrypted;
+    
+    private boolean premiumOnly;
+    
+    private LocalDateTime createdAt;
+    
+    private LocalDateTime updatedAt;
     
     // Default constructor
     public UserPreferenceDto() {
     }
     
-    // Full constructor
-    public UserPreferenceDto(Long id, Long userId, String preferenceKey, String preferenceValue, 
-                             String category, String dataType, Date lastModified, boolean isEncrypted) {
+    // Constructor with fields
+    public UserPreferenceDto(Long id, Long userId, String key, String value, 
+                           String category, boolean premiumOnly,
+                           LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.userId = userId;
-        this.preferenceKey = preferenceKey;
-        this.preferenceValue = preferenceValue;
+        this.key = key;
+        this.value = value;
         this.category = category;
-        this.dataType = dataType;
-        this.lastModified = lastModified;
-        this.isEncrypted = isEncrypted;
+        this.premiumOnly = premiumOnly;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
-    
-    // Minimal constructor
-    public UserPreferenceDto(Long userId, String preferenceKey, String preferenceValue, String category) {
-        this.userId = userId;
-        this.preferenceKey = preferenceKey;
-        this.preferenceValue = preferenceValue;
-        this.category = category;
-        this.lastModified = new Date();
-        this.dataType = "STRING";
-        this.isEncrypted = false;
-    }
-    
+
     // Getters and setters
     public Long getId() {
         return id;
     }
-    
+
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     public Long getUserId() {
         return userId;
     }
-    
+
     public void setUserId(Long userId) {
         this.userId = userId;
     }
-    
-    public String getPreferenceKey() {
-        return preferenceKey;
+
+    public String getKey() {
+        return key;
     }
-    
-    public void setPreferenceKey(String preferenceKey) {
-        this.preferenceKey = preferenceKey;
+
+    public void setKey(String key) {
+        this.key = key;
     }
-    
-    public String getPreferenceValue() {
-        return preferenceValue;
+
+    public String getValue() {
+        return value;
     }
-    
-    public void setPreferenceValue(String preferenceValue) {
-        this.preferenceValue = preferenceValue;
+
+    public void setValue(String value) {
+        this.value = value;
     }
-    
+
     public String getCategory() {
         return category;
     }
-    
+
     public void setCategory(String category) {
         this.category = category;
     }
-    
-    public String getDataType() {
-        return dataType;
+
+    public boolean isPremiumOnly() {
+        return premiumOnly;
     }
-    
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
+
+    public void setPremiumOnly(boolean premiumOnly) {
+        this.premiumOnly = premiumOnly;
     }
-    
-    public Date getLastModified() {
-        return lastModified;
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
-    
-    public void setLastModified(Date lastModified) {
-        this.lastModified = lastModified;
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
-    
-    public boolean isEncrypted() {
-        return isEncrypted;
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
-    
-    public void setEncrypted(boolean encrypted) {
-        isEncrypted = encrypted;
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
-    
-    /**
-     * Parse the preference value based on its data type
-     * @return Object representing the typed preference value
-     */
-    public Object getParsedValue() {
-        if (preferenceValue == null) {
-            return null;
-        }
-        
-        try {
-            switch (dataType.toUpperCase()) {
-                case "INTEGER":
-                    return Integer.parseInt(preferenceValue);
-                case "LONG":
-                    return Long.parseLong(preferenceValue);
-                case "DOUBLE":
-                    return Double.parseDouble(preferenceValue);
-                case "BOOLEAN":
-                    return Boolean.parseBoolean(preferenceValue);
-                case "DATE":
-                    // This is a simplified implementation - real code would use a proper date parser
-                    return new Date(Long.parseLong(preferenceValue));
-                case "STRING":
-                default:
-                    return preferenceValue;
-            }
-        } catch (Exception e) {
-            // FIXME: Add proper exception handling or logging here
-            return preferenceValue;
-        }
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UserPreferenceDto that = (UserPreferenceDto) o;
-        return Objects.equals(userId, that.userId) &&
-               Objects.equals(preferenceKey, that.preferenceKey);
-    }
-    
-    @Override
-    public int hashCode() {
-        return Objects.hash(userId, preferenceKey);
-    }
-    
+
     @Override
     public String toString() {
         return "UserPreferenceDto{" +
                 "id=" + id +
                 ", userId=" + userId +
-                ", preferenceKey='" + preferenceKey + '\'' +
+                ", key='" + key + '\'' +
+                ", value='" + value + '\'' +
                 ", category='" + category + '\'' +
-                ", dataType='" + dataType + '\'' +
-                ", lastModified=" + lastModified +
-                ", isEncrypted=" + isEncrypted +
+                ", premiumOnly=" + premiumOnly +
                 '}';
     }
 }

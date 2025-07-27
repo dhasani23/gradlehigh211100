@@ -1,57 +1,57 @@
 package com.ecommerce.root.service;
 
+import java.util.Map;
+
 /**
- * Client for the Product Service that provides methods to check service health and performance.
+ * ProductServiceClient - Client interface for communication with the Product Service.
+ * This interface defines methods for interacting with product-related functionality.
  */
-public class ProductServiceClient {
+public interface ProductServiceClient {
     
     /**
-     * Check if the Product Service is available
-     *
-     * @return true if service is available, false otherwise
+     * Sends a request to the Product Service.
+     * 
+     * @param serviceUrl the base URL of the service
+     * @param endpoint the specific endpoint to call
+     * @param payload the request payload
+     * @return the response from the service
+     * @throws Exception if the request fails
      */
-    public boolean isAvailable() {
-        // Implementation to check if product service is available
-        return true;
-    }
+    Object sendRequest(String serviceUrl, String endpoint, Object payload) throws Exception;
     
     /**
-     * Check if the current outage is temporary
-     *
-     * @return true if outage is temporary, false if it's a complete failure
+     * Gets product details by product ID.
+     * 
+     * @param productId the ID of the product
+     * @return the product details
+     * @throws Exception if the request fails
      */
-    public boolean isTemporaryOutage() {
-        // Implementation to determine if outage is temporary
-        return false;
-    }
+    Object getProductById(Long productId) throws Exception;
     
     /**
-     * Get the current response time of the Product Service in milliseconds
-     *
-     * @return response time in milliseconds
+     * Gets product inventory by product ID.
+     * 
+     * @param productId the ID of the product
+     * @return the product inventory
+     * @throws Exception if the request fails
      */
-    public int getResponseTime() {
-        // Implementation to measure response time
-        return 150;
-    }
+    Object getInventoryForProduct(Long productId) throws Exception;
     
     /**
-     * Get the current error count of the Product Service
-     *
-     * @return number of errors detected
+     * Searches for products based on search criteria.
+     * 
+     * @param criteria the search criteria
+     * @return the search results
+     * @throws Exception if the request fails
      */
-    public int getErrorCount() {
-        // Implementation to get error count
-        return 2;
-    }
+    Object searchProducts(Map<String, Object> criteria) throws Exception;
     
     /**
-     * Check if the search functionality is working properly
-     *
-     * @return true if search is functional, false otherwise
+     * Gets product recommendations based on user ID or product ID.
+     * 
+     * @param parameters the recommendation parameters
+     * @return the product recommendations
+     * @throws Exception if the request fails
      */
-    public boolean isSearchFunctional() {
-        // Implementation to test search functionality
-        return true;
-    }
+    Object getRecommendations(Map<String, Object> parameters) throws Exception;
 }

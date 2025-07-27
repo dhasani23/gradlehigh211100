@@ -1,47 +1,47 @@
 package com.ecommerce.root.service;
 
 /**
- * Client for the User Service that provides methods to check service health and performance.
+ * UserServiceClient - Client interface for communication with the User Service.
+ * This interface defines methods for interacting with user-related functionality.
  */
-public class UserServiceClient {
+public interface UserServiceClient {
     
     /**
-     * Check if the User Service is available
-     *
-     * @return true if service is available, false otherwise
+     * Sends a request to the User Service.
+     * 
+     * @param serviceUrl the base URL of the service
+     * @param endpoint the specific endpoint to call
+     * @param payload the request payload
+     * @return the response from the service
+     * @throws Exception if the request fails
      */
-    public boolean isAvailable() {
-        // Implementation to check if user service is available
-        return true;
-    }
+    Object sendRequest(String serviceUrl, String endpoint, Object payload) throws Exception;
     
     /**
-     * Get the current response time of the User Service in milliseconds
-     *
-     * @return response time in milliseconds
+     * Gets user details by user ID.
+     * 
+     * @param userId the ID of the user
+     * @return the user details
+     * @throws Exception if the request fails
      */
-    public int getResponseTime() {
-        // Implementation to measure response time
-        return 100;
-    }
+    Object getUserById(Long userId) throws Exception;
     
     /**
-     * Get the current error rate of the User Service
-     *
-     * @return error rate as a decimal (0.0 - 1.0)
+     * Gets user preferences by user ID.
+     * 
+     * @param userId the ID of the user
+     * @return the user preferences
+     * @throws Exception if the request fails
      */
-    public double getErrorRate() {
-        // Implementation to calculate error rate
-        return 0.01;
-    }
+    Object getUserPreferences(Long userId) throws Exception;
     
     /**
-     * Get the current system load of the User Service
-     *
-     * @return system load percentage (0-100)
+     * Updates user information.
+     * 
+     * @param userId the ID of the user
+     * @param userData the updated user data
+     * @return the updated user
+     * @throws Exception if the request fails
      */
-    public int getSystemLoad() {
-        // Implementation to get system load
-        return 50;
-    }
+    Object updateUser(Long userId, Object userData) throws Exception;
 }

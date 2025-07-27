@@ -1,0 +1,290 @@
+package com.ecommerce.root.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Web configuration class for CORS, interceptors, and MVC settings.
+ * This class handles all web-related configurations for the application
+ * including cross-origin resource sharing, request interceptors, static
+ * resource handling, and HTTP message conversion.
+ */
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+    
+    // Whether CORS is enabled for the application
+    @Value("${cors.enabled:true}")
+    private boolean corsEnabled;
+    
+    // List of allowed origins for CORS
+    private List<String> allowedOrigins = new ArrayList<>(Arrays.asList(
+            "http://localhost:3000",
+            "http://localhost:8080",
+            "https://example.com",
+            "https://api.example.com"
+    ));
+    
+    /**
+     * Configure CORS settings for cross-origin requests.
+     * This method sets up detailed CORS configuration for the application,
+     * controlling which domains can access resources, which methods are allowed,
+     * and handling preflight requests with appropriate cache timeouts.
+     *
+     * @return WebMvcConfigurer with CORS configuration
+     */
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                // Only apply CORS configuration if it's enabled
+                if (!corsEnabled) {
+                    return;
+                }
+                
+                // Configure multiple CORS mappings with different rules
+                
+                // API endpoints
+                registry.addMapping("/api/**")
+                        .allowedOrigins(allowedOrigins.toArray(new String[0]))
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("Authorization", "Content-Type", "X-Requested-With")
+                        .exposedHeaders("Custom-Header")
+                        .allowCredentials(true)
+                        .maxAge(3600L);
+                
+                // Public endpoints with more permissive settings
+                registry.addMapping("/public/**")
+                        .allowedOrigins("*")
+                        .allowedMethods("GET")
+                        .allowedHeaders("*")
+                        .maxAge(1800L);
+                
+                // Admin endpoints with restrictive settings
+                registry.addMapping("/admin/**")
+                        .allowedOrigins("https://admin.example.com")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedHeaders("Authorization", "Content-Type")
+                        .allowCredentials(true)
+                        .maxAge(7200L);
+                
+                // FIXME: Review security implications of CORS settings
+                // TODO: Make origins configurable through properties file
+            }
+        };
+    }
+    
+    /**
+     * Add custom interceptors for request processing.
+     * This method registers various interceptors that will intercept and process
+     * HTTP requests at different points in the request handling lifecycle.
+     *
+     * @param registry The InterceptorRegistry to register interceptors
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        // Complex logic to conditionally add different interceptors
+        if (corsEnabled) {
+            // Add logging interceptor for all requests
+            registry.addInterceptor(new LoggingInterceptor())
+                    .addPathPatterns("/**");
+            
+            // Add authentication interceptor for secured endpoints
+            registry.addInterceptor(new AuthenticationInterceptor())
+                    .addPathPatterns("/api/**", "/admin/**")
+                    .excludePathPatterns("/api/public/**", "/login", "/register");
+            
+            // Add rate limiting interceptor
+            registry.addInterceptor(new RateLimitInterceptor())
+                    .addPathPatterns("/api/**")
+                    .excludePathPatterns("/api/health");
+            
+            // Add performance monitoring interceptor
+            registry.addInterceptor(new PerformanceInterceptor())
+                    .addPathPatterns("/**")
+                    .excludePathPatterns("/static/**", "/resources/**");
+            
+            // Different behavior for different environments
+            if (isProductionEnvironment()) {
+                registry.addInterceptor(new SecurityHeadersInterceptor())
+                        .addPathPatterns("/**");
+            } else {
+                registry.addInterceptor(new DevModeInterceptor())
+                        .addPathPatterns("/**");
+            }
+        }
+        
+        // TODO: Implement caching interceptor for static resources
+        // FIXME: AuthenticationInterceptor has performance issues under high load
+    }
+    
+    /**
+     * Configure static resource handling.
+     * This method sets up rules for serving static resources like CSS, JavaScript,
+     * images, and other files that don't need dynamic processing.
+     *
+     * @param registry The ResourceHandlerRegistry to register resource handlers
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Handle multiple resource locations with different configurations
+        
+        // Static resources with cache control
+        registry.addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/")
+                .setCachePeriod(60 * 60 * 24 * 7) // 7 days in seconds
+                .resourceChain(true)
+                .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
+        
+        // Webjars for managing client-side dependencies
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/")
+                .setCachePeriod(60 * 60 * 24 * 30); // 30 days
+        
+        // Images with different cache settings
+        registry.addResourceHandler("/images/**")
+                .addResourceLocations("classpath:/static/images/", "file:/opt/uploads/images/")
+                .setCacheControl(CacheControl.maxAge(2, TimeUnit.HOURS).cachePublic());
+        
+        // Documents with no caching
+        registry.addResourceHandler("/docs/**")
+                .addResourceLocations("classpath:/docs/")
+                .setCacheControl(CacheControl.noCache().mustRevalidate());
+        
+        // Conditional resource handling
+        if (corsEnabled) {
+            registry.addResourceHandler("/downloads/**")
+                    .addResourceLocations("file:/opt/downloads/")
+                    .setUseLastModified(true)
+                    .setCacheControl(CacheControl.maxAge(1, TimeUnit.DAYS));
+        }
+        
+        // TODO: Add resource chain with versioning strategy for better cache control
+        // FIXME: Some resources don't work with content versioning
+    }
+    
+    /**
+     * Configure HTTP message converters.
+     * This method sets up converters that handle the conversion between HTTP requests
+     * and responses and Java objects, with support for different media types.
+     *
+     * @return HttpMessageConverter instance
+     */
+    @Bean
+    public HttpMessageConverter<?> messageConverter() {
+        // Create a custom message converter with complex configuration
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        
+        // Set supported media types
+        List<MediaType> mediaTypes = new ArrayList<>();
+        mediaTypes.add(MediaType.APPLICATION_JSON);
+        mediaTypes.add(new MediaType("application", "json", Collections.singletonMap("charset", "UTF-8")));
+        mediaTypes.add(new MediaType("application", "*+json"));
+        mediaTypes.add(new MediaType("application", "hal+json"));
+        
+        converter.setSupportedMediaTypes(mediaTypes);
+        
+        // Configure object mapper with custom serializer/deserializer modules
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true);
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+        
+        // Add support for Java 8 date/time types
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        
+        // Set custom property naming strategy
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        
+        // Register custom serializers for complex types
+        SimpleModule customModule = new SimpleModule();
+        customModule.addSerializer(CustomType.class, new CustomTypeSerializer());
+        customModule.addDeserializer(CustomType.class, new CustomTypeDeserializer());
+        objectMapper.registerModule(customModule);
+        
+        // Set the configured ObjectMapper
+        converter.setObjectMapper(objectMapper);
+        
+        // TODO: Add support for XML conversion
+        // FIXME: Current configuration has issues with certain date formats
+        
+        return converter;
+    }
+    
+    /**
+     * Determines if the application is running in production environment.
+     * This is a helper method used for conditional configuration.
+     * 
+     * @return boolean indicating if it's production environment
+     */
+    private boolean isProductionEnvironment() {
+        String env = System.getProperty("spring.profiles.active", "development");
+        return "production".equalsIgnoreCase(env) || "prod".equalsIgnoreCase(env);
+    }
+    
+    /**
+     * Placeholder class for LoggingInterceptor.
+     * Actual implementation would handle request/response logging.
+     */
+    private class LoggingInterceptor implements HandlerInterceptor {
+        // Implementation omitted for brevity
+    }
+    
+    /**
+     * Placeholder class for AuthenticationInterceptor.
+     * Actual implementation would validate authentication tokens.
+     */
+    private class AuthenticationInterceptor implements HandlerInterceptor {
+        // Implementation omitted for brevity
+    }
+    
+    /**
+     * Placeholder class for RateLimitInterceptor.
+     * Actual implementation would enforce API rate limits.
+     */
+    private class RateLimitInterceptor implements HandlerInterceptor {
+        // Implementation omitted for brevity
+    }
+    
+    /**
+     * Placeholder class for PerformanceInterceptor.
+     * Actual implementation would track request performance metrics.
+     */
+    private class PerformanceInterceptor implements HandlerInterceptor {
+        // Implementation omitted for brevity
+    }
+    
+    /**
+     * Placeholder class for SecurityHeadersInterceptor.
+     * Actual implementation would add security-related HTTP headers.
+     */
+    private class SecurityHeadersInterceptor implements HandlerInterceptor {
+        // Implementation omitted for brevity
+    }
+    
+    /**
+     * Placeholder class for DevModeInterceptor.
+     * Actual implementation would add development-specific behavior.
+     */
+    private class DevModeInterceptor implements HandlerInterceptor {
+        // Implementation omitted for brevity
+    }
+}

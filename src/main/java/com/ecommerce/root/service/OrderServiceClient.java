@@ -1,57 +1,60 @@
 package com.ecommerce.root.service;
 
+import java.util.List;
+import java.util.Map;
+
 /**
- * Client for the Order Service that provides methods to check service health and functionality.
+ * OrderServiceClient - Client interface for communication with the Order Service.
+ * This interface defines methods for interacting with order-related functionality.
  */
-public class OrderServiceClient {
+public interface OrderServiceClient {
     
     /**
-     * Check if the Order Service is available
-     *
-     * @return true if service is available, false otherwise
+     * Sends a request to the Order Service.
+     * 
+     * @param serviceUrl the base URL of the service
+     * @param endpoint the specific endpoint to call
+     * @param payload the request payload
+     * @return the response from the service
+     * @throws Exception if the request fails
      */
-    public boolean isAvailable() {
-        // Implementation to check if order service is available
-        return true;
-    }
+    Object sendRequest(String serviceUrl, String endpoint, Object payload) throws Exception;
     
     /**
-     * Check if the Order Service can create new orders
-     *
-     * @return true if can create orders, false otherwise
+     * Gets order details by order ID.
+     * 
+     * @param orderId the ID of the order
+     * @return the order details
+     * @throws Exception if the request fails
      */
-    public boolean canCreateOrders() {
-        // Implementation to verify order creation functionality
-        return true;
-    }
+    Object getOrderById(Long orderId) throws Exception;
     
     /**
-     * Check if the Order Service can query existing orders
-     *
-     * @return true if can query orders, false otherwise
+     * Gets orders for a user.
+     * 
+     * @param userId the ID of the user
+     * @return the user's orders
+     * @throws Exception if the request fails
      */
-    public boolean canQueryOrders() {
-        // Implementation to verify order query functionality
-        return true;
-    }
+    Object[] getOrdersForUser(Long userId) throws Exception;
     
     /**
-     * Check if the Order Service can process payments
-     *
-     * @return true if can process payments, false otherwise
+     * Creates a new order.
+     * 
+     * @param userId the ID of the user
+     * @param orderItems the order items
+     * @return the created order
+     * @throws Exception if the request fails
      */
-    public boolean canProcessPayments() {
-        // Implementation to verify payment processing functionality
-        return true;
-    }
+    Object createOrder(Long userId, List<Map<String, Object>> orderItems) throws Exception;
     
     /**
-     * Get the current size of the order processing queue
-     *
-     * @return number of orders in queue
+     * Updates the status of an order.
+     * 
+     * @param orderId the ID of the order
+     * @param status the new status
+     * @return the updated order
+     * @throws Exception if the request fails
      */
-    public int getOrderQueueSize() {
-        // Implementation to get queue size
-        return 25;
-    }
+    Object updateOrderStatus(Long orderId, String status) throws Exception;
 }
