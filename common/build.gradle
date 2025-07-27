@@ -3,22 +3,21 @@ plugins {
 }
 
 group = 'com.gradlehigh211100'
-version = '1.0.0'
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    // Add dependencies as needed
-    testImplementation 'junit:junit:4.13.2'
+    // Add your dependencies here
+    
+    // Test dependencies
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
 
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
+test {
+    useJUnitPlatform()
 }
