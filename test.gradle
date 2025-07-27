@@ -1,0 +1,13 @@
+tasks.register('singleTest', Test) {
+    useJUnit() // Changed from JUnit Platform to JUnit 4
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+        showExceptions true
+        showCauses true
+        showStackTraces true
+    }
+    filter {
+        includeTestsMatching "com.ecommerce.root.service.ProductServiceClientTest"
+    }
+}

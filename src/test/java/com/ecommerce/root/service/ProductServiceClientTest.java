@@ -1,17 +1,21 @@
 package com.ecommerce.root.service;
 
+import com.ecommerce.root.config.TestConfig;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.retry.support.RetryTemplate;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -22,40 +26,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@RunWith(SpringRunner.class)
+@Import(TestConfig.class)
 public class ProductServiceClientTest {
 
-    @Mock
+    @MockBean
     private RestTemplate restTemplate;
 
-    @Mock
+    @Autowired
     private CircuitBreaker circuitBreaker;
 
-    @Mock
+    @Autowired
     private RetryTemplate retryTemplate;
-
-    @InjectMocks
+    
     private ProductServiceClientImpl productServiceClient;
 
     private final String baseUrl = "http://test-product-service:8080";
 
-    @BeforeEach
+    @Before
     public void setup() {
+        productServiceClient = new ProductServiceClientImpl();
         ReflectionTestUtils.setField(productServiceClient, "productServiceUrl", baseUrl);
-        
-        // Setup circuit breaker to directly execute the supplier
-        when(circuitBreaker.executeSupplier(any())).thenAnswer(invocation -> {
-            return ((java.util.function.Supplier<?>) invocation.getArgument(0)).get();
-        });
-        
-        // Setup retry template to directly execute the callback
-        when(retryTemplate.execute(any())).thenAnswer(invocation -> {
-            return ((org.springframework.retry.RetryCallback<Object, Throwable>) invocation.getArgument(0)).doWithRetry(null);
-        });
+        ReflectionTestUtils.setField(productServiceClient, "restTemplate", restTemplate);
+        ReflectionTestUtils.setField(productServiceClient, "circuitBreaker", circuitBreaker);
+        ReflectionTestUtils.setField(productServiceClient, "retryTemplate", retryTemplate);
     }
 
     @Test
@@ -74,9 +72,9 @@ public class ProductServiceClientTest {
         
         // Assert
         assertNotNull(result);
-        assertEquals(1L, result.getId());
+        assertEquals(1L, result.getId().longValue());
         assertEquals("Test Product", result.getName());
-        assertEquals(99.99, result.getPrice());
+        assertEquals(99.99, result.getPrice().doubleValue(), 0.001);
     }
 
     @Test
@@ -105,12 +103,14 @@ public class ProductServiceClientTest {
         
         List<ProductServiceClient.ProductDto> expectedProducts = Arrays.asList(product1, product2);
         
+        ResponseEntity<List<ProductServiceClient.ProductDto>> response = new ResponseEntity<>(expectedProducts, HttpStatus.OK);
+        
         when(restTemplate.exchange(
                 contains(baseUrl + "/api/products/search"),
                 eq(HttpMethod.GET),
                 isNull(),
                 any(ParameterizedTypeReference.class)))
-                .thenReturn(new ResponseEntity<>(expectedProducts, HttpStatus.OK));
+                .thenReturn(response);
         
         // Act
         ProductServiceClient.ProductSearchRequest request = new ProductServiceClient.ProductSearchRequest()
@@ -136,12 +136,14 @@ public class ProductServiceClientTest {
         
         List<ProductServiceClient.ProductDto> expectedProducts = Collections.singletonList(product1);
         
+        ResponseEntity<List<ProductServiceClient.ProductDto>> response = new ResponseEntity<>(expectedProducts, HttpStatus.OK);
+        
         when(restTemplate.exchange(
                 eq(baseUrl + "/api/products/category/5"),
                 eq(HttpMethod.GET),
                 isNull(),
                 any(ParameterizedTypeReference.class)))
-                .thenReturn(new ResponseEntity<>(expectedProducts, HttpStatus.OK));
+                .thenReturn(response);
         
         // Act
         List<ProductServiceClient.ProductDto> result = productServiceClient.getProductsByCategory(5L);
@@ -149,8 +151,8 @@ public class ProductServiceClientTest {
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(5L, result.get(0).getCategoryId());
+        assertEquals(1L, result.get(0).getId().longValue());
+        assertEquals(5L, result.get(0).getCategoryId().longValue());
     }
 
     @Test

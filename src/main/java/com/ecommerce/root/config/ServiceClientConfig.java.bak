@@ -2,7 +2,6 @@ package com.ecommerce.root.config;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
-import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
@@ -11,8 +10,6 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Configuration for service clients.
@@ -35,8 +32,7 @@ public class ServiceClientConfig {
                 .ringBufferSizeInClosedState(5)
                 .build();
                 
-        CircuitBreakerRegistry registry = CircuitBreakerRegistry.of(config);
-        return registry.circuitBreaker("productServiceCircuitBreaker");
+        return CircuitBreaker.of("productServiceCircuitBreaker", config);
     }
     
     @Bean
@@ -49,15 +45,10 @@ public class ServiceClientConfig {
         backOffPolicy.setMultiplier(2);
         retryTemplate.setBackOffPolicy(backOffPolicy);
         
-        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(3, getRetryableExceptions(), true);
+        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
+        retryPolicy.setMaxAttempts(3);
         retryTemplate.setRetryPolicy(retryPolicy);
         
         return retryTemplate;
-    }
-    
-    private Map<Class<? extends Throwable>, Boolean> getRetryableExceptions() {
-        Map<Class<? extends Throwable>, Boolean> retryableExceptions = new HashMap<>();
-        retryableExceptions.put(Exception.class, true);
-        return retryableExceptions;
     }
 }

@@ -4,6 +4,8 @@ plugins {
     id 'java'
 }
 
+apply from: 'test.gradle'
+
 allprojects {
     repositories {
         mavenCentral()
@@ -44,13 +46,17 @@ dependencies {
     implementation 'io.github.resilience4j:resilience4j-retry:1.3.1'
     
     // Test dependencies
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-    testImplementation 'org.mockito:mockito-core:3.6.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:3.6.0'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.23.4'
     testImplementation 'org.springframework.boot:spring-boot-starter-test:1.5.22.RELEASE'
 }
 
 test {
-    useJUnitPlatform()
+    useJUnit() // Changed from JUnit Platform to JUnit 4
+    // Re-enabling tests
+    enabled = true
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
 }

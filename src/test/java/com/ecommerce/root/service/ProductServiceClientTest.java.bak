@@ -1,12 +1,11 @@
 package com.ecommerce.root.service;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -22,11 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 public class ProductServiceClientTest {
 
     @Mock
@@ -39,22 +37,31 @@ public class ProductServiceClientTest {
     private RetryTemplate retryTemplate;
 
     @InjectMocks
-    private ProductServiceClient productServiceClient;
+    private ProductServiceClientImpl productServiceClient;
 
     private final String baseUrl = "http://test-product-service:8080";
 
-    @BeforeEach
+    @Before
     public void setup() {
+        MockitoAnnotations.initMocks(this);
         ReflectionTestUtils.setField(productServiceClient, "productServiceUrl", baseUrl);
         
         // Setup circuit breaker to directly execute the supplier
         when(circuitBreaker.executeSupplier(any())).thenAnswer(invocation -> {
-            return ((java.util.function.Supplier<?>) invocation.getArgument(0)).get();
+            java.util.function.Supplier<?> supplier = invocation.getArgument(0);
+            return supplier.get();
         });
         
         // Setup retry template to directly execute the callback
+        when(retryTemplate.execute(any(), any(), any())).thenAnswer(invocation -> {
+            org.springframework.retry.RetryCallback<Object, Throwable> callback = invocation.getArgument(0);
+            return callback.doWithRetry(null);
+        });
+        
+        // Also handle the version without recovery callback
         when(retryTemplate.execute(any())).thenAnswer(invocation -> {
-            return ((org.springframework.retry.RetryCallback<Object, Throwable>) invocation.getArgument(0)).doWithRetry(null);
+            org.springframework.retry.RetryCallback<Object, Throwable> callback = invocation.getArgument(0);
+            return callback.doWithRetry(null);
         });
     }
 
@@ -74,9 +81,9 @@ public class ProductServiceClientTest {
         
         // Assert
         assertNotNull(result);
-        assertEquals(1L, result.getId());
+        assertEquals(1L, result.getId().longValue());
         assertEquals("Test Product", result.getName());
-        assertEquals(99.99, result.getPrice());
+        assertEquals(99.99, result.getPrice().doubleValue(), 0.001);
     }
 
     @Test
@@ -149,8 +156,8 @@ public class ProductServiceClientTest {
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(1L, result.get(0).getId());
-        assertEquals(5L, result.get(0).getCategoryId());
+        assertEquals(1L, result.get(0).getId().longValue());
+        assertEquals(5L, result.get(0).getCategoryId().longValue());
     }
 
     @Test
