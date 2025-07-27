@@ -1,11 +1,10 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '2.3.5.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'application'
 }
 
-group = 'com.ecommerce'
-version = '0.0.1-SNAPSHOT'
+group = 'com.ecommerce.root'
+version = '1.0-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 repositories {
@@ -13,26 +12,18 @@ repositories {
 }
 
 dependencies {
-    // Spring Boot
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // Micrometer for metrics
+    implementation 'io.micrometer:micrometer-core:1.9.0'
     
-    // Resilience4j for circuit breaker
-    implementation 'io.github.resilience4j:resilience4j-circuitbreaker:1.7.0'
-    implementation 'io.github.resilience4j:resilience4j-spring-boot2:1.7.0'
-    implementation 'io.vavr:vavr:0.10.3'
-    
-    // Spring Retry for retry mechanism
-    implementation 'org.springframework.retry:spring-retry'
-    implementation 'org.springframework:spring-aspects'
-    
-    // Testing
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
-    testImplementation 'org.mockito:mockito-core'
+    // Testing dependencies
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
 test {
     useJUnitPlatform()
+}
+
+application {
+    mainClassName = 'com.ecommerce.root.Application'
 }
