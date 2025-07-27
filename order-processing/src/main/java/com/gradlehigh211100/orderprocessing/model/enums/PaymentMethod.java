@@ -1,44 +1,36 @@
 package com.gradlehigh211100.orderprocessing.model.enums;
 
 /**
- * Enumeration of available payment methods in the system.
+ * Represents the various methods of payment available for orders.
  */
 public enum PaymentMethod {
-    CREDIT_CARD("Credit Card"),
-    DEBIT_CARD("Debit Card"),
-    PAYPAL("PayPal"),
-    BANK_TRANSFER("Bank Transfer"),
-    CRYPTOCURRENCY("Cryptocurrency"),
-    GIFT_CARD("Gift Card"),
-    CASH_ON_DELIVERY("Cash on Delivery");
-
-    private final String displayName;
-
-    PaymentMethod(String displayName) {
-        this.displayName = displayName;
-    }
-
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    @Override
-    public String toString() {
-        return displayName;
-    }
+    /**
+     * Payment via credit card
+     */
+    CREDIT_CARD,
     
     /**
-     * Find payment method by its display name
-     * 
-     * @param name The display name to search for
-     * @return The matching PaymentMethod or null if not found
+     * Payment via PayPal
      */
-    public static PaymentMethod fromDisplayName(String name) {
-        for (PaymentMethod method : values()) {
-            if (method.displayName.equalsIgnoreCase(name)) {
-                return method;
-            }
-        }
-        return null;
-    }
+    PAYPAL,
+    
+    /**
+     * Payment via direct bank transfer
+     */
+    BANK_TRANSFER,
+    
+    /**
+     * Payment on delivery
+     */
+    COD,
+    
+    /**
+     * Payment via gift card
+     */
+    GIFT_CARD,
+    
+    /**
+     * Payment via store credit
+     */
+    STORE_CREDIT
 }
