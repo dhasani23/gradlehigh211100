@@ -14,9 +14,6 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Test configuration that provides test versions of the required beans.
@@ -54,11 +51,8 @@ public class TestConfig {
         backOffPolicy.setMultiplier(1.5);
         retryTemplate.setBackOffPolicy(backOffPolicy);
         
-        Map<Class<? extends Throwable>, Boolean> retryableExceptions = new HashMap<>();
-        retryableExceptions.put(Exception.class, true);
-        
-        @SuppressWarnings("deprecation")
-        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(2, retryableExceptions, true);
+        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
+        retryPolicy.setMaxAttempts(2);
         retryTemplate.setRetryPolicy(retryPolicy);
         
         retryTemplate.setListeners(new RetryListener[]{

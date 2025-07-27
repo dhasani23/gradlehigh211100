@@ -11,8 +11,6 @@ import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Configuration for service clients.
@@ -49,16 +47,10 @@ public class ServiceClientConfig {
         backOffPolicy.setMultiplier(2);
         retryTemplate.setBackOffPolicy(backOffPolicy);
         
-        @SuppressWarnings("deprecation")
-        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(3, getRetryableExceptions(), true);
+        SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
+        retryPolicy.setMaxAttempts(3);
         retryTemplate.setRetryPolicy(retryPolicy);
         
         return retryTemplate;
-    }
-    
-    private Map<Class<? extends Throwable>, Boolean> getRetryableExceptions() {
-        Map<Class<? extends Throwable>, Boolean> retryableExceptions = new HashMap<>();
-        retryableExceptions.put(Exception.class, true);
-        return retryableExceptions;
     }
 }

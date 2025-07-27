@@ -49,6 +49,7 @@ public class ServiceClientConfig {
         backOffPolicy.setMultiplier(2);
         retryTemplate.setBackOffPolicy(backOffPolicy);
         
+        @SuppressWarnings("deprecation")
         SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(3, getRetryableExceptions(), true);
         retryTemplate.setRetryPolicy(retryPolicy);
         
