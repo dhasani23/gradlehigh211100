@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // No external dependencies required for this basic model class
+    
+    // Test dependencies
+    testImplementation 'junit:junit:4.13.2'
+}
+
+test {
+    useJUnit()
+}
