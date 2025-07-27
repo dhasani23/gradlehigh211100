@@ -2,22 +2,19 @@ plugins {
     id 'java-library'
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+group = 'com.gradlehigh211100'
+version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    // This is a common library with minimal dependencies
     testImplementation 'junit:junit:4.13.2'
 }
 
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
-
-javadoc {
-    options.addStringOption('Xdoclint:none', '-quiet')
-    options.encoding = 'UTF-8'
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
