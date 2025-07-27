@@ -1,90 +1,38 @@
 package com.gradlehigh211100.orderprocessing.model.enums;
 
 /**
- * Enum representing the various states an order can be in throughout its lifecycle.
- * These states track the order from creation through processing, delivery and completion.
+ * Enumeration representing the possible states of an order in the order processing workflow.
  */
 public enum OrderState {
-    /**
-     * Initial state when an order is first created
-     */
-    NEW,
     
-    /**
-     * Order has been submitted but waiting for processing to begin
-     */
-    PENDING,
+    CREATED("Created"),
+    VALIDATED("Validated"),
+    PAYMENT_PROCESSING("Payment Processing"),
+    PAYMENT_APPROVED("Payment Approved"),
+    PAYMENT_DECLINED("Payment Declined"),
+    FULFILLING("Fulfilling"),
+    BACKORDERED("Backordered"),
+    SHIPPED("Shipped"),
+    DELIVERED("Delivered"),
+    COMPLETED("Completed"),
+    CANCELLED("Cancelled"),
+    RETURN_INITIATED("Return Initiated"),
+    RETURN_APPROVED("Return Approved"),
+    RETURN_REJECTED("Return Rejected"),
+    REFUNDED("Refunded");
     
-    /**
-     * Order is currently being processed
-     */
-    PROCESSING,
+    private final String displayName;
     
-    /**
-     * Order requires payment before it can proceed
-     */
-    PAYMENT_REQUIRED,
-    
-    /**
-     * Order has been shipped to the customer
-     */
-    SHIPPED,
-    
-    /**
-     * Order processing is temporarily paused
-     */
-    ON_HOLD,
-    
-    /**
-     * Order has been delivered to the customer
-     */
-    DELIVERED,
-    
-    /**
-     * Order has been returned by the customer
-     */
-    RETURNED,
-    
-    /**
-     * Customer has been refunded for the order
-     */
-    REFUNDED,
-    
-    /**
-     * Order has been successfully completed
-     */
-    COMPLETED,
-    
-    /**
-     * Order has been cancelled and will not be processed
-     */
-    CANCELLED;
-    
-    /**
-     * Determines if this is a terminal state (no further state changes expected)
-     * 
-     * @return true if this is a terminal state
-     */
-    public boolean isTerminalState() {
-        return this == COMPLETED || this == CANCELLED;
+    OrderState(String displayName) {
+        this.displayName = displayName;
     }
     
-    /**
-     * Determines if this state represents an active order
-     * 
-     * @return true if the order is active in this state
-     */
-    public boolean isActiveState() {
-        return this == NEW || this == PENDING || this == PROCESSING || 
-               this == PAYMENT_REQUIRED || this == ON_HOLD || this == SHIPPED;
+    public String getDisplayName() {
+        return displayName;
     }
     
-    /**
-     * Determines if the state requires customer action
-     * 
-     * @return true if customer action is required
-     */
-    public boolean requiresCustomerAction() {
-        return this == PAYMENT_REQUIRED;
+    @Override
+    public String toString() {
+        return displayName;
     }
 }
