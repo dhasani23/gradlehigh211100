@@ -1,46 +1,58 @@
 package com.gradlehigh211100.common.model;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
 /**
- * Base class for all persistent entities in the system.
+ * Base abstract entity class that all entity models should extend.
  * Provides common fields and functionality for all entities.
  */
+@MappedSuperclass
 public abstract class BaseEntity implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
-    
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "created_at", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    private String createdBy;
+
+    @Column(name = "updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+
+    @Column(name = "created_by", length = 50)
+    private String createdBy;
+
+    @Column(name = "updated_by", length = 50)
     private String updatedBy;
-    private Boolean active;
-    
-    /**
-     * Default constructor
-     */
-    public BaseEntity() {
-        this.createdAt = new Date();
-        this.active = true;
+
+    @Version
+    private Long version;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = new Date();
+        // TODO: Implement user context to get current user
+        createdBy = "SYSTEM";
     }
-    
-    /**
-     * Constructor with ID
-     * 
-     * @param id the entity ID
-     */
-    public BaseEntity(Long id) {
-        this();
-        this.id = id;
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = new Date();
+        // TODO: Implement user context to get current user
+        updatedBy = "SYSTEM";
     }
 
     /**
      * Gets the entity ID
      * 
-     * @return the entity ID
+     * @return the unique identifier of this entity
      */
     public Long getId() {
         return id;
@@ -49,7 +61,7 @@ public abstract class BaseEntity implements Serializable {
     /**
      * Sets the entity ID
      * 
-     * @param id the entity ID
+     * @param id the unique identifier to set
      */
     public void setId(Long id) {
         this.id = id;
@@ -58,7 +70,7 @@ public abstract class BaseEntity implements Serializable {
     /**
      * Gets the creation timestamp
      * 
-     * @return when the entity was created
+     * @return the date when this entity was created
      */
     public Date getCreatedAt() {
         return createdAt;
@@ -67,34 +79,16 @@ public abstract class BaseEntity implements Serializable {
     /**
      * Sets the creation timestamp
      * 
-     * @param createdAt when the entity was created
+     * @param createdAt the creation date to set
      */
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
     /**
-     * Gets the user who created the entity
-     * 
-     * @return creator user identifier
-     */
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    /**
-     * Sets the user who created the entity
-     * 
-     * @param createdBy creator user identifier
-     */
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    /**
      * Gets the last update timestamp
      * 
-     * @return when the entity was last updated
+     * @return the date when this entity was last updated
      */
     public Date getUpdatedAt() {
         return updatedAt;
@@ -103,66 +97,70 @@ public abstract class BaseEntity implements Serializable {
     /**
      * Sets the last update timestamp
      * 
-     * @param updatedAt when the entity was last updated
+     * @param updatedAt the update date to set
      */
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
 
     /**
-     * Gets the user who last updated the entity
+     * Gets the user who created this entity
      * 
-     * @return updater user identifier
+     * @return the username of the creator
+     */
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    /**
+     * Sets the user who created this entity
+     * 
+     * @param createdBy the username to set
+     */
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    /**
+     * Gets the user who last updated this entity
+     * 
+     * @return the username of the last updater
      */
     public String getUpdatedBy() {
         return updatedBy;
     }
 
     /**
-     * Sets the user who last updated the entity
+     * Sets the user who last updated this entity
      * 
-     * @param updatedBy updater user identifier
+     * @param updatedBy the username to set
      */
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
     }
 
     /**
-     * Checks if the entity is active
+     * Gets the entity version (used for optimistic locking)
      * 
-     * @return true if active, false if inactive
+     * @return the version number
      */
-    public Boolean isActive() {
-        return active;
+    public Long getVersion() {
+        return version;
     }
 
     /**
-     * Sets the entity active state
+     * Sets the entity version
      * 
-     * @param active true to activate, false to deactivate
+     * @param version the version number to set
      */
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setVersion(Long version) {
+        this.version = version;
     }
-    
-    /**
-     * Pre-persist hook to set creation timestamp
-     */
-    public void prePersist() {
-        this.createdAt = new Date();
-    }
-    
-    /**
-     * Pre-update hook to set update timestamp
-     */
-    public void preUpdate() {
-        this.updatedAt = new Date();
-    }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof BaseEntity)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         
         BaseEntity that = (BaseEntity) o;
         
@@ -171,15 +169,6 @@ public abstract class BaseEntity implements Serializable {
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "{" +
-                "id=" + id +
-                ", createdAt=" + createdAt +
-                ", active=" + active +
-                '}';
+        return Objects.hash(id);
     }
 }
