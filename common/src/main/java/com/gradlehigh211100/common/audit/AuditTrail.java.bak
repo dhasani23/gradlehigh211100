@@ -2,6 +2,7 @@ package com.gradlehigh211100.common.audit;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gradlehigh211100.common.model.BaseEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -498,7 +499,9 @@ public class AuditTrail {
                 key.contains("token") || key.contains("key")) {
                 entry.setValue("*****");
             } else if (entry.getValue() instanceof Map) {
-                maskSensitiveData((Map<String, Object>) entry.getValue());
+                @SuppressWarnings("unchecked")
+                Map<String, Object> nestedMap = (Map<String, Object>) entry.getValue();
+                maskSensitiveData(nestedMap);
             }
         }
     }

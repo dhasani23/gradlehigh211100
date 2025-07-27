@@ -57,7 +57,6 @@ public class TestConfig {
         Map<Class<? extends Throwable>, Boolean> retryableExceptions = new HashMap<>();
         retryableExceptions.put(Exception.class, true);
         
-        @SuppressWarnings("deprecation")
         SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy(2, retryableExceptions, true);
         retryTemplate.setRetryPolicy(retryPolicy);
         

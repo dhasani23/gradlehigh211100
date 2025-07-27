@@ -90,6 +90,7 @@ public class ProductServiceClientTest {
         assertNull(result);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testSearchProducts_Success() {
         // Arrange
@@ -127,6 +128,7 @@ public class ProductServiceClientTest {
         assertEquals("Product 2", result.get(1).getName());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testGetProductsByCategory_Success() {
         // Arrange

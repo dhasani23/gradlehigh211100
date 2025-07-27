@@ -1,7 +1,6 @@
 package com.gradlehigh211100.productcatalog.model;
 
 import com.gradlehigh211100.common.model.BaseEntity;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Random;

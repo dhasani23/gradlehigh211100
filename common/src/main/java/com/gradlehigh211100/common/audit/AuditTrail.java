@@ -478,6 +478,7 @@ public class AuditTrail {
         // Example implementation for masking sensitive data in details
         if (record.getDetails() != null && record.getDetails().toLowerCase().contains("password")) {
             try {
+                @SuppressWarnings("unchecked")
                 Map<String, Object> detailsMap = objectMapper.readValue(record.getDetails(), Map.class);
                 maskSensitiveData(detailsMap);
                 record.setDetails(objectMapper.writeValueAsString(detailsMap));
@@ -499,7 +500,9 @@ public class AuditTrail {
                 key.contains("token") || key.contains("key")) {
                 entry.setValue("*****");
             } else if (entry.getValue() instanceof Map) {
-                maskSensitiveData((Map<String, Object>) entry.getValue());
+                @SuppressWarnings("unchecked")
+                Map<String, Object> nestedMap = (Map<String, Object>) entry.getValue();
+                maskSensitiveData(nestedMap);
             }
         }
     }

@@ -363,7 +363,6 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public List<CategoryDTO> getRootCategories() {
         // Try to get from cache
-        @SuppressWarnings("unchecked")
         List<CategoryDTO> cachedRootCategories = cacheService.get(CACHE_KEY_ROOT_CATEGORIES, List.class);
         
         if (cachedRootCategories != null) {
