@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: gradlehigh211100
+  cache:
+    type: redis
+
+application:
+  cache:
+    redisHost: localhost
+    redisPort: 6379
+    redisPassword: 
+    redisDatabase: 0
+    defaultTtl: 3600
+    prefix: ecommerce
+    useJsonSerialization: true
+    disableCachingNullValues: true
+    enableTransactions: false
+    poolMaxTotal: 8
+    poolMaxIdle: 8
+    poolMinIdle: 0
+    connectionTimeout: 2000
+    readTimeout: 2000
+    additionalCaches:
+      - categoryCache
+      - searchCache
