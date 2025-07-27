@@ -1,13 +1,16 @@
 package com.gradlehigh211100.userservice.model;
 
+import java.util.Collections;
+import java.util.List;
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entity representing a user in the system.
+ * Contains all user-related information including authentication details, profile information,
+ * and authorization data.
  */
 @Entity
 @Table(name = "users")
@@ -17,59 +20,68 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "username", nullable = false, unique = true, length = 50)
+    @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(name = "email", nullable = false, unique = true, length = 100)
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password_hash", nullable = false, length = 255)
-    private String passwordHash;
-
-    @Column(name = "first_name", length = 50)
     private String firstName;
-
-    @Column(name = "last_name", length = 50)
     private String lastName;
+    private String department;
+    private String phone;
+    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private Role role;
 
-    @Column(name = "account_non_expired")
+    @Column(nullable = false)
+    private boolean active = true;
+
+    @Column(nullable = false)
     private boolean accountNonExpired = true;
 
-    @Column(name = "account_non_locked")
+    @Column(nullable = false)
     private boolean accountNonLocked = true;
 
-    @Column(name = "credentials_non_expired")
+    @Column(nullable = false)
     private boolean credentialsNonExpired = true;
 
-    @Column(name = "enabled")
-    private boolean enabled = true;
-
-    @Column(name = "created_date", nullable = false)
-    private LocalDateTime createdDate;
-
-    @Column(name = "last_modified_date")
-    private LocalDateTime lastModifiedDate;
-
-    @Column(name = "last_login_date")
+    private LocalDateTime lastPasswordChangeDate;
     private LocalDateTime lastLoginDate;
-
-    @Column(name = "login_attempts")
-    private Integer loginAttempts = 0;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserAuditEntity> auditTrail = new ArrayList<>();
-
-    // Constructors
+    private String lastLoginIp;
     
-    public UserEntity() {
-        // Default constructor required by JPA
-    }
+    private int failedLoginAttempts = 0;
+    private LocalDateTime lockTime;
 
-    public UserEntity(String username, String email, String passwordHash) {
-        this.username = username;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.createdDate = LocalDateTime.now();
+    @Column(nullable = false)
+    private LocalDateTime createdDate;
+    
+    private LocalDateTime updatedDate;
+    
+    @PrePersist
+    protected void onCreate() {
+        createdDate = LocalDateTime.now();
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        updatedDate = LocalDateTime.now();
+    }
+    
+    /**
+     * Get roles as a list for JWT token generation
+     * 
+     * @return List containing the role
+     */
+    public List<Role> getRoles() {
+        if (role == null) {
+            return Collections.emptyList();
+        }
+        return Collections.singletonList(role);
     }
 
     // Getters and Setters
@@ -90,20 +102,20 @@ public class UserEntity {
         this.username = username;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
     }
 
     public String getFirstName() {
@@ -120,6 +132,38 @@ public class UserEntity {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public boolean isAccountNonExpired() {
@@ -146,28 +190,12 @@ public class UserEntity {
         this.credentialsNonExpired = credentialsNonExpired;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public LocalDateTime getLastPasswordChangeDate() {
+        return lastPasswordChangeDate;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public LocalDateTime getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
+    public void setLastPasswordChangeDate(LocalDateTime lastPasswordChangeDate) {
+        this.lastPasswordChangeDate = lastPasswordChangeDate;
     }
 
     public LocalDateTime getLastLoginDate() {
@@ -178,102 +206,43 @@ public class UserEntity {
         this.lastLoginDate = lastLoginDate;
     }
 
-    public Integer getLoginAttempts() {
-        return loginAttempts;
+    public String getLastLoginIp() {
+        return lastLoginIp;
     }
 
-    public void setLoginAttempts(Integer loginAttempts) {
-        this.loginAttempts = loginAttempts;
+    public void setLastLoginIp(String lastLoginIp) {
+        this.lastLoginIp = lastLoginIp;
     }
 
-    public List<UserAuditEntity> getAuditTrail() {
-        return auditTrail;
+    public int getFailedLoginAttempts() {
+        return failedLoginAttempts;
     }
 
-    public void setAuditTrail(List<UserAuditEntity> auditTrail) {
-        this.auditTrail = auditTrail;
-    }
-    
-    public void addAuditEntry(UserAuditEntity auditEntry) {
-        auditTrail.add(auditEntry);
-        auditEntry.setUser(this);
-    }
-    
-    public void removeAuditEntry(UserAuditEntity auditEntry) {
-        auditTrail.remove(auditEntry);
-        auditEntry.setUser(null);
+    public void setFailedLoginAttempts(int failedLoginAttempts) {
+        this.failedLoginAttempts = failedLoginAttempts;
     }
 
-    // Business methods
-    
-    /**
-     * Increment the login attempts counter
-     */
-    public void incrementLoginAttempts() {
-        this.loginAttempts = loginAttempts + 1;
-        
-        // Auto-lock account after threshold
-        if (this.loginAttempts >= 5) {
-            this.accountNonLocked = false;
-        }
-    }
-    
-    /**
-     * Reset login attempts counter after successful login
-     */
-    public void resetLoginAttempts() {
-        this.loginAttempts = 0;
-        this.lastLoginDate = LocalDateTime.now();
-    }
-    
-    /**
-     * Check if this account requires password reset
-     */
-    public boolean requiresPasswordReset() {
-        // If credentials expired, password reset is required
-        return !this.credentialsNonExpired;
+    public LocalDateTime getLockTime() {
+        return lockTime;
     }
 
-    /**
-     * Get user's full name
-     */
-    public String getFullName() {
-        return (firstName != null && lastName != null) ? 
-            firstName + " " + lastName : 
-            username;
+    public void setLockTime(LocalDateTime lockTime) {
+        this.lockTime = lockTime;
     }
 
-    // Equals and HashCode
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        
-        UserEntity that = (UserEntity) o;
-        
-        if (id != null) {
-            return Objects.equals(id, that.id);
-        }
-        
-        return Objects.equals(username, that.username) &&
-               Objects.equals(email, that.email);
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
     }
 
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : Objects.hash(username, email);
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
     }
 
-    @Override
-    public String toString() {
-        return "UserEntity{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", enabled=" + enabled +
-                '}';
+    public LocalDateTime getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(LocalDateTime updatedDate) {
+        this.updatedDate = updatedDate;
     }
 }

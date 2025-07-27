@@ -1,0 +1,212 @@
+package com.ecommerce.root.service;
+
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.retry.support.RetryTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+
+/**
+ * Implementation of ProductServiceClient that communicates with the product service.
+ */
+@Service
+public class ProductServiceClientImpl implements ProductServiceClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProductServiceClientImpl.class);
+    
+    @Autowired
+    private RestTemplate restTemplate;
+    
+    @Autowired
+    private CircuitBreaker circuitBreaker;
+    
+    @Autowired
+    private RetryTemplate retryTemplate;
+    
+    @Value("${product.service.url:http://product-service:8080}")
+    private String productServiceUrl;
+    
+    /**
+     * Sends a request to the Product Service.
+     * 
+     * @param serviceUrl the base URL of the service
+     * @param endpoint the specific endpoint to call
+     * @param payload the request payload
+     * @return the response from the service
+     * @throws Exception if the request fails
+     */
+    public Object sendRequest(String serviceUrl, String endpoint, Object payload) throws Exception {
+        try {
+            return circuitBreaker.executeSupplier(() -> {
+                try {
+                    return retryTemplate.execute(context -> {
+                        String url = serviceUrl + endpoint;
+                        
+                        if (payload == null) {
+                            // GET request
+                            ResponseEntity<Object> response = restTemplate.getForEntity(url, Object.class);
+                            return response.getBody();
+                        } else {
+                            // POST request
+                            HttpEntity<Object> requestEntity = new HttpEntity<>(payload);
+                            ResponseEntity<Object> response = restTemplate.exchange(
+                                    url, HttpMethod.POST, requestEntity, Object.class);
+                            return response.getBody();
+                        }
+                    });
+                } catch (Exception e) {
+                    logger.error("Failed to send request to {}{}", serviceUrl, endpoint, e);
+                    throw e;
+                }
+            });
+        } catch (Exception e) {
+            logger.error("Circuit breaker open for product service", e);
+            throw e;
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ProductDto getProductById(Long productId) {
+        try {
+            return circuitBreaker.executeSupplier(() -> {
+                try {
+                    return retryTemplate.execute(context -> {
+                        try {
+                            ResponseEntity<ProductDto> response = restTemplate.getForEntity(
+                                    productServiceUrl + "/api/products/" + productId,
+                                    ProductDto.class);
+                            return response.getBody();
+                        } catch (HttpClientErrorException e) {
+                            if (e.getStatusCode().value() == 404) {
+                                logger.warn("Product not found with ID: {}", productId);
+                                return null;
+                            }
+                            throw e;
+                        }
+                    });
+                } catch (Exception e) {
+                    logger.error("Failed to get product with ID: {}", productId, e);
+                    return null;
+                }
+            });
+        } catch (Exception e) {
+            logger.error("Circuit breaker open for product service", e);
+            return null;
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ProductDto> searchProducts(ProductSearchRequest request) {
+        try {
+            return circuitBreaker.executeSupplier(() -> {
+                try {
+                    return retryTemplate.execute(context -> {
+                        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                                .fromHttpUrl(productServiceUrl + "/api/products/search");
+                        
+                        if (request.getName() != null) {
+                            uriBuilder.queryParam("name", request.getName());
+                        }
+                        if (request.getBrand() != null) {
+                            uriBuilder.queryParam("brand", request.getBrand());
+                        }
+                        if (request.getCategoryId() != null) {
+                            uriBuilder.queryParam("categoryId", request.getCategoryId());
+                        }
+                        if (request.getMinPrice() != null) {
+                            uriBuilder.queryParam("minPrice", request.getMinPrice());
+                        }
+                        if (request.getMaxPrice() != null) {
+                            uriBuilder.queryParam("maxPrice", request.getMaxPrice());
+                        }
+                        if (request.getInStock() != null) {
+                            uriBuilder.queryParam("inStock", request.getInStock());
+                        }
+                        
+                        ResponseEntity<List<ProductDto>> response = restTemplate.exchange(
+                                uriBuilder.toUriString(),
+                                HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<List<ProductDto>>() {});
+                                
+                        return response.getBody();
+                    });
+                } catch (Exception e) {
+                    logger.error("Failed to search products", e);
+                    return Collections.emptyList();
+                }
+            });
+        } catch (Exception e) {
+            logger.error("Circuit breaker open for product service", e);
+            return Collections.emptyList();
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean checkServiceHealth() {
+        try {
+            ResponseEntity<Map> response = restTemplate.getForEntity(
+                    productServiceUrl + "/actuator/health", 
+                    Map.class);
+            
+            if (response.getBody() != null && response.getBody().containsKey("status")) {
+                return "UP".equals(response.getBody().get("status"));
+            }
+            return false;
+        } catch (Exception e) {
+            logger.error("Failed to check product service health", e);
+            return false;
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ProductDto> getProductsByCategory(Long categoryId) {
+        try {
+            return circuitBreaker.executeSupplier(() -> {
+                try {
+                    return retryTemplate.execute(context -> {
+                        ResponseEntity<List<ProductDto>> response = restTemplate.exchange(
+                                productServiceUrl + "/api/products/category/" + categoryId,
+                                HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<List<ProductDto>>() {});
+                                
+                        return response.getBody();
+                    });
+                } catch (Exception e) {
+                    logger.error("Failed to get products for category: {}", categoryId, e);
+                    return Collections.emptyList();
+                }
+            });
+        } catch (Exception e) {
+            logger.error("Circuit breaker open for product service", e);
+            return Collections.emptyList();
+        }
+    }
+}

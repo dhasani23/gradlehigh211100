@@ -1,32 +1,49 @@
-apply plugin: 'java-library'
+plugins {
+    id 'java'
+}
+
+group = 'com.gradlehigh211100'
+version = '0.1.0'
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        url "https://repo.spring.io/release"
+    }
+    maven {
+        url "https://repo.spring.io/milestone"
+    }
+}
 
 dependencies {
-    // Internal dependencies
-    api project(':common')
-    api project(':user-service')
-    api project(':product-catalog')
+    implementation project(':common')
+    implementation project(':user-service')
+    implementation project(':product-catalog')
     
     // Spring Boot dependencies
-    api 'org.springframework.boot:spring-boot-starter:1.5.22.RELEASE'
-    api 'org.springframework.boot:spring-boot-starter-data-jpa:1.5.22.RELEASE'
-    api 'org.springframework.boot:spring-boot-starter-web:1.5.22.RELEASE'
-    api 'org.springframework.boot:spring-boot-starter-amqp:1.5.22.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-web:1.5.22.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:1.5.22.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp:1.5.22.RELEASE'
     
-    // Spring State Machine for order workflow management
-    implementation 'org.springframework.statemachine:spring-statemachine-core:1.2.15.RELEASE'
+    // Spring State Machine
+    implementation 'org.springframework.statemachine:spring-statemachine-core:1.2.0.RELEASE'
     
-    // RabbitMQ for messaging
+    // RabbitMQ
     implementation 'com.rabbitmq:amqp-client:5.4.3'
     
     // Database dependencies
     implementation 'com.h2database:h2:1.4.197'
     implementation 'org.postgresql:postgresql:42.2.5'
     
-    // Micronaut dependencies
-    implementation 'io.micronaut:micronaut-http-client:1.0.4'
-    implementation 'io.micronaut:micronaut-http-server-netty:1.0.4'
-    
-    // Testing dependencies
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.statemachine:spring-statemachine-test:1.2.15.RELEASE'
+    // Testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:1.5.22.RELEASE'
+    testImplementation 'junit:junit:4.12'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }

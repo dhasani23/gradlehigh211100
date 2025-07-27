@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.gradlehigh211100.userservice.entity.UserEntity;
+import com.gradlehigh211100.userservice.model.UserEntity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

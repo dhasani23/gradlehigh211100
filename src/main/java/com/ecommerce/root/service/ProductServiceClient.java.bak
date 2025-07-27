@@ -1,0 +1,200 @@
+package com.ecommerce.root.service;
+
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.retry.support.RetryTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * ProductServiceClient - Client for communication with the Product Service.
+ * This implementation provides methods for interacting with product-related functionality.
+ */
+@Service
+public interface ProductServiceClient {
+    
+    /**
+     * Gets product details by product ID.
+     * 
+     * @param productId the ID of the product
+     * @return the product details or null if not found
+     */
+    ProductDto getProductById(Long productId);
+    
+    /**
+     * Searches for products based on search criteria.
+     * 
+     * @param request the search request containing criteria
+     * @return list of products matching the criteria
+     */
+    List<ProductDto> searchProducts(ProductSearchRequest request);
+    
+    /**
+     * Checks if the product service is healthy.
+     * 
+     * @return true if the service is healthy, false otherwise
+     */
+    boolean checkServiceHealth();
+    
+    /**
+     * ProductDto - Data Transfer Object for Product information
+     */
+    class ProductDto {
+        private Long id;
+        private String name;
+        private String description;
+        private Double price;
+        private Long categoryId;
+        private String imageUrl;
+        private Integer stockQuantity;
+        private String brand;
+        
+        public Long getId() {
+            return id;
+        }
+        
+        public void setId(Long id) {
+            this.id = id;
+        }
+        
+        public String getName() {
+            return name;
+        }
+        
+        public void setName(String name) {
+            this.name = name;
+        }
+        
+        public String getDescription() {
+            return description;
+        }
+        
+        public void setDescription(String description) {
+            this.description = description;
+        }
+        
+        public Double getPrice() {
+            return price;
+        }
+        
+        public void setPrice(Double price) {
+            this.price = price;
+        }
+        
+        public Long getCategoryId() {
+            return categoryId;
+        }
+        
+        public void setCategoryId(Long categoryId) {
+            this.categoryId = categoryId;
+        }
+        
+        public String getImageUrl() {
+            return imageUrl;
+        }
+        
+        public void setImageUrl(String imageUrl) {
+            this.imageUrl = imageUrl;
+        }
+        
+        public Integer getStockQuantity() {
+            return stockQuantity;
+        }
+        
+        public void setStockQuantity(Integer stockQuantity) {
+            this.stockQuantity = stockQuantity;
+        }
+        
+        public String getBrand() {
+            return brand;
+        }
+        
+        public void setBrand(String brand) {
+            this.brand = brand;
+        }
+    }
+    
+    /**
+     * ProductSearchRequest - Request object for product search operations
+     */
+    class ProductSearchRequest {
+        private String name;
+        private String brand;
+        private Long categoryId;
+        private Double minPrice;
+        private Double maxPrice;
+        private Boolean inStock;
+        
+        public String getName() {
+            return name;
+        }
+        
+        public ProductSearchRequest withName(String name) {
+            this.name = name;
+            return this;
+        }
+        
+        public String getBrand() {
+            return brand;
+        }
+        
+        public ProductSearchRequest withBrand(String brand) {
+            this.brand = brand;
+            return this;
+        }
+        
+        public Long getCategoryId() {
+            return categoryId;
+        }
+        
+        public ProductSearchRequest withCategoryId(Long categoryId) {
+            this.categoryId = categoryId;
+            return this;
+        }
+        
+        public Double getMinPrice() {
+            return minPrice;
+        }
+        
+        public ProductSearchRequest withMinPrice(Double minPrice) {
+            this.minPrice = minPrice;
+            return this;
+        }
+        
+        public Double getMaxPrice() {
+            return maxPrice;
+        }
+        
+        public ProductSearchRequest withMaxPrice(Double maxPrice) {
+            this.maxPrice = maxPrice;
+            return this;
+        }
+        
+        public Boolean getInStock() {
+            return inStock;
+        }
+        
+        public ProductSearchRequest withInStock(Boolean inStock) {
+            this.inStock = inStock;
+            return this;
+        }
+    }
+    
+    /**
+     * Gets products by category ID.
+     * 
+     * @param categoryId the ID of the category
+     * @return list of products in the category
+     */
+    List<ProductDto> getProductsByCategory(Long categoryId);
+}

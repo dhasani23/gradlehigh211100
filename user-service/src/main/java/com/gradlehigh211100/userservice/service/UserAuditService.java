@@ -1,5 +1,7 @@
 package com.gradlehigh211100.userservice.service;
 
+import com.gradlehigh211100.userservice.model.UserEntity;
+import com.gradlehigh211100.userservice.model.UserAuditEntity;
 import com.gradlehigh211100.userservice.repository.UserAuditRepository;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;

@@ -47,7 +47,7 @@ public interface UserAuditRepository extends JpaRepository<UserAuditEntity, Long
      * @param endDate End of the date range
      * @return List of audit records matching the criteria
      */
-    List<UserAuditEntity> findByActionAndCreatedDateBetween(String action, LocalDateTime startDate, LocalDateTime endDate);
+    List<UserAuditEntity> findByActionAndTimestampBetween(String action, LocalDateTime startDate, LocalDateTime endDate);
     
     /**
      * Finds all failed audit records for security analysis
@@ -77,7 +77,7 @@ public interface UserAuditRepository extends JpaRepository<UserAuditEntity, Long
      */
     @Query("SELECT COUNT(ua) FROM UserAuditEntity ua WHERE ua.ipAddress = :ipAddress " +
            "AND ua.action = 'LOGIN' AND ua.success = false " +
-           "AND ua.createdDate >= :timeWindow")
+           "AND ua.timestamp >= :timeWindow")
     long countFailedLoginAttempts(@Param("ipAddress") String ipAddress, 
                                  @Param("timeWindow") LocalDateTime timeWindow);
     
@@ -89,7 +89,7 @@ public interface UserAuditRepository extends JpaRepository<UserAuditEntity, Long
      * @return List of most recent audit records for the user
      */
     @Query("SELECT ua FROM UserAuditEntity ua WHERE ua.user = :user " +
-           "ORDER BY ua.createdDate DESC")
+           "ORDER BY ua.timestamp DESC")
     List<UserAuditEntity> findRecentActivityByUser(@Param("user") UserEntity user, 
                                                  @Param("limit") int limit);
     
@@ -101,8 +101,8 @@ public interface UserAuditRepository extends JpaRepository<UserAuditEntity, Long
      * @return List of user audit entries showing potential account hopping
      */
     @Query("SELECT DISTINCT ua FROM UserAuditEntity ua " +
-           "WHERE ua.ipAddress = :ipAddress AND ua.createdDate >= :timeWindow " +
-           "ORDER BY ua.user.id, ua.createdDate")
+           "WHERE ua.ipAddress = :ipAddress AND ua.timestamp >= :timeWindow " +
+           "ORDER BY ua.userId, ua.timestamp")
     List<UserAuditEntity> findPotentialAccountHopping(@Param("ipAddress") String ipAddress,
                                                     @Param("timeWindow") LocalDateTime timeWindow);
     
@@ -126,9 +126,47 @@ public interface UserAuditRepository extends JpaRepository<UserAuditEntity, Long
      */
     @Query("SELECT ua FROM UserAuditEntity ua " +
            "WHERE ua.user = :user AND " +
-           "(FUNCTION('HOUR', ua.createdDate) >= :startHour AND " +
-           "FUNCTION('HOUR', ua.createdDate) <= :endHour)")
+           "(FUNCTION('HOUR', ua.timestamp) >= :startHour AND " +
+           "FUNCTION('HOUR', ua.timestamp) <= :endHour)")
     List<UserAuditEntity> findAccessDuringHours(@Param("user") UserEntity user, 
                                               @Param("startHour") int startHour, 
                                               @Param("endHour") int endHour);
+    /**
+     * Find audit records by user ID ordered by timestamp
+     *
+     * @param userId The ID of the user
+     * @return List of audit records ordered by timestamp desc
+     */
+    List<UserAuditEntity> findByUserIdOrderByTimestampDesc(Long userId);
+    
+    /**
+     * Find audit records between two timestamps
+     *
+     * @param startDate Start timestamp
+     * @param endDate End timestamp
+     * @return List of audit records ordered by timestamp desc
+     */
+    List<UserAuditEntity> findByTimestampBetweenOrderByTimestampDesc(LocalDateTime startDate, LocalDateTime endDate);
+    
+    /**
+     * Find failed login attempts from an IP address after a specific time
+     *
+     * @param ipAddress The IP address
+     * @param timestamp Timestamp after which to look for attempts
+     * @param action The action type (typically "LOGIN")
+     * @return List of failed login attempts
+     */
+    List<UserAuditEntity> findByIpAddressAndTimestampAfterAndSuccessFalseAndActionOrderByTimestampDesc(
+            String ipAddress, LocalDateTime timestamp, String action);
+    
+    /**
+     * Find failed login attempts for a username after a specific time
+     *
+     * @param username The username
+     * @param timestamp Timestamp after which to look for attempts
+     * @param action The action type (typically "LOGIN")
+     * @return List of failed login attempts
+     */
+    List<UserAuditEntity> findByUsernameAndTimestampAfterAndSuccessFalseAndActionOrderByTimestampDesc(
+            String username, LocalDateTime timestamp, String action);
 }

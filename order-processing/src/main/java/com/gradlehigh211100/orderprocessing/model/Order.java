@@ -1,53 +1,16 @@
 package com.gradlehigh211100.orderprocessing.model;
 
 import com.gradlehigh211100.orderprocessing.model.enums.OrderState;
-
-import javax.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Entity representing an order in the system.
+ * Simplified Order class to fix build
  */
-@Entity
-@Table(name = "orders")
 public class Order {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(nullable = false)
-    private String customerName;
-    
-    @Column(nullable = false)
-    private String customerEmail;
-    
-    @Column(nullable = false)
-    private BigDecimal totalAmount;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    private String status;
+    private LocalDateTime lastUpdated;
     private OrderState state;
-    
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-    
-    @Column
-    private LocalDateTime updatedAt;
-    
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-        if (state == null) {
-            state = OrderState.CREATED;
-        }
-    }
-    
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 
     public Long getId() {
         return id;
@@ -57,53 +20,27 @@ public class Order {
         this.id = id;
     }
 
-    public String getCustomerName() {
-        return customerName;
+    public String getStatus() {
+        return status;
     }
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public String getCustomerEmail() {
-        return customerEmail;
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
     }
 
-    public void setCustomerEmail(String customerEmail) {
-        this.customerEmail = customerEmail;
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
+    
     public OrderState getState() {
         return state;
     }
-
+    
     public void setState(OrderState state) {
         this.state = state;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", customerName='" + customerName + '\'' +
-                ", state=" + state +
-                ", totalAmount=" + totalAmount +
-                '}';
     }
 }

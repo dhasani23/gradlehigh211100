@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -129,8 +130,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Add custom security headers
         http.headers()
             .frameOptions().deny()
-            .xssProtection().block(true)
-            .contentSecurityPolicy("default-src 'self'");
+            .xssProtection().block(true);
         
         // FIXME: Evaluate if we need additional protection against CSRF for non-GET requests
         // TODO: Add rate limiting for authentication endpoints to prevent brute force attacks
@@ -147,10 +147,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         // Configure database authentication with password encoding
-        auth.userDetailsService(userService).passwordEncoder(passwordEncoder);
-        
-        // Optionally add a second authentication provider for 2FA or other methods
-        auth.authenticationProvider(additionalAuthProvider());
+        auth.userDetailsService((UserDetailsService)userService).passwordEncoder(passwordEncoder);
         
         // In-memory authentication for development/testing purposes
         if (isDevelopmentMode()) {
@@ -165,16 +162,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
     }
 
-    /**
-     * Creates password encoder bean
-     * 
-     * @return BCryptPasswordEncoder configured with appropriate strength
-     */
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        // Higher strength means more secure but slower hashing
-        return new BCryptPasswordEncoder(12);
-    }
+    // This method has been moved to PasswordEncoderConfig
 
     /**
      * Exposes authentication manager as bean

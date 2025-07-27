@@ -39,7 +39,7 @@ public class ProductServiceClientTest {
     private RetryTemplate retryTemplate;
 
     @InjectMocks
-    private ProductServiceClient productServiceClient;
+    private ProductServiceClientImpl productServiceClient;
 
     private final String baseUrl = "http://test-product-service:8080";
 
@@ -54,7 +54,7 @@ public class ProductServiceClientTest {
         
         // Setup retry template to directly execute the callback
         when(retryTemplate.execute(any())).thenAnswer(invocation -> {
-            return ((org.springframework.retry.RetryCallback<?>) invocation.getArgument(0)).doWithRetry(null);
+            return ((org.springframework.retry.RetryCallback<Object, Throwable>) invocation.getArgument(0)).doWithRetry(null);
         });
     }
 
