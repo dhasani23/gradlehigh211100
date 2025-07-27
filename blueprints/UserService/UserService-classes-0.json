@@ -1,0 +1,720 @@
+[
+    {
+        "name": "RoleEntity",
+        "package": "com.gradlehigh211100.userservice.entity",
+        "type": "entity",
+        "description": "JPA entity representing user roles (customer, admin, merchant) with permissions and hierarchical role management",
+        "dependencies": ["javax.persistence.Entity", "javax.persistence.Id", "javax.persistence.GeneratedValue", "javax.persistence.Column", "javax.validation.constraints.NotBlank"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.entity.BaseEntity",
+        "fields": [
+            {
+                "name": "id",
+                "type": "Long",
+                "description": "Primary key for role entity"
+            },
+            {
+                "name": "name",
+                "type": "String",
+                "description": "Role name (CUSTOMER, ADMIN, MERCHANT)"
+            },
+            {
+                "name": "description",
+                "type": "String",
+                "description": "Detailed description of the role and its permissions"
+            },
+            {
+                "name": "level",
+                "type": "Integer",
+                "description": "Hierarchical level of the role for permission inheritance"
+            },
+            {
+                "name": "permissions",
+                "type": "Set<String>",
+                "description": "Set of permission strings associated with this role"
+            },
+            {
+                "name": "active",
+                "type": "Boolean",
+                "description": "Flag to indicate if the role is currently active"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getId",
+                "returnType": "Long",
+                "parameters": [],
+                "description": "Gets the role ID"
+            },
+            {
+                "name": "setId",
+                "returnType": "void",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Sets the role ID"
+            },
+            {
+                "name": "getName",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Gets the role name"
+            },
+            {
+                "name": "setName",
+                "returnType": "void",
+                "parameters": [{"name": "name", "type": "String"}],
+                "description": "Sets the role name"
+            },
+            {
+                "name": "hasPermission",
+                "returnType": "boolean",
+                "parameters": [{"name": "permission", "type": "String"}],
+                "description": "Checks if this role has the specified permission"
+            }
+        ]
+    },
+    {
+        "name": "UserEntity",
+        "package": "com.gradlehigh211100.userservice.entity",
+        "type": "entity",
+        "description": "JPA entity representing user data with comprehensive user information, roles, and security attributes",
+        "dependencies": ["javax.persistence.Entity", "javax.persistence.Id", "javax.persistence.ManyToMany", "javax.persistence.Column", "javax.validation.constraints.Email", "javax.validation.constraints.NotBlank"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.entity.BaseEntity",
+        "fields": [
+            {
+                "name": "id",
+                "type": "Long",
+                "description": "Primary key for user entity"
+            },
+            {
+                "name": "username",
+                "type": "String",
+                "description": "Unique username for the user account"
+            },
+            {
+                "name": "email",
+                "type": "String",
+                "description": "User's email address, must be unique"
+            },
+            {
+                "name": "password",
+                "type": "String",
+                "description": "BCrypt encoded password"
+            },
+            {
+                "name": "firstName",
+                "type": "String",
+                "description": "User's first name"
+            },
+            {
+                "name": "lastName",
+                "type": "String",
+                "description": "User's last name"
+            },
+            {
+                "name": "roles",
+                "type": "Set<RoleEntity>",
+                "description": "Set of roles assigned to this user"
+            },
+            {
+                "name": "active",
+                "type": "Boolean",
+                "description": "Flag indicating if the user account is active"
+            },
+            {
+                "name": "emailVerified",
+                "type": "Boolean",
+                "description": "Flag indicating if the email has been verified"
+            },
+            {
+                "name": "lastLoginDate",
+                "type": "LocalDateTime",
+                "description": "Timestamp of the user's last successful login"
+            },
+            {
+                "name": "failedLoginAttempts",
+                "type": "Integer",
+                "description": "Counter for consecutive failed login attempts"
+            },
+            {
+                "name": "accountLocked",
+                "type": "Boolean",
+                "description": "Flag indicating if the account is locked due to security reasons"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getId",
+                "returnType": "Long",
+                "parameters": [],
+                "description": "Gets the user ID"
+            },
+            {
+                "name": "setId",
+                "returnType": "void",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Sets the user ID"
+            },
+            {
+                "name": "getUsername",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Gets the username"
+            },
+            {
+                "name": "setUsername",
+                "returnType": "void",
+                "parameters": [{"name": "username", "type": "String"}],
+                "description": "Sets the username"
+            },
+            {
+                "name": "getFullName",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Returns the concatenated first name and last name"
+            },
+            {
+                "name": "hasRole",
+                "returnType": "boolean",
+                "parameters": [{"name": "roleName", "type": "String"}],
+                "description": "Checks if the user has the specified role"
+            },
+            {
+                "name": "addRole",
+                "returnType": "void",
+                "parameters": [{"name": "role", "type": "RoleEntity"}],
+                "description": "Adds a role to the user's role collection"
+            },
+            {
+                "name": "removeRole",
+                "returnType": "void",
+                "parameters": [{"name": "role", "type": "RoleEntity"}],
+                "description": "Removes a role from the user's role collection"
+            }
+        ]
+    },
+    {
+        "name": "UserPreferenceEntity",
+        "package": "com.gradlehigh211100.userservice.entity",
+        "type": "entity",
+        "description": "JPA entity for storing user-specific preferences, settings, and personalization data",
+        "dependencies": ["javax.persistence.Entity", "javax.persistence.Id", "javax.persistence.ManyToOne", "javax.persistence.Column"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.entity.BaseEntity",
+        "fields": [
+            {
+                "name": "id",
+                "type": "Long",
+                "description": "Primary key for preference entity"
+            },
+            {
+                "name": "user",
+                "type": "UserEntity",
+                "description": "Reference to the user who owns this preference"
+            },
+            {
+                "name": "preferenceKey",
+                "type": "String",
+                "description": "The preference key/name (e.g., theme, language, notifications)"
+            },
+            {
+                "name": "preferenceValue",
+                "type": "String",
+                "description": "The preference value as a string"
+            },
+            {
+                "name": "category",
+                "type": "String",
+                "description": "Category of the preference (UI, NOTIFICATIONS, PRIVACY, etc.)"
+            },
+            {
+                "name": "dataType",
+                "type": "String",
+                "description": "Data type of the preference value (STRING, BOOLEAN, INTEGER, etc.)"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getId",
+                "returnType": "Long",
+                "parameters": [],
+                "description": "Gets the preference ID"
+            },
+            {
+                "name": "setId",
+                "returnType": "void",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Sets the preference ID"
+            },
+            {
+                "name": "getPreferenceKey",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Gets the preference key"
+            },
+            {
+                "name": "setPreferenceKey",
+                "returnType": "void",
+                "parameters": [{"name": "preferenceKey", "type": "String"}],
+                "description": "Sets the preference key"
+            },
+            {
+                "name": "getBooleanValue",
+                "returnType": "Boolean",
+                "parameters": [],
+                "description": "Returns preference value as boolean if applicable"
+            },
+            {
+                "name": "getIntegerValue",
+                "returnType": "Integer",
+                "parameters": [],
+                "description": "Returns preference value as integer if applicable"
+            }
+        ]
+    },
+    {
+        "name": "UserAuditEntity",
+        "package": "com.gradlehigh211100.userservice.entity",
+        "type": "entity",
+        "description": "JPA entity for comprehensive audit trail of all user-related activities, changes, and system events",
+        "dependencies": ["javax.persistence.Entity", "javax.persistence.Id", "javax.persistence.ManyToOne", "javax.persistence.Column", "javax.persistence.Enumerated"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.entity.BaseEntity",
+        "fields": [
+            {
+                "name": "id",
+                "type": "Long",
+                "description": "Primary key for audit entity"
+            },
+            {
+                "name": "user",
+                "type": "UserEntity",
+                "description": "Reference to the user involved in the audited action"
+            },
+            {
+                "name": "action",
+                "type": "String",
+                "description": "The action performed (LOGIN, LOGOUT, UPDATE_PROFILE, etc.)"
+            },
+            {
+                "name": "actionDetails",
+                "type": "String",
+                "description": "Detailed description of the action performed"
+            },
+            {
+                "name": "ipAddress",
+                "type": "String",
+                "description": "IP address from which the action was performed"
+            },
+            {
+                "name": "userAgent",
+                "type": "String",
+                "description": "User agent string from the client browser"
+            },
+            {
+                "name": "success",
+                "type": "Boolean",
+                "description": "Flag indicating if the action was successful"
+            },
+            {
+                "name": "errorMessage",
+                "type": "String",
+                "description": "Error message if the action failed"
+            },
+            {
+                "name": "sessionId",
+                "type": "String",
+                "description": "Session ID associated with the action"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getId",
+                "returnType": "Long",
+                "parameters": [],
+                "description": "Gets the audit ID"
+            },
+            {
+                "name": "setId",
+                "returnType": "void",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Sets the audit ID"
+            },
+            {
+                "name": "getAction",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Gets the action performed"
+            },
+            {
+                "name": "setAction",
+                "returnType": "void",
+                "parameters": [{"name": "action", "type": "String"}],
+                "description": "Sets the action performed"
+            },
+            {
+                "name": "isSuccessful",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if the audited action was successful"
+            }
+        ]
+    },
+    {
+        "name": "UserRepository",
+        "package": "com.gradlehigh211100.userservice.repository",
+        "type": "repository",
+        "description": "Spring Data JPA repository for user entity with custom queries for authentication, user search, and complex filtering operations",
+        "dependencies": ["org.springframework.data.jpa.repository.JpaRepository", "org.springframework.data.jpa.repository.Query", "org.springframework.data.repository.query.Param", "java.util.Optional", "java.util.List"],
+        "implements": [],
+        "extends": "org.springframework.data.jpa.repository.JpaRepository<UserEntity, Long>",
+        "fields": [],
+        "methods": [
+            {
+                "name": "findByUsername",
+                "returnType": "Optional<UserEntity>",
+                "parameters": [{"name": "username", "type": "String"}],
+                "description": "Finds a user by their unique username"
+            },
+            {
+                "name": "findByEmail",
+                "returnType": "Optional<UserEntity>",
+                "parameters": [{"name": "email", "type": "String"}],
+                "description": "Finds a user by their email address"
+            },
+            {
+                "name": "findByUsernameOrEmail",
+                "returnType": "Optional<UserEntity>",
+                "parameters": [{"name": "username", "type": "String"}, {"name": "email", "type": "String"}],
+                "description": "Finds a user by username or email"
+            },
+            {
+                "name": "findByActiveTrue",
+                "returnType": "List<UserEntity>",
+                "parameters": [],
+                "description": "Finds all active users"
+            },
+            {
+                "name": "findByRoles_Name",
+                "returnType": "List<UserEntity>",
+                "parameters": [{"name": "roleName", "type": "String"}],
+                "description": "Finds all users with a specific role"
+            },
+            {
+                "name": "findByEmailVerifiedFalse",
+                "returnType": "List<UserEntity>",
+                "parameters": [],
+                "description": "Finds all users with unverified email addresses"
+            },
+            {
+                "name": "countByActiveTrue",
+                "returnType": "long",
+                "parameters": [],
+                "description": "Counts the number of active users"
+            },
+            {
+                "name": "findByAccountLockedTrueAndFailedLoginAttemptsGreaterThan",
+                "returnType": "List<UserEntity>",
+                "parameters": [{"name": "attempts", "type": "int"}],
+                "description": "Finds locked accounts with failed login attempts above threshold"
+            }
+        ]
+    },
+    {
+        "name": "RoleRepository",
+        "package": "com.gradlehigh211100.userservice.repository",
+        "type": "repository",
+        "description": "Spring Data JPA repository for role entity operations, role hierarchy management, and permission queries",
+        "dependencies": ["org.springframework.data.jpa.repository.JpaRepository", "java.util.Optional", "java.util.List"],
+        "implements": [],
+        "extends": "org.springframework.data.jpa.repository.JpaRepository<RoleEntity, Long>",
+        "fields": [],
+        "methods": [
+            {
+                "name": "findByName",
+                "returnType": "Optional<RoleEntity>",
+                "parameters": [{"name": "name", "type": "String"}],
+                "description": "Finds a role by its name"
+            },
+            {
+                "name": "findByActiveTrue",
+                "returnType": "List<RoleEntity>",
+                "parameters": [],
+                "description": "Finds all active roles"
+            },
+            {
+                "name": "findByLevelLessThanEqual",
+                "returnType": "List<RoleEntity>",
+                "parameters": [{"name": "level", "type": "Integer"}],
+                "description": "Finds roles with level less than or equal to specified value"
+            },
+            {
+                "name": "findByPermissionsContaining",
+                "returnType": "List<RoleEntity>",
+                "parameters": [{"name": "permission", "type": "String"}],
+                "description": "Finds roles that contain a specific permission"
+            }
+        ]
+    },
+    {
+        "name": "UserPreferenceRepository",
+        "package": "com.gradlehigh211100.userservice.repository",
+        "type": "repository",
+        "description": "Spring Data JPA repository for user preference management with category-based and user-specific queries",
+        "dependencies": ["org.springframework.data.jpa.repository.JpaRepository", "java.util.List", "java.util.Optional"],
+        "implements": [],
+        "extends": "org.springframework.data.jpa.repository.JpaRepository<UserPreferenceEntity, Long>",
+        "fields": [],
+        "methods": [
+            {
+                "name": "findByUser",
+                "returnType": "List<UserPreferenceEntity>",
+                "parameters": [{"name": "user", "type": "UserEntity"}],
+                "description": "Finds all preferences for a specific user"
+            },
+            {
+                "name": "findByUserAndPreferenceKey",
+                "returnType": "Optional<UserPreferenceEntity>",
+                "parameters": [{"name": "user", "type": "UserEntity"}, {"name": "preferenceKey", "type": "String"}],
+                "description": "Finds a specific preference by user and key"
+            },
+            {
+                "name": "findByUserAndCategory",
+                "returnType": "List<UserPreferenceEntity>",
+                "parameters": [{"name": "user", "type": "UserEntity"}, {"name": "category", "type": "String"}],
+                "description": "Finds all preferences for a user in a specific category"
+            },
+            {
+                "name": "deleteByUserAndPreferenceKey",
+                "returnType": "void",
+                "parameters": [{"name": "user", "type": "UserEntity"}, {"name": "preferenceKey", "type": "String"}],
+                "description": "Deletes a specific preference by user and key"
+            }
+        ]
+    },
+    {
+        "name": "UserAuditRepository",
+        "package": "com.gradlehigh211100.userservice.repository",
+        "type": "repository",
+        "description": "Spring Data JPA repository for user audit trail storage with comprehensive querying capabilities for security analysis",
+        "dependencies": ["org.springframework.data.jpa.repository.JpaRepository", "java.util.List", "java.time.LocalDateTime"],
+        "implements": [],
+        "extends": "org.springframework.data.jpa.repository.JpaRepository<UserAuditEntity, Long>",
+        "fields": [],
+        "methods": [
+            {
+                "name": "findByUser",
+                "returnType": "List<UserAuditEntity>",
+                "parameters": [{"name": "user", "type": "UserEntity"}],
+                "description": "Finds all audit records for a specific user"
+            },
+            {
+                "name": "findByUserAndAction",
+                "returnType": "List<UserAuditEntity>",
+                "parameters": [{"name": "user", "type": "UserEntity"}, {"name": "action", "type": "String"}],
+                "description": "Finds audit records for a user and specific action"
+            },
+            {
+                "name": "findByActionAndCreatedDateBetween",
+                "returnType": "List<UserAuditEntity>",
+                "parameters": [{"name": "action", "type": "String"}, {"name": "startDate", "type": "LocalDateTime"}, {"name": "endDate", "type": "LocalDateTime"}],
+                "description": "Finds audit records by action within a date range"
+            },
+            {
+                "name": "findBySuccessFalse",
+                "returnType": "List<UserAuditEntity>",
+                "parameters": [],
+                "description": "Finds all failed audit records for security analysis"
+            },
+            {
+                "name": "findByIpAddress",
+                "returnType": "List<UserAuditEntity>",
+                "parameters": [{"name": "ipAddress", "type": "String"}],
+                "description": "Finds all audit records from a specific IP address"
+            }
+        ]
+    },
+    {
+        "name": "UserDto",
+        "package": "com.gradlehigh211100.userservice.dto",
+        "type": "dto",
+        "description": "Comprehensive data transfer object for user information exchange between API layers with validation annotations",
+        "dependencies": ["javax.validation.constraints.Email", "javax.validation.constraints.NotBlank", "javax.validation.constraints.Size", "java.time.LocalDateTime", "java.util.Set"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "id",
+                "type": "Long",
+                "description": "User ID"
+            },
+            {
+                "name": "username",
+                "type": "String",
+                "description": "Username with validation constraints"
+            },
+            {
+                "name": "email",
+                "type": "String",
+                "description": "Email address with email validation"
+            },
+            {
+                "name": "firstName",
+                "type": "String",
+                "description": "User's first name"
+            },
+            {
+                "name": "lastName",
+                "type": "String",
+                "description": "User's last name"
+            },
+            {
+                "name": "roles",
+                "type": "Set<String>",
+                "description": "Set of role names assigned to the user"
+            },
+            {
+                "name": "active",
+                "type": "Boolean",
+                "description": "User account active status"
+            },
+            {
+                "name": "emailVerified",
+                "type": "Boolean",
+                "description": "Email verification status"
+            },
+            {
+                "name": "lastLoginDate",
+                "type": "LocalDateTime",
+                "description": "Last login timestamp"
+            },
+            {
+                "name": "createdDate",
+                "type": "LocalDateTime",
+                "description": "Account creation timestamp"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getId",
+                "returnType": "Long",
+                "parameters": [],
+                "description": "Gets the user ID"
+            },
+            {
+                "name": "setId",
+                "returnType": "void",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Sets the user ID"
+            },
+            {
+                "name": "getUsername",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Gets the username"
+            },
+            {
+                "name": "setUsername",
+                "returnType": "void",
+                "parameters": [{"name": "username", "type": "String"}],
+                "description": "Sets the username"
+            },
+            {
+                "name": "getFullName",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Returns concatenated first and last name"
+            },
+            {
+                "name": "hasRole",
+                "returnType": "boolean",
+                "parameters": [{"name": "roleName", "type": "String"}],
+                "description": "Checks if user has specific role"
+            }
+        ]
+    },
+    {
+        "name": "UserRegistrationDto",
+        "package": "com.gradlehigh211100.userservice.dto",
+        "type": "dto",
+        "description": "Data transfer object for user registration requests with comprehensive validation rules and password confirmation",
+        "dependencies": ["javax.validation.constraints.Email", "javax.validation.constraints.NotBlank", "javax.validation.constraints.Size", "javax.validation.constraints.Pattern"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "username",
+                "type": "String",
+                "description": "Desired username with length and pattern validation"
+            },
+            {
+                "name": "email",
+                "type": "String",
+                "description": "Email address with email format validation"
+            },
+            {
+                "name": "password",
+                "type": "String",
+                "description": "Password with strength requirements"
+            },
+            {
+                "name": "confirmPassword",
+                "type": "String",
+                "description": "Password confirmation field"
+            },
+            {
+                "name": "firstName",
+                "type": "String",
+                "description": "User's first name"
+            },
+            {
+                "name": "lastName",
+                "type": "String",
+                "description": "User's last name"
+            },
+            {
+                "name": "agreedToTerms",
+                "type": "Boolean",
+                "description": "Flag indicating agreement to terms and conditions"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getUsername",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Gets the desired username"
+            },
+            {
+                "name": "setUsername",
+                "returnType": "void",
+                "parameters": [{"name": "username", "type": "String"}],
+                "description": "Sets the desired username"
+            },
+            {
+                "name": "getEmail",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Gets the email address"
+            },
+            {
+                "name": "setEmail",
+                "returnType": "void",
+                "parameters": [{"name": "email", "type": "String"}],
+                "description": "Sets the email address"
+            },
+            {
+                "name": "passwordsMatch",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Validates that password and confirmPassword match"
+            },
+            {
+                "name": "isValid",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Performs overall validation of the registration request"
+            }
+        ]
+    }
+]

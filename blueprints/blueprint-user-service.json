@@ -1,0 +1,232 @@
+{
+    "module": "UserService",
+    "description": "Comprehensive user management service responsible for user registration, authentication, authorization, profile management, and role-based access control. This module implements JWT-based authentication, password encryption using BCrypt, user preference management, and account lifecycle operations. It provides RESTful APIs for user CRUD operations, login/logout functionality, password reset mechanisms, and user profile updates. The service integrates with Spring Security for robust authentication and authorization, supports multiple user roles (customer, admin, merchant), and includes audit logging for all user-related activities.",
+    "file_count": 20,
+    "module_path": "user-service",
+    "internal_dependencies": ["common"],
+    "external_dependencies": {
+        "spring-boot-starter": "1.5.22.RELEASE",
+        "spring-boot-starter-data-jpa": "1.5.22.RELEASE",
+        "spring-boot-starter-security": "1.5.22.RELEASE",
+        "spring-boot-starter-web": "1.5.22.RELEASE",
+        "spring-security-jwt": "1.0.9.RELEASE",
+        "h2": "1.4.197",
+        "postgresql": "42.2.5",
+        "bcrypt": "0.4",
+        "javax.validation": "2.0.1.Final"
+    },
+    "classes": [
+        {
+            "name": "UserEntity",
+            "package": "com.gradlehigh211100.userservice.entity",
+            "type": "entity",
+            "description": "JPA entity representing user data with all user attributes, relationships, and audit fields",
+            "dependencies": ["javax.persistence.Entity", "javax.persistence.Id", "javax.validation.constraints.Email"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.entity.BaseEntity"
+        },
+        {
+            "name": "RoleEntity",
+            "package": "com.gradlehigh211100.userservice.entity",
+            "type": "entity",
+            "description": "JPA entity representing user roles (customer, admin, merchant) with permissions",
+            "dependencies": ["javax.persistence.Entity", "javax.persistence.Id"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.entity.BaseEntity"
+        },
+        {
+            "name": "UserPreferenceEntity",
+            "package": "com.gradlehigh211100.userservice.entity",
+            "type": "entity",
+            "description": "JPA entity for storing user preferences and settings",
+            "dependencies": ["javax.persistence.Entity", "javax.persistence.Id", "javax.persistence.ManyToOne"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.entity.BaseEntity"
+        },
+        {
+            "name": "UserAuditEntity",
+            "package": "com.gradlehigh211100.userservice.entity",
+            "type": "entity",
+            "description": "JPA entity for audit trail of all user-related activities and changes",
+            "dependencies": ["javax.persistence.Entity", "javax.persistence.Id", "javax.persistence.ManyToOne"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.entity.BaseEntity"
+        },
+        {
+            "name": "UserRepository",
+            "package": "com.gradlehigh211100.userservice.repository",
+            "type": "repository",
+            "description": "Spring Data JPA repository for user entity CRUD operations and custom queries",
+            "dependencies": ["org.springframework.data.jpa.repository.JpaRepository", "org.springframework.data.jpa.repository.Query"],
+            "implements": [],
+            "extends": "org.springframework.data.jpa.repository.JpaRepository"
+        },
+        {
+            "name": "RoleRepository",
+            "package": "com.gradlehigh211100.userservice.repository",
+            "type": "repository",
+            "description": "Spring Data JPA repository for role entity operations and role-based queries",
+            "dependencies": ["org.springframework.data.jpa.repository.JpaRepository"],
+            "implements": [],
+            "extends": "org.springframework.data.jpa.repository.JpaRepository"
+        },
+        {
+            "name": "UserPreferenceRepository",
+            "package": "com.gradlehigh211100.userservice.repository",
+            "type": "repository",
+            "description": "Spring Data JPA repository for user preferences management",
+            "dependencies": ["org.springframework.data.jpa.repository.JpaRepository"],
+            "implements": [],
+            "extends": "org.springframework.data.jpa.repository.JpaRepository"
+        },
+        {
+            "name": "UserAuditRepository",
+            "package": "com.gradlehigh211100.userservice.repository",
+            "type": "repository",
+            "description": "Spring Data JPA repository for user audit trail storage and retrieval",
+            "dependencies": ["org.springframework.data.jpa.repository.JpaRepository"],
+            "implements": [],
+            "extends": "org.springframework.data.jpa.repository.JpaRepository"
+        },
+        {
+            "name": "UserDto",
+            "package": "com.gradlehigh211100.userservice.dto",
+            "type": "dto",
+            "description": "Data transfer object for user information exchange between layers",
+            "dependencies": ["javax.validation.constraints.Email", "javax.validation.constraints.NotBlank"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "UserRegistrationDto",
+            "package": "com.gradlehigh211100.userservice.dto",
+            "type": "dto",
+            "description": "Data transfer object for user registration requests with validation",
+            "dependencies": ["javax.validation.constraints.Email", "javax.validation.constraints.NotBlank", "javax.validation.constraints.Size"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "LoginDto",
+            "package": "com.gradlehigh211100.userservice.dto",
+            "type": "dto",
+            "description": "Data transfer object for user login requests",
+            "dependencies": ["javax.validation.constraints.NotBlank"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "UserPreferenceDto",
+            "package": "com.gradlehigh211100.userservice.dto",
+            "type": "dto",
+            "description": "Data transfer object for user preference management",
+            "dependencies": ["javax.validation.constraints.NotNull"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "UserService",
+            "package": "com.gradlehigh211100.userservice.service",
+            "type": "service",
+            "description": "Core business service for user management operations including CRUD, authentication, and profile updates",
+            "dependencies": ["com.gradlehigh211100.userservice.repository.UserRepository", "com.gradlehigh211100.userservice.repository.RoleRepository", "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "AuthenticationService",
+            "package": "com.gradlehigh211100.userservice.service",
+            "type": "service",
+            "description": "Service handling user authentication, JWT token generation, and session management",
+            "dependencies": ["com.gradlehigh211100.userservice.service.UserService", "com.gradlehigh211100.userservice.service.JwtService", "org.springframework.security.authentication.AuthenticationManager"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "JwtService",
+            "package": "com.gradlehigh211100.userservice.service",
+            "type": "service",
+            "description": "Service for JWT token creation, validation, and parsing operations",
+            "dependencies": ["io.jsonwebtoken.Jwts", "io.jsonwebtoken.SignatureAlgorithm"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "UserPreferenceService",
+            "package": "com.gradlehigh211100.userservice.service",
+            "type": "service",
+            "description": "Service for managing user preferences and personalization settings",
+            "dependencies": ["com.gradlehigh211100.userservice.repository.UserPreferenceRepository", "com.gradlehigh211100.userservice.service.UserService"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "UserAuditService",
+            "package": "com.gradlehigh211100.userservice.service",
+            "type": "service",
+            "description": "Service for recording and managing user activity audit trails",
+            "dependencies": ["com.gradlehigh211100.userservice.repository.UserAuditRepository"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "UserController",
+            "package": "com.gradlehigh211100.userservice.controller",
+            "type": "controller",
+            "description": "REST controller providing user management endpoints for registration, profile updates, and user operations",
+            "dependencies": ["com.gradlehigh211100.userservice.service.UserService", "com.gradlehigh211100.userservice.service.UserPreferenceService", "org.springframework.web.bind.annotation.RestController"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "AuthController",
+            "package": "com.gradlehigh211100.userservice.controller",
+            "type": "controller",
+            "description": "REST controller handling authentication endpoints including login, logout, and token refresh",
+            "dependencies": ["com.gradlehigh211100.userservice.service.AuthenticationService", "org.springframework.web.bind.annotation.RestController"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "SecurityConfig",
+            "package": "com.gradlehigh211100.userservice.config",
+            "type": "configuration",
+            "description": "Spring Security configuration class defining authentication, authorization, and JWT filter chain",
+            "dependencies": ["org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter", "org.springframework.security.config.annotation.web.builders.HttpSecurity", "org.springframework.context.annotation.Configuration"],
+            "implements": [],
+            "extends": "org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter"
+        }
+    ],
+    "configFiles": [
+        {
+            "path": "user-service/build.gradle",
+            "description": "Gradle build configuration file for the UserService module with dependencies and build settings"
+        },
+        {
+            "path": "user-service/src/main/resources/application.yml",
+            "description": "Application configuration properties for the UserService module including database, security, and JWT settings"
+        }
+    ],
+    "generationOrder": [
+        "com.gradlehigh211100.userservice.entity.RoleEntity",
+        "com.gradlehigh211100.userservice.entity.UserEntity",
+        "com.gradlehigh211100.userservice.entity.UserPreferenceEntity",
+        "com.gradlehigh211100.userservice.entity.UserAuditEntity",
+        "com.gradlehigh211100.userservice.dto.UserDto",
+        "com.gradlehigh211100.userservice.dto.UserRegistrationDto",
+        "com.gradlehigh211100.userservice.dto.LoginDto",
+        "com.gradlehigh211100.userservice.dto.UserPreferenceDto",
+        "com.gradlehigh211100.userservice.repository.RoleRepository",
+        "com.gradlehigh211100.userservice.repository.UserRepository",
+        "com.gradlehigh211100.userservice.repository.UserPreferenceRepository",
+        "com.gradlehigh211100.userservice.repository.UserAuditRepository",
+        "com.gradlehigh211100.userservice.service.JwtService",
+        "com.gradlehigh211100.userservice.service.UserAuditService",
+        "com.gradlehigh211100.userservice.service.UserService",
+        "com.gradlehigh211100.userservice.service.UserPreferenceService",
+        "com.gradlehigh211100.userservice.service.AuthenticationService",
+        "com.gradlehigh211100.userservice.config.SecurityConfig",
+        "com.gradlehigh211100.userservice.controller.UserController",
+        "com.gradlehigh211100.userservice.controller.AuthController"
+    ]
+}

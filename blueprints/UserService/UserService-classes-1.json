@@ -1,0 +1,660 @@
+[
+    {
+        "name": "LoginDto",
+        "package": "com.gradlehigh211100.userservice.dto",
+        "type": "dto",
+        "description": "Data transfer object for user authentication requests with validation and security-focused design",
+        "dependencies": ["javax.validation.constraints.NotBlank", "javax.validation.constraints.Size"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "usernameOrEmail",
+                "type": "String",
+                "description": "Username or email address for login"
+            },
+            {
+                "name": "password",
+                "type": "String",
+                "description": "User password for authentication"
+            },
+            {
+                "name": "rememberMe",
+                "type": "Boolean",
+                "description": "Flag for extended session duration"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getUsernameOrEmail",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Gets the username or email"
+            },
+            {
+                "name": "setUsernameOrEmail",
+                "returnType": "void",
+                "parameters": [{"name": "usernameOrEmail", "type": "String"}],
+                "description": "Sets the username or email"
+            },
+            {
+                "name": "getPassword",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Gets the password"
+            },
+            {
+                "name": "setPassword",
+                "returnType": "void",
+                "parameters": [{"name": "password", "type": "String"}],
+                "description": "Sets the password"
+            },
+            {
+                "name": "isRememberMe",
+                "returnType": "Boolean",
+                "parameters": [],
+                "description": "Checks if remember me is enabled"
+            }
+        ]
+    },
+    {
+        "name": "UserPreferenceDto",
+        "package": "com.gradlehigh211100.userservice.dto",
+        "type": "dto",
+        "description": "Data transfer object for user preference management with category grouping and type-safe value handling",
+        "dependencies": ["javax.validation.constraints.NotNull", "javax.validation.constraints.NotBlank"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "id",
+                "type": "Long",
+                "description": "Preference ID"
+            },
+            {
+                "name": "userId",
+                "type": "Long",
+                "description": "ID of the user who owns this preference"
+            },
+            {
+                "name": "preferenceKey",
+                "type": "String",
+                "description": "The preference key/identifier"
+            },
+            {
+                "name": "preferenceValue",
+                "type": "String",
+                "description": "The preference value as string"
+            },
+            {
+                "name": "category",
+                "type": "String",
+                "description": "Category classification of the preference"
+            },
+            {
+                "name": "dataType",
+                "type": "String",
+                "description": "Data type of the preference value"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getId",
+                "returnType": "Long",
+                "parameters": [],
+                "description": "Gets the preference ID"
+            },
+            {
+                "name": "setId",
+                "returnType": "void",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Sets the preference ID"
+            },
+            {
+                "name": "getPreferenceKey",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Gets the preference key"
+            },
+            {
+                "name": "setPreferenceKey",
+                "returnType": "void",
+                "parameters": [{"name": "preferenceKey", "type": "String"}],
+                "description": "Sets the preference key"
+            },
+            {
+                "name": "getTypedValue",
+                "returnType": "Object",
+                "parameters": [],
+                "description": "Returns the preference value converted to its proper type"
+            }
+        ]
+    },
+    {
+        "name": "UserService",
+        "package": "com.gradlehigh211100.userservice.service",
+        "type": "service",
+        "description": "Core business service for comprehensive user management including CRUD operations, profile management, role assignment, and account lifecycle",
+        "dependencies": ["com.gradlehigh211100.userservice.repository.UserRepository", "com.gradlehigh211100.userservice.repository.RoleRepository", "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder", "org.springframework.stereotype.Service"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "userRepository",
+                "type": "UserRepository",
+                "description": "Repository for user data access"
+            },
+            {
+                "name": "roleRepository",
+                "type": "RoleRepository",
+                "description": "Repository for role data access"
+            },
+            {
+                "name": "passwordEncoder",
+                "type": "BCryptPasswordEncoder",
+                "description": "Password encoder for secure password hashing"
+            },
+            {
+                "name": "userAuditService",
+                "type": "UserAuditService",
+                "description": "Service for audit trail management"
+            }
+        ],
+        "methods": [
+            {
+                "name": "createUser",
+                "returnType": "UserEntity",
+                "parameters": [{"name": "userRegistrationDto", "type": "UserRegistrationDto"}],
+                "description": "Creates a new user account with validation and default role assignment"
+            },
+            {
+                "name": "getUserById",
+                "returnType": "Optional<UserEntity>",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Retrieves a user by their ID"
+            },
+            {
+                "name": "getUserByUsername",
+                "returnType": "Optional<UserEntity>",
+                "parameters": [{"name": "username", "type": "String"}],
+                "description": "Retrieves a user by their username"
+            },
+            {
+                "name": "updateUser",
+                "returnType": "UserEntity",
+                "parameters": [{"name": "id", "type": "Long"}, {"name": "userDto", "type": "UserDto"}],
+                "description": "Updates user information with validation and audit logging"
+            },
+            {
+                "name": "deleteUser",
+                "returnType": "void",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Soft deletes a user account"
+            },
+            {
+                "name": "assignRole",
+                "returnType": "void",
+                "parameters": [{"name": "userId", "type": "Long"}, {"name": "roleName", "type": "String"}],
+                "description": "Assigns a role to a user"
+            },
+            {
+                "name": "removeRole",
+                "returnType": "void",
+                "parameters": [{"name": "userId", "type": "Long"}, {"name": "roleName", "type": "String"}],
+                "description": "Removes a role from a user"
+            },
+            {
+                "name": "changePassword",
+                "returnType": "void",
+                "parameters": [{"name": "userId", "type": "Long"}, {"name": "oldPassword", "type": "String"}, {"name": "newPassword", "type": "String"}],
+                "description": "Changes user password with old password verification"
+            },
+            {
+                "name": "lockAccount",
+                "returnType": "void",
+                "parameters": [{"name": "userId", "type": "Long"}, {"name": "reason", "type": "String"}],
+                "description": "Locks a user account for security reasons"
+            },
+            {
+                "name": "unlockAccount",
+                "returnType": "void",
+                "parameters": [{"name": "userId", "type": "Long"}],
+                "description": "Unlocks a previously locked user account"
+            }
+        ]
+    },
+    {
+        "name": "AuthenticationService",
+        "package": "com.gradlehigh211100.userservice.service",
+        "type": "service",
+        "description": "Service handling user authentication, JWT token management, session control, and security validations",
+        "dependencies": ["com.gradlehigh211100.userservice.service.UserService", "com.gradlehigh211100.userservice.service.JwtService", "org.springframework.security.authentication.AuthenticationManager", "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "userService",
+                "type": "UserService",
+                "description": "User service for user operations"
+            },
+            {
+                "name": "jwtService",
+                "type": "JwtService",
+                "description": "JWT service for token operations"
+            },
+            {
+                "name": "authenticationManager",
+                "type": "AuthenticationManager",
+                "description": "Spring Security authentication manager"
+            },
+            {
+                "name": "passwordEncoder",
+                "type": "BCryptPasswordEncoder",
+                "description": "Password encoder for validation"
+            },
+            {
+                "name": "userAuditService",
+                "type": "UserAuditService",
+                "description": "Service for logging authentication events"
+            }
+        ],
+        "methods": [
+            {
+                "name": "authenticate",
+                "returnType": "String",
+                "parameters": [{"name": "loginDto", "type": "LoginDto"}],
+                "description": "Authenticates user credentials and returns JWT token"
+            },
+            {
+                "name": "validateToken",
+                "returnType": "boolean",
+                "parameters": [{"name": "token", "type": "String"}],
+                "description": "Validates JWT token authenticity and expiration"
+            },
+            {
+                "name": "refreshToken",
+                "returnType": "String",
+                "parameters": [{"name": "token", "type": "String"}],
+                "description": "Refreshes an existing JWT token"
+            },
+            {
+                "name": "logout",
+                "returnType": "void",
+                "parameters": [{"name": "token", "type": "String"}],
+                "description": "Invalidates user session and JWT token"
+            },
+            {
+                "name": "getUserFromToken",
+                "returnType": "UserEntity",
+                "parameters": [{"name": "token", "type": "String"}],
+                "description": "Extracts user information from JWT token"
+            },
+            {
+                "name": "recordFailedLogin",
+                "returnType": "void",
+                "parameters": [{"name": "username", "type": "String"}, {"name": "ipAddress", "type": "String"}],
+                "description": "Records failed login attempts for security tracking"
+            },
+            {
+                "name": "recordSuccessfulLogin",
+                "returnType": "void",
+                "parameters": [{"name": "user", "type": "UserEntity"}, {"name": "ipAddress", "type": "String"}],
+                "description": "Records successful login for audit purposes"
+            }
+        ]
+    },
+    {
+        "name": "JwtService",
+        "package": "com.gradlehigh211100.userservice.service",
+        "type": "service",
+        "description": "Service for JWT token creation, validation, parsing, and security management with configurable expiration and signing",
+        "dependencies": ["io.jsonwebtoken.Jwts", "io.jsonwebtoken.SignatureAlgorithm", "io.jsonwebtoken.Claims", "java.util.Date", "org.springframework.stereotype.Service"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "secretKey",
+                "type": "String",
+                "description": "Secret key for JWT signing"
+            },
+            {
+                "name": "expirationTime",
+                "type": "long",
+                "description": "Token expiration time in milliseconds"
+            },
+            {
+                "name": "refreshExpirationTime",
+                "type": "long",
+                "description": "Refresh token expiration time in milliseconds"
+            }
+        ],
+        "methods": [
+            {
+                "name": "generateToken",
+                "returnType": "String",
+                "parameters": [{"name": "user", "type": "UserEntity"}],
+                "description": "Generates JWT token for authenticated user"
+            },
+            {
+                "name": "generateRefreshToken",
+                "returnType": "String",
+                "parameters": [{"name": "user", "type": "UserEntity"}],
+                "description": "Generates refresh token with extended expiration"
+            },
+            {
+                "name": "validateToken",
+                "returnType": "boolean",
+                "parameters": [{"name": "token", "type": "String"}],
+                "description": "Validates token signature and expiration"
+            },
+            {
+                "name": "getUsernameFromToken",
+                "returnType": "String",
+                "parameters": [{"name": "token", "type": "String"}],
+                "description": "Extracts username from JWT token claims"
+            },
+            {
+                "name": "getExpirationDateFromToken",
+                "returnType": "Date",
+                "parameters": [{"name": "token", "type": "String"}],
+                "description": "Extracts expiration date from JWT token"
+            },
+            {
+                "name": "isTokenExpired",
+                "returnType": "boolean",
+                "parameters": [{"name": "token", "type": "String"}],
+                "description": "Checks if token has expired"
+            },
+            {
+                "name": "getRolesFromToken",
+                "returnType": "List<String>",
+                "parameters": [{"name": "token", "type": "String"}],
+                "description": "Extracts user roles from JWT token claims"
+            }
+        ]
+    },
+    {
+        "name": "UserPreferenceService",
+        "package": "com.gradlehigh211100.userservice.service",
+        "type": "service",
+        "description": "Service for managing user preferences, personalization settings, and configuration with category-based organization",
+        "dependencies": ["com.gradlehigh211100.userservice.repository.UserPreferenceRepository", "com.gradlehigh211100.userservice.service.UserService", "org.springframework.stereotype.Service"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "userPreferenceRepository",
+                "type": "UserPreferenceRepository",
+                "description": "Repository for user preference data access"
+            },
+            {
+                "name": "userService",
+                "type": "UserService",
+                "description": "User service for user validation"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getUserPreferences",
+                "returnType": "List<UserPreferenceDto>",
+                "parameters": [{"name": "userId", "type": "Long"}],
+                "description": "Retrieves all preferences for a specific user"
+            },
+            {
+                "name": "getUserPreferenceByKey",
+                "returnType": "Optional<UserPreferenceDto>",
+                "parameters": [{"name": "userId", "type": "Long"}, {"name": "preferenceKey", "type": "String"}],
+                "description": "Retrieves a specific preference by user and key"
+            },
+            {
+                "name": "setUserPreference",
+                "returnType": "UserPreferenceDto",
+                "parameters": [{"name": "userId", "type": "Long"}, {"name": "preferenceDto", "type": "UserPreferenceDto"}],
+                "description": "Sets or updates a user preference"
+            },
+            {
+                "name": "deleteUserPreference",
+                "returnType": "void",
+                "parameters": [{"name": "userId", "type": "Long"}, {"name": "preferenceKey", "type": "String"}],
+                "description": "Deletes a specific user preference"
+            },
+            {
+                "name": "getUserPreferencesByCategory",
+                "returnType": "List<UserPreferenceDto>",
+                "parameters": [{"name": "userId", "type": "Long"}, {"name": "category", "type": "String"}],
+                "description": "Retrieves preferences by category for a user"
+            },
+            {
+                "name": "resetUserPreferences",
+                "returnType": "void",
+                "parameters": [{"name": "userId", "type": "Long"}, {"name": "category", "type": "String"}],
+                "description": "Resets all preferences in a category to defaults"
+            }
+        ]
+    },
+    {
+        "name": "UserAuditService",
+        "package": "com.gradlehigh211100.userservice.service",
+        "type": "service",
+        "description": "Service for comprehensive audit trail management, security event logging, and compliance reporting",
+        "dependencies": ["com.gradlehigh211100.userservice.repository.UserAuditRepository", "org.springframework.stereotype.Service"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "userAuditRepository",
+                "type": "UserAuditRepository",
+                "description": "Repository for audit data persistence"
+            }
+        ],
+        "methods": [
+            {
+                "name": "logUserAction",
+                "returnType": "void",
+                "parameters": [{"name": "user", "type": "UserEntity"}, {"name": "action", "type": "String"}, {"name": "details", "type": "String"}, {"name": "success", "type": "boolean"}, {"name": "ipAddress", "type": "String"}],
+                "description": "Logs a user action with full context information"
+            },
+            {
+                "name": "getUserAuditHistory",
+                "returnType": "List<UserAuditEntity>",
+                "parameters": [{"name": "userId", "type": "Long"}],
+                "description": "Retrieves complete audit history for a user"
+            },
+            {
+                "name": "getSecurityEvents",
+                "returnType": "List<UserAuditEntity>",
+                "parameters": [{"name": "startDate", "type": "LocalDateTime"}, {"name": "endDate", "type": "LocalDateTime"}],
+                "description": "Retrieves security-related events within date range"
+            },
+            {
+                "name": "getFailedLoginAttempts",
+                "returnType": "List<UserAuditEntity>",
+                "parameters": [{"name": "ipAddress", "type": "String"}, {"name": "timeWindow", "type": "LocalDateTime"}],
+                "description": "Gets failed login attempts from IP within time window"
+            },
+            {
+                "name": "logSecurityEvent",
+                "returnType": "void",
+                "parameters": [{"name": "eventType", "type": "String"}, {"name": "details", "type": "String"}, {"name": "ipAddress", "type": "String"}],
+                "description": "Logs system-level security events"
+            }
+        ]
+    },
+    {
+        "name": "UserController",
+        "package": "com.gradlehigh211100.userservice.controller",
+        "type": "controller",
+        "description": "REST controller providing comprehensive user management endpoints with full CRUD operations, profile management, and role administration",
+        "dependencies": ["com.gradlehigh211100.userservice.service.UserService", "com.gradlehigh211100.userservice.service.UserPreferenceService", "org.springframework.web.bind.annotation.RestController", "org.springframework.http.ResponseEntity"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "userService",
+                "type": "UserService",
+                "description": "User service for business operations"
+            },
+            {
+                "name": "userPreferenceService",
+                "type": "UserPreferenceService",
+                "description": "Service for user preference management"
+            }
+        ],
+        "methods": [
+            {
+                "name": "createUser",
+                "returnType": "ResponseEntity<UserDto>",
+                "parameters": [{"name": "userRegistrationDto", "type": "UserRegistrationDto"}],
+                "description": "Creates a new user account via REST API"
+            },
+            {
+                "name": "getUserById",
+                "returnType": "ResponseEntity<UserDto>",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Retrieves user by ID via REST API"
+            },
+            {
+                "name": "updateUser",
+                "returnType": "ResponseEntity<UserDto>",
+                "parameters": [{"name": "id", "type": "Long"}, {"name": "userDto", "type": "UserDto"}],
+                "description": "Updates user information via REST API"
+            },
+            {
+                "name": "deleteUser",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Deletes user account via REST API"
+            },
+            {
+                "name": "getUserPreferences",
+                "returnType": "ResponseEntity<List<UserPreferenceDto>>",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Retrieves user preferences via REST API"
+            },
+            {
+                "name": "updateUserPreference",
+                "returnType": "ResponseEntity<UserPreferenceDto>",
+                "parameters": [{"name": "id", "type": "Long"}, {"name": "preferenceDto", "type": "UserPreferenceDto"}],
+                "description": "Updates user preference via REST API"
+            },
+            {
+                "name": "assignRole",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [{"name": "id", "type": "Long"}, {"name": "roleName", "type": "String"}],
+                "description": "Assigns role to user via REST API"
+            }
+        ]
+    },
+    {
+        "name": "AuthController",
+        "package": "com.gradlehigh211100.userservice.controller",
+        "type": "controller",
+        "description": "REST controller handling authentication endpoints with comprehensive security features including login, logout, token management, and password operations",
+        "dependencies": ["com.gradlehigh211100.userservice.service.AuthenticationService", "org.springframework.web.bind.annotation.RestController", "org.springframework.http.ResponseEntity", "javax.servlet.http.HttpServletRequest"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "authenticationService",
+                "type": "AuthenticationService",
+                "description": "Authentication service for security operations"
+            }
+        ],
+        "methods": [
+            {
+                "name": "login",
+                "returnType": "ResponseEntity<Map<String, String>>",
+                "parameters": [{"name": "loginDto", "type": "LoginDto"}, {"name": "request", "type": "HttpServletRequest"}],
+                "description": "Authenticates user and returns JWT token"
+            },
+            {
+                "name": "refresh",
+                "returnType": "ResponseEntity<Map<String, String>>",
+                "parameters": [{"name": "refreshToken", "type": "String"}],
+                "description": "Refreshes JWT token using refresh token"
+            },
+            {
+                "name": "logout",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [{"name": "request", "type": "HttpServletRequest"}],
+                "description": "Logs out user and invalidates token"
+            },
+            {
+                "name": "validateToken",
+                "returnType": "ResponseEntity<Map<String, Object>>",
+                "parameters": [{"name": "token", "type": "String"}],
+                "description": "Validates JWT token and returns user info"
+            },
+            {
+                "name": "forgotPassword",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [{"name": "email", "type": "String"}],
+                "description": "Initiates password reset process"
+            },
+            {
+                "name": "resetPassword",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [{"name": "token", "type": "String"}, {"name": "newPassword", "type": "String"}],
+                "description": "Resets password using reset token"
+            }
+        ]
+    },
+    {
+        "name": "SecurityConfig",
+        "package": "com.gradlehigh211100.userservice.config",
+        "type": "configuration",
+        "description": "Comprehensive Spring Security configuration class defining authentication providers, JWT filter chain, CORS settings, and authorization rules",
+        "dependencies": ["org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter", "org.springframework.security.config.annotation.web.builders.HttpSecurity", "org.springframework.context.annotation.Configuration", "org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder"],
+        "implements": [],
+        "extends": "org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter",
+        "fields": [
+            {
+                "name": "jwtService",
+                "type": "JwtService",
+                "description": "JWT service for token operations"
+            },
+            {
+                "name": "userService",
+                "type": "UserService",
+                "description": "User service for authentication"
+            },
+            {
+                "name": "passwordEncoder",
+                "type": "BCryptPasswordEncoder",
+                "description": "Password encoder bean"
+            }
+        ],
+        "methods": [
+            {
+                "name": "configure",
+                "returnType": "void",
+                "parameters": [{"name": "http", "type": "HttpSecurity"}],
+                "description": "Configures HTTP security settings and filters"
+            },
+            {
+                "name": "configure",
+                "returnType": "void",
+                "parameters": [{"name": "auth", "type": "AuthenticationManagerBuilder"}],
+                "description": "Configures authentication manager and providers"
+            },
+            {
+                "name": "passwordEncoder",
+                "returnType": "BCryptPasswordEncoder",
+                "parameters": [],
+                "description": "Creates password encoder bean"
+            },
+            {
+                "name": "authenticationManager",
+                "returnType": "AuthenticationManager",
+                "parameters": [],
+                "description": "Exposes authentication manager as bean"
+            },
+            {
+                "name": "corsConfigurationSource",
+                "returnType": "CorsConfigurationSource",
+                "parameters": [],
+                "description": "Configures CORS settings for cross-origin requests"
+            }
+        ]
+    }
+]
