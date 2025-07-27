@@ -1,0 +1,83 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.22.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+
+group = 'com.gradlehigh211100'
+version = '0.1.0'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    // Spring Boot dependencies
+    compile('org.springframework.boot:spring-boot-starter:1.5.22.RELEASE')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa:1.5.22.RELEASE')
+    compile('org.springframework.boot:spring-boot-starter-web:1.5.22.RELEASE')
+    compile('org.springframework.boot:spring-boot-starter-amqp:1.5.22.RELEASE')
+    
+    // Spring State Machine for order workflow management
+    compile('org.springframework.statemachine:spring-statemachine-core:1.2.15.RELEASE')
+    
+    // RabbitMQ for messaging
+    compile('com.rabbitmq:amqp-client:5.4.3')
+    
+    // Database dependencies
+    runtime('com.h2database:h2:1.4.197')
+    runtime('org.postgresql:postgresql:42.2.5')
+    
+    // Micronaut dependencies
+    compile('io.micronaut:micronaut-http-client:1.0.4')
+    compile('io.micronaut:micronaut-http-server-netty:1.0.4')
+    
+    // Testing dependencies
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.springframework.statemachine:spring-statemachine-test:1.2.15.RELEASE')
+}
+
+// Task to generate wrapper with specified Gradle version
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.10.2'
+}
+
+// Configuration for test task
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
+
+// Configuration for JAR task
+bootRepackage {
+    mainClass = 'com.gradlehigh211100.orderprocessing.OrderProcessingApplication'
+}
+
+// Custom tasks for different environments
+task prepareDevEnvironment(dependsOn: 'classes', type: JavaExec) {
+    main = 'com.gradlehigh211100.orderprocessing.setup.DevEnvironmentSetup'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+// Documentation task
+task generateJavadoc(type: Javadoc) {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
+}
+
+// FIXME: Add proper configurations for different environments (dev, test, prod)
+// TODO: Configure integration tests to run against test environment
+// TODO: Add code quality plugins (checkstyle, PMD, findbugs)
