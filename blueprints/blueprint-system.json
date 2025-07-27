@@ -1,0 +1,112 @@
+{
+    "project": "gradlehigh211100",
+    "build_system": "gradle",
+    "multi_module": true,
+    "total_files": 100,
+    "description": "A sophisticated enterprise-grade e-commerce platform built with Java 8, combining Spring Boot for core services with Micronaut for high-performance microservices. The system provides comprehensive e-commerce functionality including user management, product catalog, inventory tracking, order processing, payment integration, and analytics. The architecture is designed for scalability, maintainability, and performance with clear separation of concerns across multiple modules.",
+    "domain": "ecommerce",
+    "modules": [
+        {
+            "name": "Common",
+            "blueprint_file": "blueprint-common.json",
+            "module_path": "common",
+            "file_count": 15,
+            "path": "common",
+            "internal_dependencies": [],
+            "external_dependencies": {
+                "spring-boot-starter": "1.5.22.RELEASE",
+                "spring-boot-starter-validation": "1.5.22.RELEASE",
+                "jackson-databind": "2.8.11.6",
+                "slf4j-api": "1.7.25",
+                "logback-classic": "1.2.3",
+                "commons-lang3": "3.7",
+                "junit": "4.12",
+                "mockito-core": "2.23.4"
+            },
+            "description": "The foundational module providing shared utilities, common data transfer objects, exception handling, validation annotations, logging configuration, and base classes used across all other modules. This module establishes the core architectural patterns and shared contracts that ensure consistency throughout the application. It includes common enums, constants, utility classes for date/time handling, string manipulation, and mathematical operations. The module also provides standardized response wrappers, pagination utilities, and audit trail functionality."
+        },
+        {
+            "name": "UserService",
+            "blueprint_file": "blueprint-user-service.json",
+            "module_path": "user-service",
+            "file_count": 20,
+            "path": "user-service",
+            "internal_dependencies": ["common"],
+            "external_dependencies": {
+                "spring-boot-starter": "1.5.22.RELEASE",
+                "spring-boot-starter-data-jpa": "1.5.22.RELEASE",
+                "spring-boot-starter-security": "1.5.22.RELEASE",
+                "spring-boot-starter-web": "1.5.22.RELEASE",
+                "spring-security-jwt": "1.0.9.RELEASE",
+                "h2": "1.4.197",
+                "postgresql": "42.2.5",
+                "bcrypt": "0.4",
+                "javax.validation": "2.0.1.Final"
+            },
+            "description": "Comprehensive user management service responsible for user registration, authentication, authorization, profile management, and role-based access control. This module implements JWT-based authentication, password encryption using BCrypt, user preference management, and account lifecycle operations. It provides RESTful APIs for user CRUD operations, login/logout functionality, password reset mechanisms, and user profile updates. The service integrates with Spring Security for robust authentication and authorization, supports multiple user roles (customer, admin, merchant), and includes audit logging for all user-related activities."
+        },
+        {
+            "name": "ProductCatalog",
+            "blueprint_file": "blueprint-product-catalog.json",
+            "module_path": "product-catalog",
+            "file_count": 25,
+            "path": "product-catalog",
+            "internal_dependencies": ["common"],
+            "external_dependencies": {
+                "spring-boot-starter": "1.5.22.RELEASE",
+                "spring-boot-starter-data-jpa": "1.5.22.RELEASE",
+                "spring-boot-starter-web": "1.5.22.RELEASE",
+                "spring-boot-starter-cache": "1.5.22.RELEASE",
+                "elasticsearch": "6.4.3",
+                "spring-data-elasticsearch": "3.1.18.RELEASE",
+                "redis": "2.9.0",
+                "image-processing": "1.0.0",
+                "h2": "1.4.197",
+                "postgresql": "42.2.5"
+            },
+            "description": "Advanced product catalog management system handling product information, categories, inventory levels, pricing, and search functionality. This module provides comprehensive product lifecycle management including product creation, updates, categorization, and deletion. It implements advanced search capabilities using Elasticsearch for full-text search, filtering, and faceted search. The service includes product image management, variant handling (size, color, style), bulk product operations, and integration with external product information systems. It supports complex product relationships, cross-selling recommendations, and real-time inventory tracking with low-stock alerts."
+        },
+        {
+            "name": "OrderProcessing",
+            "blueprint_file": "blueprint-order-processing.json",
+            "module_path": "order-processing",
+            "file_count": 20,
+            "path": "order-processing",
+            "internal_dependencies": ["common", "user-service", "product-catalog"],
+            "external_dependencies": {
+                "spring-boot-starter": "1.5.22.RELEASE",
+                "spring-boot-starter-data-jpa": "1.5.22.RELEASE",
+                "spring-boot-starter-web": "1.5.22.RELEASE",
+                "spring-boot-starter-amqp": "1.5.22.RELEASE",
+                "spring-statemachine": "1.2.15.RELEASE",
+                "rabbitmq": "5.4.3",
+                "h2": "1.4.197",
+                "postgresql": "42.2.5"
+            },
+            "description": "Sophisticated order processing engine managing the complete order lifecycle from cart creation to fulfillment. This module implements a state machine-based order workflow handling order creation, validation, payment processing, inventory reservation, shipping, and completion. It provides shopping cart management, order history tracking, order modification capabilities, and integration with external fulfillment systems. The service includes complex business logic for order validation, tax calculation, shipping cost computation, and discount application. It supports multiple payment methods, handles order cancellations and refunds, and provides real-time order tracking capabilities."
+        },
+        {
+            "name": "Root",
+            "blueprint_file": "blueprint-root.json",
+            "module_path": ".",
+            "file_count": 20,
+            "path": ".",
+            "internal_dependencies": ["common", "user-service", "product-catalog", "order-processing"],
+            "external_dependencies": {
+                "spring-boot-starter": "1.5.22.RELEASE",
+                "spring-boot-starter-web": "1.5.22.RELEASE",
+                "spring-boot-starter-actuator": "1.5.22.RELEASE",
+                "spring-cloud-starter-config": "1.4.7.RELEASE",
+                "spring-cloud-starter-eureka": "1.4.7.RELEASE",
+                "micronaut-core": "1.3.7",
+                "micronaut-http-server-netty": "1.3.7",
+                "micronaut-runtime": "1.3.7",
+                "micrometer-registry-prometheus": "1.1.6",
+                "swagger": "2.9.2",
+                "h2": "1.4.197",
+                "postgresql": "42.2.5"
+            },
+            "description": "The main orchestration module serving as the application entry point and central coordinator for all microservices. This root module provides the main application configuration, service discovery setup, API gateway functionality, and cross-cutting concerns like monitoring, logging, and health checks. It implements the primary REST API endpoints that aggregate functionality from various services, handles global exception handling, and provides unified API documentation using Swagger. The module includes application startup configuration, database connection pooling, caching strategies, and integration with external monitoring systems. It serves as the deployment artifact and provides the main method for application bootstrap."
+        }
+    ]
+}
