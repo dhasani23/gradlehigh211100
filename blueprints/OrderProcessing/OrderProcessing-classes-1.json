@@ -1,0 +1,984 @@
+[
+    {
+        "name": "OrderRepository",
+        "package": "com.gradlehigh211100.orderprocessing.repository",
+        "type": "repository",
+        "description": "Repository interface providing data access methods for Order entity including complex queries for order searching, filtering, and reporting",
+        "dependencies": ["org.springframework.data.jpa.repository.JpaRepository", "com.gradlehigh211100.orderprocessing.model.entity.Order", "com.gradlehigh211100.orderprocessing.model.enums.OrderState"],
+        "implements": ["org.springframework.data.jpa.repository.JpaRepository<Order, Long>"],
+        "extends": "",
+        "fields": [],
+        "methods": [
+            {
+                "name": "findByCustomerId",
+                "returnType": "List<Order>",
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Finds all orders for a specific customer"
+            },
+            {
+                "name": "findByOrderNumber",
+                "returnType": "Optional<Order>",
+                "parameters": [
+                    {
+                        "name": "orderNumber",
+                        "type": "String"
+                    }
+                ],
+                "description": "Finds order by order number"
+            },
+            {
+                "name": "findByOrderState",
+                "returnType": "List<Order>",
+                "parameters": [
+                    {
+                        "name": "orderState",
+                        "type": "OrderState"
+                    }
+                ],
+                "description": "Finds all orders in specific state"
+            },
+            {
+                "name": "findByCustomerIdAndOrderState",
+                "returnType": "List<Order>",
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "orderState",
+                        "type": "OrderState"
+                    }
+                ],
+                "description": "Finds orders for customer in specific state"
+            },
+            {
+                "name": "findByOrderDateBetween",
+                "returnType": "List<Order>",
+                "parameters": [
+                    {
+                        "name": "startDate",
+                        "type": "Date"
+                    },
+                    {
+                        "name": "endDate",
+                        "type": "Date"
+                    }
+                ],
+                "description": "Finds orders within date range"
+            },
+            {
+                "name": "countByOrderState",
+                "returnType": "Long",
+                "parameters": [
+                    {
+                        "name": "orderState",
+                        "type": "OrderState"
+                    }
+                ],
+                "description": "Counts orders in specific state"
+            }
+        ]
+    },
+    {
+        "name": "ShoppingCartRepository",
+        "package": "com.gradlehigh211100.orderprocessing.repository",
+        "type": "repository",
+        "description": "Repository interface for shopping cart data access including cart persistence, retrieval, and cleanup operations",
+        "dependencies": ["org.springframework.data.jpa.repository.JpaRepository", "com.gradlehigh211100.orderprocessing.model.entity.ShoppingCart"],
+        "implements": ["org.springframework.data.jpa.repository.JpaRepository<ShoppingCart, Long>"],
+        "extends": "",
+        "fields": [],
+        "methods": [
+            {
+                "name": "findByUserId",
+                "returnType": "Optional<ShoppingCart>",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Finds shopping cart for a specific user"
+            },
+            {
+                "name": "findBySessionId",
+                "returnType": "Optional<ShoppingCart>",
+                "parameters": [
+                    {
+                        "name": "sessionId",
+                        "type": "String"
+                    }
+                ],
+                "description": "Finds shopping cart for a specific session"
+            },
+            {
+                "name": "findByUserIdAndIsActive",
+                "returnType": "Optional<ShoppingCart>",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "isActive",
+                        "type": "Boolean"
+                    }
+                ],
+                "description": "Finds active shopping cart for user"
+            },
+            {
+                "name": "findByLastModifiedDateBefore",
+                "returnType": "List<ShoppingCart>",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "type": "Date"
+                    }
+                ],
+                "description": "Finds abandoned carts before specific date"
+            },
+            {
+                "name": "deleteByLastModifiedDateBefore",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "type": "Date"
+                    }
+                ],
+                "description": "Deletes old abandoned carts"
+            }
+        ]
+    },
+    {
+        "name": "OrderHistoryRepository",
+        "package": "com.gradlehigh211100.orderprocessing.repository",
+        "type": "repository",
+        "description": "Repository interface for order history tracking providing methods to query historical order state changes and audit trails",
+        "dependencies": ["org.springframework.data.jpa.repository.JpaRepository", "com.gradlehigh211100.orderprocessing.model.entity.OrderHistory"],
+        "implements": ["org.springframework.data.jpa.repository.JpaRepository<OrderHistory, Long>"],
+        "extends": "",
+        "fields": [],
+        "methods": [
+            {
+                "name": "findByOrderId",
+                "returnType": "List<OrderHistory>",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Finds all history entries for a specific order"
+            },
+            {
+                "name": "findByOrderIdOrderByStateChangeDateDesc",
+                "returnType": "List<OrderHistory>",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Finds order history sorted by date descending"
+            },
+            {
+                "name": "findByNewState",
+                "returnType": "List<OrderHistory>",
+                "parameters": [
+                    {
+                        "name": "newState",
+                        "type": "OrderState"
+                    }
+                ],
+                "description": "Finds all history entries for specific state"
+            },
+            {
+                "name": "findByStateChangeDateBetween",
+                "returnType": "List<OrderHistory>",
+                "parameters": [
+                    {
+                        "name": "startDate",
+                        "type": "Date"
+                    },
+                    {
+                        "name": "endDate",
+                        "type": "Date"
+                    }
+                ],
+                "description": "Finds history entries within date range"
+            }
+        ]
+    },
+    {
+        "name": "OrderStateMachine",
+        "package": "com.gradlehigh211100.orderprocessing.service.statemachine",
+        "type": "service",
+        "description": "State machine service managing order state transitions, validating state changes, and orchestrating the order workflow process",
+        "dependencies": ["org.springframework.statemachine.StateMachine", "com.gradlehigh211100.orderprocessing.model.enums.OrderState", "com.gradlehigh211100.orderprocessing.model.enums.OrderEvent"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "stateMachine",
+                "type": "StateMachine<OrderState, OrderEvent>",
+                "description": "The Spring State Machine instance"
+            },
+            {
+                "name": "orderRepository",
+                "type": "OrderRepository",
+                "description": "Repository for order persistence"
+            },
+            {
+                "name": "orderHistoryRepository",
+                "type": "OrderHistoryRepository",
+                "description": "Repository for order history tracking"
+            }
+        ],
+        "methods": [
+            {
+                "name": "transitionOrder",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "event",
+                        "type": "OrderEvent"
+                    }
+                ],
+                "description": "Transitions order to new state based on event"
+            },
+            {
+                "name": "canTransition",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "currentState",
+                        "type": "OrderState"
+                    },
+                    {
+                        "name": "event",
+                        "type": "OrderEvent"
+                    }
+                ],
+                "description": "Checks if transition is valid for current state"
+            },
+            {
+                "name": "getPossibleTransitions",
+                "returnType": "List<OrderEvent>",
+                "parameters": [
+                    {
+                        "name": "currentState",
+                        "type": "OrderState"
+                    }
+                ],
+                "description": "Gets all possible events for current state"
+            },
+            {
+                "name": "initializeStateMachine",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "initialState",
+                        "type": "OrderState"
+                    }
+                ],
+                "description": "Initializes state machine with initial state"
+            },
+            {
+                "name": "recordStateTransition",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "fromState",
+                        "type": "OrderState"
+                    },
+                    {
+                        "name": "toState",
+                        "type": "OrderState"
+                    },
+                    {
+                        "name": "event",
+                        "type": "OrderEvent"
+                    }
+                ],
+                "description": "Records state transition in order history"
+            }
+        ]
+    },
+    {
+        "name": "OrderValidationService",
+        "package": "com.gradlehigh211100.orderprocessing.service.validation",
+        "type": "service",
+        "description": "Service responsible for comprehensive order validation including product availability, pricing validation, customer eligibility, and business rule enforcement",
+        "dependencies": ["com.gradlehigh211100.orderprocessing.model.entity.Order", "com.gradlehigh211100.productcatalog.service.ProductService", "com.gradlehigh211100.userservice.service.UserService"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "productService",
+                "type": "ProductService",
+                "description": "Service for product operations"
+            },
+            {
+                "name": "userService",
+                "type": "UserService",
+                "description": "Service for user operations"
+            },
+            {
+                "name": "logger",
+                "type": "Logger",
+                "description": "Logger for validation events"
+            }
+        ],
+        "methods": [
+            {
+                "name": "validateOrder",
+                "returnType": "ValidationResult",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "type": "Order"
+                    }
+                ],
+                "description": "Performs comprehensive order validation"
+            },
+            {
+                "name": "validateCustomer",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Validates customer eligibility"
+            },
+            {
+                "name": "validateProductAvailability",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "type": "Order"
+                    }
+                ],
+                "description": "Validates product availability for all order items"
+            },
+            {
+                "name": "validatePricing",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "type": "Order"
+                    }
+                ],
+                "description": "Validates pricing information against current prices"
+            },
+            {
+                "name": "validateBusinessRules",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "type": "Order"
+                    }
+                ],
+                "description": "Validates order against business rules"
+            },
+            {
+                "name": "validateOrderLimits",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "type": "Order"
+                    }
+                ],
+                "description": "Validates order against quantity and value limits"
+            }
+        ]
+    },
+    {
+        "name": "PaymentProcessingService",
+        "package": "com.gradlehigh211100.orderprocessing.service.payment",
+        "type": "service",
+        "description": "Service handling payment processing operations including payment validation, transaction processing, refund handling, and integration with external payment gateways",
+        "dependencies": ["com.gradlehigh211100.orderprocessing.model.entity.Order", "com.gradlehigh211100.orderprocessing.model.entity.PaymentDetails"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "paymentGateway",
+                "type": "PaymentGateway",
+                "description": "External payment gateway interface"
+            },
+            {
+                "name": "logger",
+                "type": "Logger",
+                "description": "Logger for payment events"
+            }
+        ],
+        "methods": [
+            {
+                "name": "processPayment",
+                "returnType": "PaymentResult",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "type": "Order"
+                    },
+                    {
+                        "name": "paymentDetails",
+                        "type": "PaymentDetails"
+                    }
+                ],
+                "description": "Processes payment for the order"
+            },
+            {
+                "name": "validatePaymentDetails",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "paymentDetails",
+                        "type": "PaymentDetails"
+                    }
+                ],
+                "description": "Validates payment details before processing"
+            },
+            {
+                "name": "authorizePayment",
+                "returnType": "AuthorizationResult",
+                "parameters": [
+                    {
+                        "name": "paymentDetails",
+                        "type": "PaymentDetails"
+                    },
+                    {
+                        "name": "amount",
+                        "type": "BigDecimal"
+                    }
+                ],
+                "description": "Authorizes payment with payment gateway"
+            },
+            {
+                "name": "capturePayment",
+                "returnType": "CaptureResult",
+                "parameters": [
+                    {
+                        "name": "authorizationCode",
+                        "type": "String"
+                    },
+                    {
+                        "name": "amount",
+                        "type": "BigDecimal"
+                    }
+                ],
+                "description": "Captures authorized payment"
+            },
+            {
+                "name": "refundPayment",
+                "returnType": "RefundResult",
+                "parameters": [
+                    {
+                        "name": "transactionId",
+                        "type": "String"
+                    },
+                    {
+                        "name": "amount",
+                        "type": "BigDecimal"
+                    }
+                ],
+                "description": "Processes refund for a transaction"
+            },
+            {
+                "name": "voidPayment",
+                "returnType": "VoidResult",
+                "parameters": [
+                    {
+                        "name": "authorizationCode",
+                        "type": "String"
+                    }
+                ],
+                "description": "Voids an authorized payment"
+            }
+        ]
+    },
+    {
+        "name": "InventoryReservationService",
+        "package": "com.gradlehigh211100.orderprocessing.service.inventory",
+        "type": "service",
+        "description": "Service managing inventory reservation and release operations ensuring product availability during order processing and handling stock allocation",
+        "dependencies": ["com.gradlehigh211100.orderprocessing.model.entity.Order", "com.gradlehigh211100.productcatalog.service.InventoryService"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "inventoryService",
+                "type": "InventoryService",
+                "description": "Service for inventory operations"
+            },
+            {
+                "name": "logger",
+                "type": "Logger",
+                "description": "Logger for inventory events"
+            }
+        ],
+        "methods": [
+            {
+                "name": "reserveInventory",
+                "returnType": "ReservationResult",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "type": "Order"
+                    }
+                ],
+                "description": "Reserves inventory for all items in the order"
+            },
+            {
+                "name": "releaseInventory",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "type": "Order"
+                    }
+                ],
+                "description": "Releases reserved inventory for cancelled orders"
+            },
+            {
+                "name": "checkAvailability",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "quantity",
+                        "type": "Integer"
+                    }
+                ],
+                "description": "Checks if product is available in required quantity"
+            },
+            {
+                "name": "reserveProduct",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "quantity",
+                        "type": "Integer"
+                    },
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Reserves specific product quantity for order"
+            },
+            {
+                "name": "releaseProduct",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "quantity",
+                        "type": "Integer"
+                    },
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Releases specific product reservation"
+            },
+            {
+                "name": "confirmReservation",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Confirms inventory reservation for shipped order"
+            }
+        ]
+    },
+    {
+        "name": "ShippingService",
+        "package": "com.gradlehigh211100.orderprocessing.service.shipping",
+        "type": "service",
+        "description": "Service handling shipping operations including shipping cost calculation, carrier integration, tracking number generation, and delivery status updates",
+        "dependencies": ["com.gradlehigh211100.orderprocessing.model.entity.Order", "com.gradlehigh211100.orderprocessing.model.entity.ShippingDetails"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "shippingCarriers",
+                "type": "List<ShippingCarrier>",
+                "description": "List of available shipping carriers"
+            },
+            {
+                "name": "rateCalculator",
+                "type": "ShippingRateCalculator",
+                "description": "Calculator for shipping rates"
+            },
+            {
+                "name": "logger",
+                "type": "Logger",
+                "description": "Logger for shipping events"
+            }
+        ],
+        "methods": [
+            {
+                "name": "calculateShippingCost",
+                "returnType": "BigDecimal",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "type": "Order"
+                    },
+                    {
+                        "name": "shippingMethod",
+                        "type": "String"
+                    }
+                ],
+                "description": "Calculates shipping cost for the order"
+            },
+            {
+                "name": "getAvailableShippingMethods",
+                "returnType": "List<ShippingMethod>",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "type": "Order"
+                    }
+                ],
+                "description": "Gets available shipping methods for the order"
+            },
+            {
+                "name": "createShipment",
+                "returnType": "ShipmentResult",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "type": "Order"
+                    },
+                    {
+                        "name": "shippingDetails",
+                        "type": "ShippingDetails"
+                    }
+                ],
+                "description": "Creates shipment with carrier"
+            },
+            {
+                "name": "trackShipment",
+                "returnType": "TrackingInfo",
+                "parameters": [
+                    {
+                        "name": "trackingNumber",
+                        "type": "String"
+                    }
+                ],
+                "description": "Tracks shipment status"
+            },
+            {
+                "name": "updateDeliveryStatus",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "trackingNumber",
+                        "type": "String"
+                    },
+                    {
+                        "name": "status",
+                        "type": "String"
+                    }
+                ],
+                "description": "Updates delivery status for tracking number"
+            },
+            {
+                "name": "scheduleDelivery",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "type": "Order"
+                    },
+                    {
+                        "name": "deliveryDate",
+                        "type": "Date"
+                    }
+                ],
+                "description": "Schedules delivery for the order"
+            }
+        ]
+    },
+    {
+        "name": "OrderService",
+        "package": "com.gradlehigh211100.orderprocessing.service",
+        "type": "service",
+        "description": "Main orchestrating service coordinating the entire order processing workflow, managing state transitions, and integrating with all supporting services",
+        "dependencies": ["com.gradlehigh211100.orderprocessing.repository.OrderRepository", "com.gradlehigh211100.orderprocessing.service.statemachine.OrderStateMachine", "com.gradlehigh211100.orderprocessing.service.validation.OrderValidationService", "com.gradlehigh211100.orderprocessing.service.payment.PaymentProcessingService", "com.gradlehigh211100.orderprocessing.service.inventory.InventoryReservationService", "com.gradlehigh211100.orderprocessing.service.shipping.ShippingService"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "orderRepository",
+                "type": "OrderRepository",
+                "description": "Repository for order persistence"
+            },
+            {
+                "name": "orderStateMachine",
+                "type": "OrderStateMachine",
+                "description": "State machine for order workflow"
+            },
+            {
+                "name": "validationService",
+                "type": "OrderValidationService",
+                "description": "Service for order validation"
+            },
+            {
+                "name": "paymentService",
+                "type": "PaymentProcessingService",
+                "description": "Service for payment processing"
+            },
+            {
+                "name": "inventoryService",
+                "type": "InventoryReservationService",
+                "description": "Service for inventory reservation"
+            },
+            {
+                "name": "shippingService",
+                "type": "ShippingService",
+                "description": "Service for shipping operations"
+            }
+        ],
+        "methods": [
+            {
+                "name": "createOrder",
+                "returnType": "Order",
+                "parameters": [
+                    {
+                        "name": "orderRequest",
+                        "type": "OrderRequest"
+                    }
+                ],
+                "description": "Creates a new order from request"
+            },
+            {
+                "name": "processOrder",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Processes order through complete workflow"
+            },
+            {
+                "name": "cancelOrder",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "reason",
+                        "type": "String"
+                    }
+                ],
+                "description": "Cancels an order with reason"
+            },
+            {
+                "name": "getOrderById",
+                "returnType": "Order",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Retrieves order by ID"
+            },
+            {
+                "name": "getOrdersByCustomer",
+                "returnType": "List<Order>",
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Retrieves all orders for a customer"
+            },
+            {
+                "name": "updateOrderStatus",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "event",
+                        "type": "OrderEvent"
+                    }
+                ],
+                "description": "Updates order status based on event"
+            },
+            {
+                "name": "refundOrder",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "refundAmount",
+                        "type": "BigDecimal"
+                    }
+                ],
+                "description": "Processes refund for order"
+            }
+        ]
+    },
+    {
+        "name": "OrderController",
+        "package": "com.gradlehigh211100.orderprocessing.controller",
+        "type": "controller",
+        "description": "REST controller providing comprehensive order management endpoints including order creation, retrieval, updates, cancellation, and status tracking with full CRUD operations",
+        "dependencies": ["com.gradlehigh211100.orderprocessing.service.OrderService", "com.gradlehigh211100.orderprocessing.model.entity.Order"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "orderService",
+                "type": "OrderService",
+                "description": "Service for order operations"
+            },
+            {
+                "name": "logger",
+                "type": "Logger",
+                "description": "Logger for controller events"
+            }
+        ],
+        "methods": [
+            {
+                "name": "createOrder",
+                "returnType": "ResponseEntity<Order>",
+                "parameters": [
+                    {
+                        "name": "orderRequest",
+                        "type": "OrderRequest"
+                    }
+                ],
+                "description": "Creates a new order"
+            },
+            {
+                "name": "getOrder",
+                "returnType": "ResponseEntity<Order>",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Retrieves order by ID"
+            },
+            {
+                "name": "getOrdersByCustomer",
+                "returnType": "ResponseEntity<List<Order>>",
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Retrieves all orders for a customer"
+            },
+            {
+                "name": "updateOrderStatus",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "statusUpdate",
+                        "type": "OrderStatusUpdate"
+                    }
+                ],
+                "description": "Updates order status"
+            },
+            {
+                "name": "cancelOrder",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "cancellationRequest",
+                        "type": "CancellationRequest"
+                    }
+                ],
+                "description": "Cancels an order"
+            },
+            {
+                "name": "refundOrder",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "refundRequest",
+                        "type": "RefundRequest"
+                    }
+                ],
+                "description": "Processes refund for order"
+            },
+            {
+                "name": "trackOrder",
+                "returnType": "ResponseEntity<TrackingInfo>",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Tracks order status and delivery"
+            }
+        ]
+    }
+]

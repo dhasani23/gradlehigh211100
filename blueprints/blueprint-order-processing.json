@@ -1,0 +1,231 @@
+{
+    "module": "OrderProcessing",
+    "description": "Sophisticated order processing engine managing the complete order lifecycle from cart creation to fulfillment. This module implements a state machine-based order workflow handling order creation, validation, payment processing, inventory reservation, shipping, and completion. It provides shopping cart management, order history tracking, order modification capabilities, and integration with external fulfillment systems. The service includes complex business logic for order validation, tax calculation, shipping cost computation, and discount application. It supports multiple payment methods, handles order cancellations and refunds, and provides real-time order tracking capabilities.",
+    "file_count": 20,
+    "module_path": "order-processing",
+    "internal_dependencies": ["Common", "UserService", "ProductCatalog"],
+    "external_dependencies": {
+        "spring-boot-starter": "1.5.22.RELEASE",
+        "spring-boot-starter-data-jpa": "1.5.22.RELEASE",
+        "spring-boot-starter-web": "1.5.22.RELEASE",
+        "spring-boot-starter-amqp": "1.5.22.RELEASE",
+        "spring-statemachine": "1.2.15.RELEASE",
+        "rabbitmq": "5.4.3",
+        "h2": "1.4.197",
+        "postgresql": "42.2.5"
+    },
+    "classes": [
+        {
+            "name": "OrderState",
+            "package": "com.gradlehigh211100.orderprocessing.model.enums",
+            "type": "enum",
+            "description": "Enumeration defining all possible states in the order lifecycle state machine including PENDING, VALIDATED, PAYMENT_PROCESSING, PAID, INVENTORY_RESERVED, SHIPPED, DELIVERED, CANCELLED, REFUNDED",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "OrderEvent",
+            "package": "com.gradlehigh211100.orderprocessing.model.enums",
+            "type": "enum",
+            "description": "Enumeration defining all possible events that can trigger state transitions in the order state machine including CREATE, VALIDATE, PROCESS_PAYMENT, RESERVE_INVENTORY, SHIP, DELIVER, CANCEL, REFUND",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "PaymentMethod",
+            "package": "com.gradlehigh211100.orderprocessing.model.enums",
+            "type": "enum",
+            "description": "Enumeration defining supported payment methods including CREDIT_CARD, DEBIT_CARD, PAYPAL, BANK_TRANSFER, CASH_ON_DELIVERY",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "OrderItem",
+            "package": "com.gradlehigh211100.orderprocessing.model.entity",
+            "type": "entity",
+            "description": "Entity representing individual items within an order including product reference, quantity, unit price, discounts, and total amount calculations",
+            "dependencies": ["com.gradlehigh211100.common.model.BaseEntity"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.model.BaseEntity"
+        },
+        {
+            "name": "Order",
+            "package": "com.gradlehigh211100.orderprocessing.model.entity",
+            "type": "entity",
+            "description": "Main order entity containing order details, customer information, order items, payment details, shipping information, and state tracking",
+            "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.orderprocessing.model.entity.OrderItem", "com.gradlehigh211100.orderprocessing.model.enums.OrderState", "com.gradlehigh211100.orderprocessing.model.enums.PaymentMethod"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.model.BaseEntity"
+        },
+        {
+            "name": "ShoppingCart",
+            "package": "com.gradlehigh211100.orderprocessing.model.entity",
+            "type": "entity",
+            "description": "Entity representing a user's shopping cart with cart items, session management, and cart persistence capabilities",
+            "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.orderprocessing.model.entity.CartItem"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.model.BaseEntity"
+        },
+        {
+            "name": "CartItem",
+            "package": "com.gradlehigh211100.orderprocessing.model.entity",
+            "type": "entity",
+            "description": "Entity representing individual items in a shopping cart with product reference, quantity, and temporary pricing information",
+            "dependencies": ["com.gradlehigh211100.common.model.BaseEntity"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.model.BaseEntity"
+        },
+        {
+            "name": "OrderHistory",
+            "package": "com.gradlehigh211100.orderprocessing.model.entity",
+            "type": "entity",
+            "description": "Entity tracking the complete history and state transitions of orders including timestamps, state changes, and audit information",
+            "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.orderprocessing.model.entity.Order", "com.gradlehigh211100.orderprocessing.model.enums.OrderState"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.model.BaseEntity"
+        },
+        {
+            "name": "PaymentDetails",
+            "package": "com.gradlehigh211100.orderprocessing.model.entity",
+            "type": "entity",
+            "description": "Entity containing payment information including payment method, transaction details, payment status, and financial calculations",
+            "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.orderprocessing.model.enums.PaymentMethod"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.model.BaseEntity"
+        },
+        {
+            "name": "ShippingDetails",
+            "package": "com.gradlehigh211100.orderprocessing.model.entity",
+            "type": "entity",
+            "description": "Entity containing shipping information including delivery address, shipping method, tracking number, and delivery status",
+            "dependencies": ["com.gradlehigh211100.common.model.BaseEntity"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.model.BaseEntity"
+        },
+        {
+            "name": "OrderRepository",
+            "package": "com.gradlehigh211100.orderprocessing.repository",
+            "type": "repository",
+            "description": "Repository interface providing data access methods for Order entity including complex queries for order searching, filtering, and reporting",
+            "dependencies": ["org.springframework.data.jpa.repository.JpaRepository", "com.gradlehigh211100.orderprocessing.model.entity.Order", "com.gradlehigh211100.orderprocessing.model.enums.OrderState"],
+            "implements": ["org.springframework.data.jpa.repository.JpaRepository<Order, Long>"],
+            "extends": ""
+        },
+        {
+            "name": "ShoppingCartRepository",
+            "package": "com.gradlehigh211100.orderprocessing.repository",
+            "type": "repository",
+            "description": "Repository interface for shopping cart data access including cart persistence, retrieval, and cleanup operations",
+            "dependencies": ["org.springframework.data.jpa.repository.JpaRepository", "com.gradlehigh211100.orderprocessing.model.entity.ShoppingCart"],
+            "implements": ["org.springframework.data.jpa.repository.JpaRepository<ShoppingCart, Long>"],
+            "extends": ""
+        },
+        {
+            "name": "OrderHistoryRepository",
+            "package": "com.gradlehigh211100.orderprocessing.repository",
+            "type": "repository",
+            "description": "Repository interface for order history tracking providing methods to query historical order state changes and audit trails",
+            "dependencies": ["org.springframework.data.jpa.repository.JpaRepository", "com.gradlehigh211100.orderprocessing.model.entity.OrderHistory"],
+            "implements": ["org.springframework.data.jpa.repository.JpaRepository<OrderHistory, Long>"],
+            "extends": ""
+        },
+        {
+            "name": "OrderStateMachine",
+            "package": "com.gradlehigh211100.orderprocessing.service.statemachine",
+            "type": "service",
+            "description": "State machine service managing order state transitions, validating state changes, and orchestrating the order workflow process",
+            "dependencies": ["org.springframework.statemachine.StateMachine", "com.gradlehigh211100.orderprocessing.model.enums.OrderState", "com.gradlehigh211100.orderprocessing.model.enums.OrderEvent"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "OrderValidationService",
+            "package": "com.gradlehigh211100.orderprocessing.service.validation",
+            "type": "service",
+            "description": "Service responsible for comprehensive order validation including product availability, pricing validation, customer eligibility, and business rule enforcement",
+            "dependencies": ["com.gradlehigh211100.orderprocessing.model.entity.Order", "com.gradlehigh211100.productcatalog.service.ProductService", "com.gradlehigh211100.userservice.service.UserService"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "PaymentProcessingService",
+            "package": "com.gradlehigh211100.orderprocessing.service.payment",
+            "type": "service",
+            "description": "Service handling payment processing operations including payment validation, transaction processing, refund handling, and integration with external payment gateways",
+            "dependencies": ["com.gradlehigh211100.orderprocessing.model.entity.Order", "com.gradlehigh211100.orderprocessing.model.entity.PaymentDetails"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "InventoryReservationService",
+            "package": "com.gradlehigh211100.orderprocessing.service.inventory",
+            "type": "service",
+            "description": "Service managing inventory reservation and release operations ensuring product availability during order processing and handling stock allocation",
+            "dependencies": ["com.gradlehigh211100.orderprocessing.model.entity.Order", "com.gradlehigh211100.productcatalog.service.InventoryService"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ShippingService",
+            "package": "com.gradlehigh211100.orderprocessing.service.shipping",
+            "type": "service",
+            "description": "Service handling shipping operations including shipping cost calculation, carrier integration, tracking number generation, and delivery status updates",
+            "dependencies": ["com.gradlehigh211100.orderprocessing.model.entity.Order", "com.gradlehigh211100.orderprocessing.model.entity.ShippingDetails"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "OrderService",
+            "package": "com.gradlehigh211100.orderprocessing.service",
+            "type": "service",
+            "description": "Main orchestrating service coordinating the entire order processing workflow, managing state transitions, and integrating with all supporting services",
+            "dependencies": ["com.gradlehigh211100.orderprocessing.repository.OrderRepository", "com.gradlehigh211100.orderprocessing.service.statemachine.OrderStateMachine", "com.gradlehigh211100.orderprocessing.service.validation.OrderValidationService", "com.gradlehigh211100.orderprocessing.service.payment.PaymentProcessingService", "com.gradlehigh211100.orderprocessing.service.inventory.InventoryReservationService", "com.gradlehigh211100.orderprocessing.service.shipping.ShippingService"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "OrderController",
+            "package": "com.gradlehigh211100.orderprocessing.controller",
+            "type": "controller",
+            "description": "REST controller providing comprehensive order management endpoints including order creation, retrieval, updates, cancellation, and status tracking with full CRUD operations",
+            "dependencies": ["com.gradlehigh211100.orderprocessing.service.OrderService", "com.gradlehigh211100.orderprocessing.model.entity.Order"],
+            "implements": [],
+            "extends": ""
+        }
+    ],
+    "configFiles": [
+        {
+            "path": "order-processing/build.gradle",
+            "description": "Gradle build file for the OrderProcessing module with dependencies, plugins, and build configuration"
+        },
+        {
+            "path": "order-processing/src/main/resources/application-orderprocessing.properties",
+            "description": "Configuration properties for the OrderProcessing module including database, messaging, and order-specific settings"
+        }
+    ],
+    "generationOrder": [
+        "com.gradlehigh211100.orderprocessing.model.enums.OrderState",
+        "com.gradlehigh211100.orderprocessing.model.enums.OrderEvent",
+        "com.gradlehigh211100.orderprocessing.model.enums.PaymentMethod",
+        "com.gradlehigh211100.orderprocessing.model.entity.OrderItem",
+        "com.gradlehigh211100.orderprocessing.model.entity.CartItem",
+        "com.gradlehigh211100.orderprocessing.model.entity.PaymentDetails",
+        "com.gradlehigh211100.orderprocessing.model.entity.ShippingDetails",
+        "com.gradlehigh211100.orderprocessing.model.entity.ShoppingCart",
+        "com.gradlehigh211100.orderprocessing.model.entity.Order",
+        "com.gradlehigh211100.orderprocessing.model.entity.OrderHistory",
+        "com.gradlehigh211100.orderprocessing.repository.OrderRepository",
+        "com.gradlehigh211100.orderprocessing.repository.ShoppingCartRepository",
+        "com.gradlehigh211100.orderprocessing.repository.OrderHistoryRepository",
+        "com.gradlehigh211100.orderprocessing.service.statemachine.OrderStateMachine",
+        "com.gradlehigh211100.orderprocessing.service.validation.OrderValidationService",
+        "com.gradlehigh211100.orderprocessing.service.payment.PaymentProcessingService",
+        "com.gradlehigh211100.orderprocessing.service.inventory.InventoryReservationService",
+        "com.gradlehigh211100.orderprocessing.service.shipping.ShippingService",
+        "com.gradlehigh211100.orderprocessing.service.OrderService",
+        "com.gradlehigh211100.orderprocessing.controller.OrderController"
+    ]
+}

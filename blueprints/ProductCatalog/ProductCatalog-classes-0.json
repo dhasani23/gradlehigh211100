@@ -1,0 +1,755 @@
+[
+    {
+        "name": "CategoryDTO",
+        "package": "com.gradlehigh211100.productcatalog.dto",
+        "type": "dto",
+        "description": "Data transfer object for category information used in API responses and requests. Contains category hierarchy information and metadata.",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "id",
+                "type": "Long",
+                "description": "Unique identifier for the category"
+            },
+            {
+                "name": "name",
+                "type": "String",
+                "description": "Name of the category"
+            },
+            {
+                "name": "description",
+                "type": "String",
+                "description": "Detailed description of the category"
+            },
+            {
+                "name": "parentId",
+                "type": "Long",
+                "description": "ID of the parent category for hierarchical structure"
+            },
+            {
+                "name": "level",
+                "type": "Integer",
+                "description": "Hierarchical level of the category"
+            },
+            {
+                "name": "isActive",
+                "type": "Boolean",
+                "description": "Flag indicating if category is active"
+            },
+            {
+                "name": "sortOrder",
+                "type": "Integer",
+                "description": "Sort order for category display"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getId",
+                "returnType": "Long",
+                "parameters": [],
+                "description": "Get category ID"
+            },
+            {
+                "name": "setId",
+                "returnType": "void",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Set category ID"
+            },
+            {
+                "name": "getName",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Get category name"
+            },
+            {
+                "name": "setName",
+                "returnType": "void",
+                "parameters": [{"name": "name", "type": "String"}],
+                "description": "Set category name"
+            }
+        ]
+    },
+    {
+        "name": "ProductVariantDTO",
+        "package": "com.gradlehigh211100.productcatalog.dto",
+        "type": "dto",
+        "description": "Data transfer object for product variant information including size, color, style variations with pricing and inventory details.",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "id",
+                "type": "Long",
+                "description": "Unique identifier for the product variant"
+            },
+            {
+                "name": "productId",
+                "type": "Long",
+                "description": "ID of the parent product"
+            },
+            {
+                "name": "sku",
+                "type": "String",
+                "description": "Stock keeping unit for the variant"
+            },
+            {
+                "name": "size",
+                "type": "String",
+                "description": "Size specification of the variant"
+            },
+            {
+                "name": "color",
+                "type": "String",
+                "description": "Color specification of the variant"
+            },
+            {
+                "name": "style",
+                "type": "String",
+                "description": "Style specification of the variant"
+            },
+            {
+                "name": "price",
+                "type": "BigDecimal",
+                "description": "Price of the variant"
+            },
+            {
+                "name": "weight",
+                "type": "Double",
+                "description": "Weight of the variant"
+            },
+            {
+                "name": "dimensions",
+                "type": "String",
+                "description": "Physical dimensions of the variant"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getId",
+                "returnType": "Long",
+                "parameters": [],
+                "description": "Get variant ID"
+            },
+            {
+                "name": "setId",
+                "returnType": "void",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Set variant ID"
+            },
+            {
+                "name": "getPrice",
+                "returnType": "BigDecimal",
+                "parameters": [],
+                "description": "Get variant price"
+            },
+            {
+                "name": "setPrice",
+                "returnType": "void",
+                "parameters": [{"name": "price", "type": "BigDecimal"}],
+                "description": "Set variant price"
+            }
+        ]
+    },
+    {
+        "name": "ProductImageDTO",
+        "package": "com.gradlehigh211100.productcatalog.dto",
+        "type": "dto",
+        "description": "Data transfer object for product image information including URL, alt text, and ordering information for product galleries.",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "id",
+                "type": "Long",
+                "description": "Unique identifier for the product image"
+            },
+            {
+                "name": "productId",
+                "type": "Long",
+                "description": "ID of the associated product"
+            },
+            {
+                "name": "url",
+                "type": "String",
+                "description": "URL of the image"
+            },
+            {
+                "name": "altText",
+                "type": "String",
+                "description": "Alternative text for accessibility"
+            },
+            {
+                "name": "sortOrder",
+                "type": "Integer",
+                "description": "Order of image in product gallery"
+            },
+            {
+                "name": "isPrimary",
+                "type": "Boolean",
+                "description": "Flag indicating if this is the primary product image"
+            },
+            {
+                "name": "imageType",
+                "type": "String",
+                "description": "Type of image (thumbnail, detail, zoom)"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getId",
+                "returnType": "Long",
+                "parameters": [],
+                "description": "Get image ID"
+            },
+            {
+                "name": "setId",
+                "returnType": "void",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Set image ID"
+            },
+            {
+                "name": "getUrl",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Get image URL"
+            },
+            {
+                "name": "setUrl",
+                "returnType": "void",
+                "parameters": [{"name": "url", "type": "String"}],
+                "description": "Set image URL"
+            }
+        ]
+    },
+    {
+        "name": "InventoryDTO",
+        "package": "com.gradlehigh211100.productcatalog.dto",
+        "type": "dto",
+        "description": "Data transfer object for inventory information including stock levels, reserved quantities, and reorder points.",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "id",
+                "type": "Long",
+                "description": "Unique identifier for the inventory record"
+            },
+            {
+                "name": "productId",
+                "type": "Long",
+                "description": "ID of the associated product"
+            },
+            {
+                "name": "variantId",
+                "type": "Long",
+                "description": "ID of the associated product variant"
+            },
+            {
+                "name": "availableQuantity",
+                "type": "Integer",
+                "description": "Currently available quantity"
+            },
+            {
+                "name": "reservedQuantity",
+                "type": "Integer",
+                "description": "Quantity reserved for pending orders"
+            },
+            {
+                "name": "reorderPoint",
+                "type": "Integer",
+                "description": "Stock level triggering reorder alert"
+            },
+            {
+                "name": "maxStockLevel",
+                "type": "Integer",
+                "description": "Maximum stock level"
+            },
+            {
+                "name": "lastUpdated",
+                "type": "Date",
+                "description": "Timestamp of last inventory update"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getId",
+                "returnType": "Long",
+                "parameters": [],
+                "description": "Get inventory ID"
+            },
+            {
+                "name": "setId",
+                "returnType": "void",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Set inventory ID"
+            },
+            {
+                "name": "getAvailableQuantity",
+                "returnType": "Integer",
+                "parameters": [],
+                "description": "Get available quantity"
+            },
+            {
+                "name": "updateQuantity",
+                "returnType": "void",
+                "parameters": [{"name": "quantity", "type": "Integer"}],
+                "description": "Update available quantity"
+            }
+        ]
+    },
+    {
+        "name": "ProductSearchRequest",
+        "package": "com.gradlehigh211100.productcatalog.dto",
+        "type": "dto",
+        "description": "Data transfer object for product search requests containing search criteria, filters, and pagination parameters.",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "query",
+                "type": "String",
+                "description": "Search query text for full-text search"
+            },
+            {
+                "name": "categoryId",
+                "type": "Long",
+                "description": "Category ID for category-based filtering"
+            },
+            {
+                "name": "minPrice",
+                "type": "BigDecimal",
+                "description": "Minimum price filter"
+            },
+            {
+                "name": "maxPrice",
+                "type": "BigDecimal",
+                "description": "Maximum price filter"
+            },
+            {
+                "name": "brands",
+                "type": "List<String>",
+                "description": "List of brands to filter by"
+            },
+            {
+                "name": "sizes",
+                "type": "List<String>",
+                "description": "List of sizes to filter by"
+            },
+            {
+                "name": "colors",
+                "type": "List<String>",
+                "description": "List of colors to filter by"
+            },
+            {
+                "name": "sortBy",
+                "type": "String",
+                "description": "Field to sort results by"
+            },
+            {
+                "name": "sortOrder",
+                "type": "String",
+                "description": "Sort order (ASC/DESC)"
+            },
+            {
+                "name": "page",
+                "type": "Integer",
+                "description": "Page number for pagination"
+            },
+            {
+                "name": "size",
+                "type": "Integer",
+                "description": "Page size for pagination"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getQuery",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Get search query"
+            },
+            {
+                "name": "setQuery",
+                "returnType": "void",
+                "parameters": [{"name": "query", "type": "String"}],
+                "description": "Set search query"
+            },
+            {
+                "name": "addBrandFilter",
+                "returnType": "void",
+                "parameters": [{"name": "brand", "type": "String"}],
+                "description": "Add brand to filter list"
+            },
+            {
+                "name": "clearFilters",
+                "returnType": "void",
+                "parameters": [],
+                "description": "Clear all search filters"
+            }
+        ]
+    },
+    {
+        "name": "ProductDTO",
+        "package": "com.gradlehigh211100.productcatalog.dto",
+        "type": "dto",
+        "description": "Data transfer object for product information containing core product details, category, variants, and images.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.dto.CategoryDTO", "com.gradlehigh211100.productcatalog.dto.ProductVariantDTO", "com.gradlehigh211100.productcatalog.dto.ProductImageDTO"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "id",
+                "type": "Long",
+                "description": "Unique identifier for the product"
+            },
+            {
+                "name": "sku",
+                "type": "String",
+                "description": "Stock keeping unit"
+            },
+            {
+                "name": "name",
+                "type": "String",
+                "description": "Product name"
+            },
+            {
+                "name": "description",
+                "type": "String",
+                "description": "Product description"
+            },
+            {
+                "name": "brand",
+                "type": "String",
+                "description": "Product brand"
+            },
+            {
+                "name": "basePrice",
+                "type": "BigDecimal",
+                "description": "Base price of the product"
+            },
+            {
+                "name": "category",
+                "type": "CategoryDTO",
+                "description": "Product category information"
+            },
+            {
+                "name": "variants",
+                "type": "List<ProductVariantDTO>",
+                "description": "List of product variants"
+            },
+            {
+                "name": "images",
+                "type": "List<ProductImageDTO>",
+                "description": "List of product images"
+            },
+            {
+                "name": "isActive",
+                "type": "Boolean",
+                "description": "Flag indicating if product is active"
+            },
+            {
+                "name": "createdDate",
+                "type": "Date",
+                "description": "Product creation date"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getId",
+                "returnType": "Long",
+                "parameters": [],
+                "description": "Get product ID"
+            },
+            {
+                "name": "setId",
+                "returnType": "void",
+                "parameters": [{"name": "id", "type": "Long"}],
+                "description": "Set product ID"
+            },
+            {
+                "name": "addVariant",
+                "returnType": "void",
+                "parameters": [{"name": "variant", "type": "ProductVariantDTO"}],
+                "description": "Add a product variant"
+            },
+            {
+                "name": "addImage",
+                "returnType": "void",
+                "parameters": [{"name": "image", "type": "ProductImageDTO"}],
+                "description": "Add a product image"
+            },
+            {
+                "name": "getActiveVariants",
+                "returnType": "List<ProductVariantDTO>",
+                "parameters": [],
+                "description": "Get list of active variants"
+            }
+        ]
+    },
+    {
+        "name": "ProductSearchResponse",
+        "package": "com.gradlehigh211100.productcatalog.dto",
+        "type": "dto",
+        "description": "Data transfer object for product search responses containing results, pagination, and faceted search information.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.dto.ProductDTO"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "products",
+                "type": "List<ProductDTO>",
+                "description": "List of products matching search criteria"
+            },
+            {
+                "name": "totalResults",
+                "type": "Long",
+                "description": "Total number of matching products"
+            },
+            {
+                "name": "currentPage",
+                "type": "Integer",
+                "description": "Current page number"
+            },
+            {
+                "name": "totalPages",
+                "type": "Integer",
+                "description": "Total number of pages"
+            },
+            {
+                "name": "pageSize",
+                "type": "Integer",
+                "description": "Size of each page"
+            },
+            {
+                "name": "facets",
+                "type": "Map<String, List<String>>",
+                "description": "Faceted search results for filtering"
+            },
+            {
+                "name": "suggestedTerms",
+                "type": "List<String>",
+                "description": "Search suggestions for query improvement"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getProducts",
+                "returnType": "List<ProductDTO>",
+                "parameters": [],
+                "description": "Get list of products"
+            },
+            {
+                "name": "setProducts",
+                "returnType": "void",
+                "parameters": [{"name": "products", "type": "List<ProductDTO>"}],
+                "description": "Set list of products"
+            },
+            {
+                "name": "addFacet",
+                "returnType": "void",
+                "parameters": [{"name": "facetName", "type": "String"}, {"name": "facetValues", "type": "List<String>"}],
+                "description": "Add facet to search response"
+            },
+            {
+                "name": "hasNextPage",
+                "returnType": "Boolean",
+                "parameters": [],
+                "description": "Check if there is a next page"
+            }
+        ]
+    },
+    {
+        "name": "Category",
+        "package": "com.gradlehigh211100.productcatalog.model",
+        "type": "model",
+        "description": "Category entity representing hierarchical product categories with parent-child relationships and category-specific attributes.",
+        "dependencies": ["com.gradlehigh211100.common.model.BaseEntity"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.model.BaseEntity",
+        "fields": [
+            {
+                "name": "name",
+                "type": "String",
+                "description": "Category name"
+            },
+            {
+                "name": "description",
+                "type": "String",
+                "description": "Category description"
+            },
+            {
+                "name": "parent",
+                "type": "Category",
+                "description": "Parent category for hierarchical structure"
+            },
+            {
+                "name": "children",
+                "type": "Set<Category>",
+                "description": "Child categories"
+            },
+            {
+                "name": "level",
+                "type": "Integer",
+                "description": "Hierarchical level"
+            },
+            {
+                "name": "isActive",
+                "type": "Boolean",
+                "description": "Active status flag"
+            },
+            {
+                "name": "sortOrder",
+                "type": "Integer",
+                "description": "Sort order for display"
+            },
+            {
+                "name": "metaTitle",
+                "type": "String",
+                "description": "SEO meta title"
+            },
+            {
+                "name": "metaDescription",
+                "type": "String",
+                "description": "SEO meta description"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getName",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Get category name"
+            },
+            {
+                "name": "setName",
+                "returnType": "void",
+                "parameters": [{"name": "name", "type": "String"}],
+                "description": "Set category name"
+            },
+            {
+                "name": "addChild",
+                "returnType": "void",
+                "parameters": [{"name": "child", "type": "Category"}],
+                "description": "Add child category"
+            },
+            {
+                "name": "removeChild",
+                "returnType": "void",
+                "parameters": [{"name": "child", "type": "Category"}],
+                "description": "Remove child category"
+            },
+            {
+                "name": "isRootCategory",
+                "returnType": "Boolean",
+                "parameters": [],
+                "description": "Check if this is a root category"
+            },
+            {
+                "name": "getFullPath",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Get full hierarchical path"
+            }
+        ]
+    },
+    {
+        "name": "ProductVariant",
+        "package": "com.gradlehigh211100.productcatalog.model",
+        "type": "model",
+        "description": "Product variant entity representing different variations of a product such as size, color, style with specific pricing and inventory.",
+        "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.productcatalog.model.Product"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.model.BaseEntity",
+        "fields": [
+            {
+                "name": "product",
+                "type": "Product",
+                "description": "Parent product reference"
+            },
+            {
+                "name": "sku",
+                "type": "String",
+                "description": "Stock keeping unit for variant"
+            },
+            {
+                "name": "size",
+                "type": "String",
+                "description": "Size specification"
+            },
+            {
+                "name": "color",
+                "type": "String",
+                "description": "Color specification"
+            },
+            {
+                "name": "style",
+                "type": "String",
+                "description": "Style specification"
+            },
+            {
+                "name": "price",
+                "type": "BigDecimal",
+                "description": "Variant price"
+            },
+            {
+                "name": "weight",
+                "type": "Double",
+                "description": "Variant weight"
+            },
+            {
+                "name": "dimensions",
+                "type": "String",
+                "description": "Physical dimensions"
+            },
+            {
+                "name": "isActive",
+                "type": "Boolean",
+                "description": "Active status flag"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getSku",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Get variant SKU"
+            },
+            {
+                "name": "setSku",
+                "returnType": "void",
+                "parameters": [{"name": "sku", "type": "String"}],
+                "description": "Set variant SKU"
+            },
+            {
+                "name": "getPrice",
+                "returnType": "BigDecimal",
+                "parameters": [],
+                "description": "Get variant price"
+            },
+            {
+                "name": "setPrice",
+                "returnType": "void",
+                "parameters": [{"name": "price", "type": "BigDecimal"}],
+                "description": "Set variant price"
+            },
+            {
+                "name": "getDisplayName",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Get formatted display name including size and color"
+            },
+            {
+                "name": "isAvailable",
+                "returnType": "Boolean",
+                "parameters": [],
+                "description": "Check if variant is available"
+            }
+        ]
+    }
+]

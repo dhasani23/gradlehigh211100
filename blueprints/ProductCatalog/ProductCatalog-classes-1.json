@@ -1,0 +1,561 @@
+[
+    {
+        "name": "ProductImage",
+        "package": "com.gradlehigh211100.productcatalog.model",
+        "type": "model",
+        "description": "Product image entity storing image URLs, alt text, and ordering information for product gallery.",
+        "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.productcatalog.model.Product"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.model.BaseEntity",
+        "fields": [
+            {
+                "name": "product",
+                "type": "Product",
+                "description": "Associated product reference"
+            },
+            {
+                "name": "url",
+                "type": "String",
+                "description": "Image URL"
+            },
+            {
+                "name": "altText",
+                "type": "String",
+                "description": "Alternative text for accessibility"
+            },
+            {
+                "name": "sortOrder",
+                "type": "Integer",
+                "description": "Order in product gallery"
+            },
+            {
+                "name": "isPrimary",
+                "type": "Boolean",
+                "description": "Primary image flag"
+            },
+            {
+                "name": "imageType",
+                "type": "String",
+                "description": "Type of image (thumbnail, detail, zoom)"
+            },
+            {
+                "name": "fileSize",
+                "type": "Long",
+                "description": "File size in bytes"
+            },
+            {
+                "name": "mimeType",
+                "type": "String",
+                "description": "MIME type of the image"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getUrl",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Get image URL"
+            },
+            {
+                "name": "setUrl",
+                "returnType": "void",
+                "parameters": [{"name": "url", "type": "String"}],
+                "description": "Set image URL"
+            },
+            {
+                "name": "isPrimary",
+                "returnType": "Boolean",
+                "parameters": [],
+                "description": "Check if this is the primary image"
+            },
+            {
+                "name": "setPrimary",
+                "returnType": "void",
+                "parameters": [{"name": "primary", "type": "Boolean"}],
+                "description": "Set primary image flag"
+            }
+        ]
+    },
+    {
+        "name": "Product",
+        "package": "com.gradlehigh211100.productcatalog.model",
+        "type": "model",
+        "description": "Core product entity representing a product with all its attributes including SKU, name, description, category, pricing, and inventory information.",
+        "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.productcatalog.model.Category", "com.gradlehigh211100.productcatalog.model.ProductVariant", "com.gradlehigh211100.productcatalog.model.ProductImage"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.model.BaseEntity",
+        "fields": [
+            {
+                "name": "sku",
+                "type": "String",
+                "description": "Stock keeping unit"
+            },
+            {
+                "name": "name",
+                "type": "String",
+                "description": "Product name"
+            },
+            {
+                "name": "description",
+                "type": "String",
+                "description": "Product description"
+            },
+            {
+                "name": "brand",
+                "type": "String",
+                "description": "Product brand"
+            },
+            {
+                "name": "category",
+                "type": "Category",
+                "description": "Product category"
+            },
+            {
+                "name": "basePrice",
+                "type": "BigDecimal",
+                "description": "Base price"
+            },
+            {
+                "name": "variants",
+                "type": "Set<ProductVariant>",
+                "description": "Product variants"
+            },
+            {
+                "name": "images",
+                "type": "Set<ProductImage>",
+                "description": "Product images"
+            },
+            {
+                "name": "isActive",
+                "type": "Boolean",
+                "description": "Active status flag"
+            },
+            {
+                "name": "tags",
+                "type": "String",
+                "description": "Comma-separated tags"
+            },
+            {
+                "name": "metaTitle",
+                "type": "String",
+                "description": "SEO meta title"
+            },
+            {
+                "name": "metaDescription",
+                "type": "String",
+                "description": "SEO meta description"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getSku",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Get product SKU"
+            },
+            {
+                "name": "setSku",
+                "returnType": "void",
+                "parameters": [{"name": "sku", "type": "String"}],
+                "description": "Set product SKU"
+            },
+            {
+                "name": "addVariant",
+                "returnType": "void",
+                "parameters": [{"name": "variant", "type": "ProductVariant"}],
+                "description": "Add product variant"
+            },
+            {
+                "name": "removeVariant",
+                "returnType": "void",
+                "parameters": [{"name": "variant", "type": "ProductVariant"}],
+                "description": "Remove product variant"
+            },
+            {
+                "name": "addImage",
+                "returnType": "void",
+                "parameters": [{"name": "image", "type": "ProductImage"}],
+                "description": "Add product image"
+            },
+            {
+                "name": "getPrimaryImage",
+                "returnType": "ProductImage",
+                "parameters": [],
+                "description": "Get primary product image"
+            },
+            {
+                "name": "getActiveVariants",
+                "returnType": "List<ProductVariant>",
+                "parameters": [],
+                "description": "Get list of active variants"
+            }
+        ]
+    },
+    {
+        "name": "Inventory",
+        "package": "com.gradlehigh211100.productcatalog.model",
+        "type": "model",
+        "description": "Inventory entity tracking stock levels, reserved quantities, and reorder points for products and variants.",
+        "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.productcatalog.model.Product", "com.gradlehigh211100.productcatalog.model.ProductVariant"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.model.BaseEntity",
+        "fields": [
+            {
+                "name": "product",
+                "type": "Product",
+                "description": "Associated product"
+            },
+            {
+                "name": "variant",
+                "type": "ProductVariant",
+                "description": "Associated product variant"
+            },
+            {
+                "name": "availableQuantity",
+                "type": "Integer",
+                "description": "Available stock quantity"
+            },
+            {
+                "name": "reservedQuantity",
+                "type": "Integer",
+                "description": "Reserved stock quantity"
+            },
+            {
+                "name": "reorderPoint",
+                "type": "Integer",
+                "description": "Reorder point threshold"
+            },
+            {
+                "name": "maxStockLevel",
+                "type": "Integer",
+                "description": "Maximum stock level"
+            },
+            {
+                "name": "lastUpdated",
+                "type": "Date",
+                "description": "Last update timestamp"
+            },
+            {
+                "name": "location",
+                "type": "String",
+                "description": "Storage location"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getAvailableQuantity",
+                "returnType": "Integer",
+                "parameters": [],
+                "description": "Get available quantity"
+            },
+            {
+                "name": "updateQuantity",
+                "returnType": "void",
+                "parameters": [{"name": "quantity", "type": "Integer"}],
+                "description": "Update available quantity"
+            },
+            {
+                "name": "reserveStock",
+                "returnType": "Boolean",
+                "parameters": [{"name": "quantity", "type": "Integer"}],
+                "description": "Reserve stock for order"
+            },
+            {
+                "name": "releaseReservedStock",
+                "returnType": "void",
+                "parameters": [{"name": "quantity", "type": "Integer"}],
+                "description": "Release reserved stock"
+            },
+            {
+                "name": "isLowStock",
+                "returnType": "Boolean",
+                "parameters": [],
+                "description": "Check if stock is below reorder point"
+            },
+            {
+                "name": "getTotalQuantity",
+                "returnType": "Integer",
+                "parameters": [],
+                "description": "Get total quantity (available + reserved)"
+            }
+        ]
+    },
+    {
+        "name": "ProductRelationship",
+        "package": "com.gradlehigh211100.productcatalog.model",
+        "type": "model",
+        "description": "Entity representing relationships between products like cross-sell, upsell, and related products.",
+        "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.productcatalog.model.Product"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.model.BaseEntity",
+        "fields": [
+            {
+                "name": "sourceProduct",
+                "type": "Product",
+                "description": "Source product in relationship"
+            },
+            {
+                "name": "targetProduct",
+                "type": "Product",
+                "description": "Target product in relationship"
+            },
+            {
+                "name": "relationshipType",
+                "type": "String",
+                "description": "Type of relationship (cross-sell, upsell, related)"
+            },
+            {
+                "name": "priority",
+                "type": "Integer",
+                "description": "Priority for ordering recommendations"
+            },
+            {
+                "name": "isActive",
+                "type": "Boolean",
+                "description": "Active status flag"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getRelationshipType",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Get relationship type"
+            },
+            {
+                "name": "setRelationshipType",
+                "returnType": "void",
+                "parameters": [{"name": "type", "type": "String"}],
+                "description": "Set relationship type"
+            },
+            {
+                "name": "isCrossSell",
+                "returnType": "Boolean",
+                "parameters": [],
+                "description": "Check if relationship is cross-sell"
+            },
+            {
+                "name": "isUpsell",
+                "returnType": "Boolean",
+                "parameters": [],
+                "description": "Check if relationship is upsell"
+            }
+        ]
+    },
+    {
+        "name": "CategoryRepository",
+        "package": "com.gradlehigh211100.productcatalog.repository",
+        "type": "repository",
+        "description": "JPA repository interface for category CRUD operations and hierarchical queries.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.model.Category"],
+        "implements": [],
+        "extends": "org.springframework.data.jpa.repository.JpaRepository",
+        "fields": [],
+        "methods": [
+            {
+                "name": "findByParentIsNull",
+                "returnType": "List<Category>",
+                "parameters": [],
+                "description": "Find all root categories"
+            },
+            {
+                "name": "findByParentId",
+                "returnType": "List<Category>",
+                "parameters": [{"name": "parentId", "type": "Long"}],
+                "description": "Find categories by parent ID"
+            },
+            {
+                "name": "findByIsActiveTrue",
+                "returnType": "List<Category>",
+                "parameters": [],
+                "description": "Find all active categories"
+            },
+            {
+                "name": "findByLevel",
+                "returnType": "List<Category>",
+                "parameters": [{"name": "level", "type": "Integer"}],
+                "description": "Find categories by hierarchical level"
+            },
+            {
+                "name": "findByNameContainingIgnoreCase",
+                "returnType": "List<Category>",
+                "parameters": [{"name": "name", "type": "String"}],
+                "description": "Find categories by name (case-insensitive)"
+            }
+        ]
+    },
+    {
+        "name": "ProductVariantRepository",
+        "package": "com.gradlehigh211100.productcatalog.repository",
+        "type": "repository",
+        "description": "JPA repository interface for product variant CRUD operations and variant-specific queries.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.model.ProductVariant"],
+        "implements": [],
+        "extends": "org.springframework.data.jpa.repository.JpaRepository",
+        "fields": [],
+        "methods": [
+            {
+                "name": "findByProductId",
+                "returnType": "List<ProductVariant>",
+                "parameters": [{"name": "productId", "type": "Long"}],
+                "description": "Find variants by product ID"
+            },
+            {
+                "name": "findBySkuIgnoreCase",
+                "returnType": "Optional<ProductVariant>",
+                "parameters": [{"name": "sku", "type": "String"}],
+                "description": "Find variant by SKU"
+            },
+            {
+                "name": "findByProductIdAndIsActiveTrue",
+                "returnType": "List<ProductVariant>",
+                "parameters": [{"name": "productId", "type": "Long"}],
+                "description": "Find active variants by product ID"
+            },
+            {
+                "name": "findBySize",
+                "returnType": "List<ProductVariant>",
+                "parameters": [{"name": "size", "type": "String"}],
+                "description": "Find variants by size"
+            },
+            {
+                "name": "findByColor",
+                "returnType": "List<ProductVariant>",
+                "parameters": [{"name": "color", "type": "String"}],
+                "description": "Find variants by color"
+            }
+        ]
+    },
+    {
+        "name": "InventoryRepository",
+        "package": "com.gradlehigh211100.productcatalog.repository",
+        "type": "repository",
+        "description": "JPA repository interface for inventory CRUD operations and stock level queries.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.model.Inventory"],
+        "implements": [],
+        "extends": "org.springframework.data.jpa.repository.JpaRepository",
+        "fields": [],
+        "methods": [
+            {
+                "name": "findByProductId",
+                "returnType": "Optional<Inventory>",
+                "parameters": [{"name": "productId", "type": "Long"}],
+                "description": "Find inventory by product ID"
+            },
+            {
+                "name": "findByVariantId",
+                "returnType": "Optional<Inventory>",
+                "parameters": [{"name": "variantId", "type": "Long"}],
+                "description": "Find inventory by variant ID"
+            },
+            {
+                "name": "findByAvailableQuantityLessThanEqual",
+                "returnType": "List<Inventory>",
+                "parameters": [{"name": "threshold", "type": "Integer"}],
+                "description": "Find low stock items"
+            },
+            {
+                "name": "findByAvailableQuantityLessThanReorderPoint",
+                "returnType": "List<Inventory>",
+                "parameters": [],
+                "description": "Find items needing reorder"
+            },
+            {
+                "name": "updateAvailableQuantity",
+                "returnType": "Integer",
+                "parameters": [{"name": "id", "type": "Long"}, {"name": "quantity", "type": "Integer"}],
+                "description": "Update available quantity"
+            }
+        ]
+    },
+    {
+        "name": "ProductRepository",
+        "package": "com.gradlehigh211100.productcatalog.repository",
+        "type": "repository",
+        "description": "JPA repository interface for product CRUD operations and custom queries.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.model.Product"],
+        "implements": [],
+        "extends": "org.springframework.data.jpa.repository.JpaRepository",
+        "fields": [],
+        "methods": [
+            {
+                "name": "findBySkuIgnoreCase",
+                "returnType": "Optional<Product>",
+                "parameters": [{"name": "sku", "type": "String"}],
+                "description": "Find product by SKU"
+            },
+            {
+                "name": "findByCategoryId",
+                "returnType": "List<Product>",
+                "parameters": [{"name": "categoryId", "type": "Long"}],
+                "description": "Find products by category ID"
+            },
+            {
+                "name": "findByBrandIgnoreCase",
+                "returnType": "List<Product>",
+                "parameters": [{"name": "brand", "type": "String"}],
+                "description": "Find products by brand"
+            },
+            {
+                "name": "findByIsActiveTrueOrderByNameAsc",
+                "returnType": "List<Product>",
+                "parameters": [],
+                "description": "Find active products ordered by name"
+            },
+            {
+                "name": "findByNameContainingIgnoreCase",
+                "returnType": "List<Product>",
+                "parameters": [{"name": "name", "type": "String"}],
+                "description": "Find products by name (case-insensitive)"
+            },
+            {
+                "name": "findByBasePriceBetween",
+                "returnType": "List<Product>",
+                "parameters": [{"name": "minPrice", "type": "BigDecimal"}, {"name": "maxPrice", "type": "BigDecimal"}],
+                "description": "Find products within price range"
+            }
+        ]
+    },
+    {
+        "name": "ProductSearchRepository",
+        "package": "com.gradlehigh211100.productcatalog.repository",
+        "type": "repository",
+        "description": "Elasticsearch repository interface for product search operations and full-text search.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.model.Product"],
+        "implements": [],
+        "extends": "org.springframework.data.elasticsearch.repository.ElasticsearchRepository",
+        "fields": [],
+        "methods": [
+            {
+                "name": "findByNameContaining",
+                "returnType": "List<Product>",
+                "parameters": [{"name": "name", "type": "String"}],
+                "description": "Full-text search by product name"
+            },
+            {
+                "name": "findByDescriptionContaining",
+                "returnType": "List<Product>",
+                "parameters": [{"name": "description", "type": "String"}],
+                "description": "Full-text search by product description"
+            },
+            {
+                "name": "findByTagsContaining",
+                "returnType": "List<Product>",
+                "parameters": [{"name": "tags", "type": "String"}],
+                "description": "Search by product tags"
+            },
+            {
+                "name": "findByCategoryNameContaining",
+                "returnType": "List<Product>",
+                "parameters": [{"name": "categoryName", "type": "String"}],
+                "description": "Search by category name"
+            },
+            {
+                "name": "findByBrandContaining",
+                "returnType": "List<Product>",
+                "parameters": [{"name": "brand", "type": "String"}],
+                "description": "Search by brand name"
+            }
+        ]
+    }
+]

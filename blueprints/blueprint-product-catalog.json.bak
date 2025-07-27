@@ -1,0 +1,277 @@
+{
+    "module": "ProductCatalog",
+    "description": "Advanced product catalog management system handling product information, categories, inventory levels, pricing, and search functionality. This module provides comprehensive product lifecycle management including product creation, updates, categorization, and deletion. It implements advanced search capabilities using Elasticsearch for full-text search, filtering, and faceted search. The service includes product image management, variant handling (size, color, style), bulk product operations, and integration with external product information systems. It supports complex product relationships, cross-selling recommendations, and real-time inventory tracking with low-stock alerts.",
+    "file_count": 25,
+    "module_path": "product-catalog",
+    "internal_dependencies": ["common"],
+    "external_dependencies": {
+        "spring-boot-starter": "1.5.22.RELEASE",
+        "spring-boot-starter-data-jpa": "1.5.22.RELEASE",
+        "spring-boot-starter-web": "1.5.22.RELEASE",
+        "spring-boot-starter-cache": "1.5.22.RELEASE",
+        "elasticsearch": "6.4.3",
+        "spring-data-elasticsearch": "3.1.18.RELEASE",
+        "redis": "2.9.0",
+        "image-processing": "1.0.0",
+        "h2": "1.4.197",
+        "postgresql": "42.2.5"
+    },
+    "classes": [
+        {
+            "name": "Product",
+            "package": "com.gradlehigh211100.productcatalog.model",
+            "type": "model",
+            "description": "Core product entity representing a product with all its attributes including SKU, name, description, category, pricing, and inventory information",
+            "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.productcatalog.model.Category", "com.gradlehigh211100.productcatalog.model.ProductVariant", "com.gradlehigh211100.productcatalog.model.ProductImage"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.model.BaseEntity"
+        },
+        {
+            "name": "Category",
+            "package": "com.gradlehigh211100.productcatalog.model",
+            "type": "model",
+            "description": "Category entity representing hierarchical product categories with parent-child relationships and category-specific attributes",
+            "dependencies": ["com.gradlehigh211100.common.model.BaseEntity"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.model.BaseEntity"
+        },
+        {
+            "name": "ProductVariant",
+            "package": "com.gradlehigh211100.productcatalog.model",
+            "type": "model",
+            "description": "Product variant entity representing different variations of a product such as size, color, style with specific pricing and inventory",
+            "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.productcatalog.model.Product"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.model.BaseEntity"
+        },
+        {
+            "name": "ProductImage",
+            "package": "com.gradlehigh211100.productcatalog.model",
+            "type": "model",
+            "description": "Product image entity storing image URLs, alt text, and ordering information for product gallery",
+            "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.productcatalog.model.Product"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.model.BaseEntity"
+        },
+        {
+            "name": "Inventory",
+            "package": "com.gradlehigh211100.productcatalog.model",
+            "type": "model",
+            "description": "Inventory entity tracking stock levels, reserved quantities, and reorder points for products and variants",
+            "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.productcatalog.model.Product", "com.gradlehigh211100.productcatalog.model.ProductVariant"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.model.BaseEntity"
+        },
+        {
+            "name": "ProductRelationship",
+            "package": "com.gradlehigh211100.productcatalog.model",
+            "type": "model",
+            "description": "Entity representing relationships between products like cross-sell, upsell, and related products",
+            "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.productcatalog.model.Product"],
+            "implements": [],
+            "extends": "com.gradlehigh211100.common.model.BaseEntity"
+        },
+        {
+            "name": "ProductDTO",
+            "package": "com.gradlehigh211100.productcatalog.dto",
+            "type": "dto",
+            "description": "Data transfer object for product information used in API responses and requests",
+            "dependencies": ["com.gradlehigh211100.productcatalog.dto.CategoryDTO", "com.gradlehigh211100.productcatalog.dto.ProductVariantDTO", "com.gradlehigh211100.productcatalog.dto.ProductImageDTO"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "CategoryDTO",
+            "package": "com.gradlehigh211100.productcatalog.dto",
+            "type": "dto",
+            "description": "Data transfer object for category information used in API responses and requests",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ProductVariantDTO",
+            "package": "com.gradlehigh211100.productcatalog.dto",
+            "type": "dto",
+            "description": "Data transfer object for product variant information used in API responses and requests",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ProductImageDTO",
+            "package": "com.gradlehigh211100.productcatalog.dto",
+            "type": "dto",
+            "description": "Data transfer object for product image information used in API responses and requests",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "InventoryDTO",
+            "package": "com.gradlehigh211100.productcatalog.dto",
+            "type": "dto",
+            "description": "Data transfer object for inventory information used in API responses and requests",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ProductSearchRequest",
+            "package": "com.gradlehigh211100.productcatalog.dto",
+            "type": "dto",
+            "description": "Data transfer object for product search requests with filtering and pagination parameters",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ProductSearchResponse",
+            "package": "com.gradlehigh211100.productcatalog.dto",
+            "type": "dto",
+            "description": "Data transfer object for product search responses with results and faceted search information",
+            "dependencies": ["com.gradlehigh211100.productcatalog.dto.ProductDTO"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ProductRepository",
+            "package": "com.gradlehigh211100.productcatalog.repository",
+            "type": "repository",
+            "description": "JPA repository interface for product CRUD operations and custom queries",
+            "dependencies": ["com.gradlehigh211100.productcatalog.model.Product"],
+            "implements": [],
+            "extends": "org.springframework.data.jpa.repository.JpaRepository"
+        },
+        {
+            "name": "CategoryRepository",
+            "package": "com.gradlehigh211100.productcatalog.repository",
+            "type": "repository",
+            "description": "JPA repository interface for category CRUD operations and hierarchical queries",
+            "dependencies": ["com.gradlehigh211100.productcatalog.model.Category"],
+            "implements": [],
+            "extends": "org.springframework.data.jpa.repository.JpaRepository"
+        },
+        {
+            "name": "ProductVariantRepository",
+            "package": "com.gradlehigh211100.productcatalog.repository",
+            "type": "repository",
+            "description": "JPA repository interface for product variant CRUD operations and variant-specific queries",
+            "dependencies": ["com.gradlehigh211100.productcatalog.model.ProductVariant"],
+            "implements": [],
+            "extends": "org.springframework.data.jpa.repository.JpaRepository"
+        },
+        {
+            "name": "InventoryRepository",
+            "package": "com.gradlehigh211100.productcatalog.repository",
+            "type": "repository",
+            "description": "JPA repository interface for inventory CRUD operations and stock level queries",
+            "dependencies": ["com.gradlehigh211100.productcatalog.model.Inventory"],
+            "implements": [],
+            "extends": "org.springframework.data.jpa.repository.JpaRepository"
+        },
+        {
+            "name": "ProductSearchRepository",
+            "package": "com.gradlehigh211100.productcatalog.repository",
+            "type": "repository",
+            "description": "Elasticsearch repository interface for product search operations and full-text search",
+            "dependencies": ["com.gradlehigh211100.productcatalog.model.Product"],
+            "implements": [],
+            "extends": "org.springframework.data.elasticsearch.repository.ElasticsearchRepository"
+        },
+        {
+            "name": "ProductService",
+            "package": "com.gradlehigh211100.productcatalog.service",
+            "type": "service",
+            "description": "Core product service providing business logic for product management, CRUD operations, and product lifecycle management",
+            "dependencies": ["com.gradlehigh211100.productcatalog.repository.ProductRepository", "com.gradlehigh211100.productcatalog.repository.CategoryRepository", "com.gradlehigh211100.productcatalog.repository.ProductVariantRepository", "com.gradlehigh211100.productcatalog.service.CacheService", "com.gradlehigh211100.productcatalog.service.ImageService"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "CategoryService",
+            "package": "com.gradlehigh211100.productcatalog.service",
+            "type": "service",
+            "description": "Category service providing business logic for category management, hierarchical operations, and category tree management",
+            "dependencies": ["com.gradlehigh211100.productcatalog.repository.CategoryRepository", "com.gradlehigh211100.productcatalog.service.CacheService"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "InventoryService",
+            "package": "com.gradlehigh211100.productcatalog.service",
+            "type": "service",
+            "description": "Inventory service providing business logic for inventory management, stock level tracking, and low-stock alerts",
+            "dependencies": ["com.gradlehigh211100.productcatalog.repository.InventoryRepository", "com.gradlehigh211100.productcatalog.service.NotificationService"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "SearchService",
+            "package": "com.gradlehigh211100.productcatalog.service",
+            "type": "service",
+            "description": "Search service providing advanced search capabilities using Elasticsearch for full-text search, filtering, and faceted search",
+            "dependencies": ["com.gradlehigh211100.productcatalog.repository.ProductSearchRepository", "com.gradlehigh211100.productcatalog.service.CacheService"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ImageService",
+            "package": "com.gradlehigh211100.productcatalog.service",
+            "type": "service",
+            "description": "Image service providing business logic for product image management, upload, processing, and optimization",
+            "dependencies": ["com.gradlehigh211100.productcatalog.repository.ProductRepository"],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ProductController",
+            "package": "com.gradlehigh211100.productcatalog.controller",
+            "type": "controller",
+            "description": "REST controller providing API endpoints for product management operations including CRUD, search, and bulk operations",
+            "dependencies": ["com.gradlehigh211100.productcatalog.service.ProductService", "com.gradlehigh211100.productcatalog.service.SearchService"],
+            "implements": [],
+            "extends": ""
+        }
+    ],
+    "configFiles": [
+        {
+            "path": "product-catalog/build.gradle",
+            "description": "Gradle build file for the ProductCatalog module defining dependencies, plugins, and build configuration"
+        },
+        {
+            "path": "product-catalog/src/main/resources/application-productcatalog.yml",
+            "description": "Configuration properties for the ProductCatalog module including database, cache, and search engine settings"
+        }
+    ],
+    "generationOrder": [
+        "com.gradlehigh211100.productcatalog.dto.CategoryDTO",
+        "com.gradlehigh211100.productcatalog.dto.ProductVariantDTO",
+        "com.gradlehigh211100.productcatalog.dto.ProductImageDTO",
+        "com.gradlehigh211100.productcatalog.dto.InventoryDTO",
+        "com.gradlehigh211100.productcatalog.dto.ProductSearchRequest",
+        "com.gradlehigh211100.productcatalog.dto.ProductDTO",
+        "com.gradlehigh211100.productcatalog.dto.ProductSearchResponse",
+        "com.gradlehigh211100.productcatalog.model.Category",
+        "com.gradlehigh211100.productcatalog.model.ProductVariant",
+        "com.gradlehigh211100.productcatalog.model.ProductImage",
+        "com.gradlehigh211100.productcatalog.model.Product",
+        "com.gradlehigh211100.productcatalog.model.Inventory",
+        "com.gradlehigh211100.productcatalog.model.ProductRelationship",
+        "com.gradlehigh211100.productcatalog.repository.CategoryRepository",
+        "com.gradlehigh211100.productcatalog.repository.ProductVariantRepository",
+        "com.gradlehigh211100.productcatalog.repository.InventoryRepository",
+        "com.gradlehigh211100.productcatalog.repository.ProductRepository",
+        "com.gradlehigh211100.productcatalog.repository.ProductSearchRepository",
+        "com.gradlehigh211100.productcatalog.service.CacheService",
+        "com.gradlehigh211100.productcatalog.service.NotificationService",
+        "com.gradlehigh211100.productcatalog.service.ImageService",
+        "com.gradlehigh211100.productcatalog.service.InventoryService",
+        "com.gradlehigh211100.productcatalog.service.CategoryService",
+        "com.gradlehigh211100.productcatalog.service.SearchService",
+        "com.gradlehigh211100.productcatalog.service.ProductService",
+        "com.gradlehigh211100.productcatalog.controller.CategoryController",
+        "com.gradlehigh211100.productcatalog.controller.InventoryController",
+        "com.gradlehigh211100.productcatalog.controller.ProductController"
+    ]
+}

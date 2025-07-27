@@ -1,0 +1,680 @@
+[
+    {
+        "name": "CacheService",
+        "package": "com.gradlehigh211100.productcatalog.service",
+        "type": "service",
+        "description": "Cache service providing Redis-based caching functionality for frequently accessed product and category data.",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "redisTemplate",
+                "type": "RedisTemplate<String, Object>",
+                "description": "Redis template for cache operations"
+            },
+            {
+                "name": "defaultExpiration",
+                "type": "Long",
+                "description": "Default cache expiration time in seconds"
+            }
+        ],
+        "methods": [
+            {
+                "name": "cacheProduct",
+                "returnType": "void",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "product", "type": "Object"}],
+                "description": "Cache product data"
+            },
+            {
+                "name": "getProduct",
+                "returnType": "Object",
+                "parameters": [{"name": "productId", "type": "Long"}],
+                "description": "Get cached product data"
+            },
+            {
+                "name": "evictProduct",
+                "returnType": "void",
+                "parameters": [{"name": "productId", "type": "Long"}],
+                "description": "Remove product from cache"
+            },
+            {
+                "name": "cacheCategory",
+                "returnType": "void",
+                "parameters": [{"name": "categoryId", "type": "Long"}, {"name": "category", "type": "Object"}],
+                "description": "Cache category data"
+            },
+            {
+                "name": "getCategory",
+                "returnType": "Object",
+                "parameters": [{"name": "categoryId", "type": "Long"}],
+                "description": "Get cached category data"
+            },
+            {
+                "name": "evictCategory",
+                "returnType": "void",
+                "parameters": [{"name": "categoryId", "type": "Long"}],
+                "description": "Remove category from cache"
+            },
+            {
+                "name": "clearAllCache",
+                "returnType": "void",
+                "parameters": [],
+                "description": "Clear all cached data"
+            }
+        ]
+    },
+    {
+        "name": "NotificationService",
+        "package": "com.gradlehigh211100.productcatalog.service",
+        "type": "service",
+        "description": "Notification service providing business logic for sending alerts and notifications related to inventory and product events.",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "emailService",
+                "type": "EmailService",
+                "description": "Email service for sending notifications"
+            },
+            {
+                "name": "smsService",
+                "type": "SmsService",
+                "description": "SMS service for sending notifications"
+            }
+        ],
+        "methods": [
+            {
+                "name": "sendLowStockAlert",
+                "returnType": "void",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "currentStock", "type": "Integer"}],
+                "description": "Send low stock alert notification"
+            },
+            {
+                "name": "sendOutOfStockAlert",
+                "returnType": "void",
+                "parameters": [{"name": "productId", "type": "Long"}],
+                "description": "Send out of stock alert notification"
+            },
+            {
+                "name": "sendProductUpdateNotification",
+                "returnType": "void",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "changeType", "type": "String"}],
+                "description": "Send product update notification"
+            },
+            {
+                "name": "sendBulkOperationResult",
+                "returnType": "void",
+                "parameters": [{"name": "operationType", "type": "String"}, {"name": "successCount", "type": "Integer"}, {"name": "failureCount", "type": "Integer"}],
+                "description": "Send bulk operation result notification"
+            }
+        ]
+    },
+    {
+        "name": "ImageService",
+        "package": "com.gradlehigh211100.productcatalog.service",
+        "type": "service",
+        "description": "Image service providing business logic for product image management, upload, processing, and optimization.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.repository.ProductRepository"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "productRepository",
+                "type": "ProductRepository",
+                "description": "Product repository for database operations"
+            },
+            {
+                "name": "imageStoragePath",
+                "type": "String",
+                "description": "Base path for image storage"
+            },
+            {
+                "name": "allowedImageTypes",
+                "type": "List<String>",
+                "description": "List of allowed image MIME types"
+            }
+        ],
+        "methods": [
+            {
+                "name": "uploadImage",
+                "returnType": "String",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "imageFile", "type": "MultipartFile"}],
+                "description": "Upload and process product image"
+            },
+            {
+                "name": "deleteImage",
+                "returnType": "void",
+                "parameters": [{"name": "imageId", "type": "Long"}],
+                "description": "Delete product image"
+            },
+            {
+                "name": "resizeImage",
+                "returnType": "byte[]",
+                "parameters": [{"name": "imageData", "type": "byte[]"}, {"name": "width", "type": "Integer"}, {"name": "height", "type": "Integer"}],
+                "description": "Resize image to specified dimensions"
+            },
+            {
+                "name": "generateThumbnail",
+                "returnType": "String",
+                "parameters": [{"name": "originalImageUrl", "type": "String"}],
+                "description": "Generate thumbnail from original image"
+            },
+            {
+                "name": "validateImage",
+                "returnType": "Boolean",
+                "parameters": [{"name": "imageFile", "type": "MultipartFile"}],
+                "description": "Validate image format and size"
+            },
+            {
+                "name": "setPrimaryImage",
+                "returnType": "void",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "imageId", "type": "Long"}],
+                "description": "Set image as primary for product"
+            }
+        ]
+    },
+    {
+        "name": "InventoryService",
+        "package": "com.gradlehigh211100.productcatalog.service",
+        "type": "service",
+        "description": "Inventory service providing business logic for inventory management, stock level tracking, and low-stock alerts.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.repository.InventoryRepository", "com.gradlehigh211100.productcatalog.service.NotificationService"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "inventoryRepository",
+                "type": "InventoryRepository",
+                "description": "Inventory repository for database operations"
+            },
+            {
+                "name": "notificationService",
+                "type": "NotificationService",
+                "description": "Notification service for alerts"
+            }
+        ],
+        "methods": [
+            {
+                "name": "updateStock",
+                "returnType": "void",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "quantity", "type": "Integer"}],
+                "description": "Update stock quantity for product"
+            },
+            {
+                "name": "reserveStock",
+                "returnType": "Boolean",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "variantId", "type": "Long"}, {"name": "quantity", "type": "Integer"}],
+                "description": "Reserve stock for order"
+            },
+            {
+                "name": "releaseReservedStock",
+                "returnType": "void",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "variantId", "type": "Long"}, {"name": "quantity", "type": "Integer"}],
+                "description": "Release reserved stock"
+            },
+            {
+                "name": "checkStockAvailability",
+                "returnType": "Integer",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "variantId", "type": "Long"}],
+                "description": "Check available stock quantity"
+            },
+            {
+                "name": "getLowStockItems",
+                "returnType": "List<Inventory>",
+                "parameters": [],
+                "description": "Get list of low stock items"
+            },
+            {
+                "name": "processLowStockAlerts",
+                "returnType": "void",
+                "parameters": [],
+                "description": "Process and send low stock alerts"
+            },
+            {
+                "name": "bulkUpdateInventory",
+                "returnType": "void",
+                "parameters": [{"name": "inventoryUpdates", "type": "List<InventoryDTO>"}],
+                "description": "Bulk update inventory data"
+            }
+        ]
+    },
+    {
+        "name": "CategoryService",
+        "package": "com.gradlehigh211100.productcatalog.service",
+        "type": "service",
+        "description": "Category service providing business logic for category management, hierarchical operations, and category tree management.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.repository.CategoryRepository", "com.gradlehigh211100.productcatalog.service.CacheService"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "categoryRepository",
+                "type": "CategoryRepository",
+                "description": "Category repository for database operations"
+            },
+            {
+                "name": "cacheService",
+                "type": "CacheService",
+                "description": "Cache service for caching category data"
+            }
+        ],
+        "methods": [
+            {
+                "name": "createCategory",
+                "returnType": "CategoryDTO",
+                "parameters": [{"name": "categoryData", "type": "CategoryDTO"}],
+                "description": "Create new category"
+            },
+            {
+                "name": "updateCategory",
+                "returnType": "CategoryDTO",
+                "parameters": [{"name": "categoryId", "type": "Long"}, {"name": "categoryData", "type": "CategoryDTO"}],
+                "description": "Update existing category"
+            },
+            {
+                "name": "deleteCategory",
+                "returnType": "void",
+                "parameters": [{"name": "categoryId", "type": "Long"}],
+                "description": "Delete category"
+            },
+            {
+                "name": "getCategoryById",
+                "returnType": "CategoryDTO",
+                "parameters": [{"name": "categoryId", "type": "Long"}],
+                "description": "Get category by ID"
+            },
+            {
+                "name": "getRootCategories",
+                "returnType": "List<CategoryDTO>",
+                "parameters": [],
+                "description": "Get all root categories"
+            },
+            {
+                "name": "getChildCategories",
+                "returnType": "List<CategoryDTO>",
+                "parameters": [{"name": "parentId", "type": "Long"}],
+                "description": "Get child categories of parent"
+            },
+            {
+                "name": "getCategoryTree",
+                "returnType": "List<CategoryDTO>",
+                "parameters": [],
+                "description": "Get complete category tree structure"
+            },
+            {
+                "name": "moveCategory",
+                "returnType": "void",
+                "parameters": [{"name": "categoryId", "type": "Long"}, {"name": "newParentId", "type": "Long"}],
+                "description": "Move category to new parent"
+            }
+        ]
+    },
+    {
+        "name": "SearchService",
+        "package": "com.gradlehigh211100.productcatalog.service",
+        "type": "service",
+        "description": "Search service providing advanced search capabilities using Elasticsearch for full-text search, filtering, and faceted search.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.repository.ProductSearchRepository", "com.gradlehigh211100.productcatalog.service.CacheService"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "searchRepository",
+                "type": "ProductSearchRepository",
+                "description": "Elasticsearch repository for search operations"
+            },
+            {
+                "name": "cacheService",
+                "type": "CacheService",
+                "description": "Cache service for search result caching"
+            }
+        ],
+        "methods": [
+            {
+                "name": "searchProducts",
+                "returnType": "ProductSearchResponse",
+                "parameters": [{"name": "searchRequest", "type": "ProductSearchRequest"}],
+                "description": "Perform product search with filters"
+            },
+            {
+                "name": "fullTextSearch",
+                "returnType": "List<ProductDTO>",
+                "parameters": [{"name": "query", "type": "String"}],
+                "description": "Perform full-text search"
+            },
+            {
+                "name": "searchByCategory",
+                "returnType": "List<ProductDTO>",
+                "parameters": [{"name": "categoryId", "type": "Long"}, {"name": "filters", "type": "Map<String, Object>"}],
+                "description": "Search products in specific category"
+            },
+            {
+                "name": "searchByPriceRange",
+                "returnType": "List<ProductDTO>",
+                "parameters": [{"name": "minPrice", "type": "BigDecimal"}, {"name": "maxPrice", "type": "BigDecimal"}],
+                "description": "Search products by price range"
+            },
+            {
+                "name": "getFacetedSearchResults",
+                "returnType": "Map<String, List<String>>",
+                "parameters": [{"name": "query", "type": "String"}],
+                "description": "Get faceted search results for filters"
+            },
+            {
+                "name": "getSearchSuggestions",
+                "returnType": "List<String>",
+                "parameters": [{"name": "partialQuery", "type": "String"}],
+                "description": "Get search suggestions for auto-complete"
+            },
+            {
+                "name": "indexProduct",
+                "returnType": "void",
+                "parameters": [{"name": "product", "type": "Product"}],
+                "description": "Index product for search"
+            },
+            {
+                "name": "removeFromIndex",
+                "returnType": "void",
+                "parameters": [{"name": "productId", "type": "Long"}],
+                "description": "Remove product from search index"
+            }
+        ]
+    },
+    {
+        "name": "ProductService",
+        "package": "com.gradlehigh211100.productcatalog.service",
+        "type": "service",
+        "description": "Core product service providing business logic for product management, CRUD operations, and product lifecycle management.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.repository.ProductRepository", "com.gradlehigh211100.productcatalog.repository.CategoryRepository", "com.gradlehigh211100.productcatalog.repository.ProductVariantRepository", "com.gradlehigh211100.productcatalog.service.CacheService", "com.gradlehigh211100.productcatalog.service.ImageService"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "productRepository",
+                "type": "ProductRepository",
+                "description": "Product repository for database operations"
+            },
+            {
+                "name": "categoryRepository",
+                "type": "CategoryRepository",
+                "description": "Category repository for category operations"
+            },
+            {
+                "name": "variantRepository",
+                "type": "ProductVariantRepository",
+                "description": "Variant repository for variant operations"
+            },
+            {
+                "name": "cacheService",
+                "type": "CacheService",
+                "description": "Cache service for product caching"
+            },
+            {
+                "name": "imageService",
+                "type": "ImageService",
+                "description": "Image service for product images"
+            }
+        ],
+        "methods": [
+            {
+                "name": "createProduct",
+                "returnType": "ProductDTO",
+                "parameters": [{"name": "productData", "type": "ProductDTO"}],
+                "description": "Create new product"
+            },
+            {
+                "name": "updateProduct",
+                "returnType": "ProductDTO",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "productData", "type": "ProductDTO"}],
+                "description": "Update existing product"
+            },
+            {
+                "name": "deleteProduct",
+                "returnType": "void",
+                "parameters": [{"name": "productId", "type": "Long"}],
+                "description": "Delete product"
+            },
+            {
+                "name": "getProductById",
+                "returnType": "ProductDTO",
+                "parameters": [{"name": "productId", "type": "Long"}],
+                "description": "Get product by ID"
+            },
+            {
+                "name": "getProductBySku",
+                "returnType": "ProductDTO",
+                "parameters": [{"name": "sku", "type": "String"}],
+                "description": "Get product by SKU"
+            },
+            {
+                "name": "getProductsByCategory",
+                "returnType": "List<ProductDTO>",
+                "parameters": [{"name": "categoryId", "type": "Long"}],
+                "description": "Get products by category"
+            },
+            {
+                "name": "addProductVariant",
+                "returnType": "ProductVariantDTO",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "variant", "type": "ProductVariantDTO"}],
+                "description": "Add variant to product"
+            },
+            {
+                "name": "bulkCreateProducts",
+                "returnType": "List<ProductDTO>",
+                "parameters": [{"name": "products", "type": "List<ProductDTO>"}],
+                "description": "Bulk create products"
+            },
+            {
+                "name": "bulkUpdateProducts",
+                "returnType": "void",
+                "parameters": [{"name": "updates", "type": "List<ProductDTO>"}],
+                "description": "Bulk update products"
+            },
+            {
+                "name": "getRelatedProducts",
+                "returnType": "List<ProductDTO>",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "relationType", "type": "String"}],
+                "description": "Get related products by type"
+            }
+        ]
+    },
+    {
+        "name": "CategoryController",
+        "package": "com.gradlehigh211100.productcatalog.controller",
+        "type": "controller",
+        "description": "REST controller providing API endpoints for category management operations including hierarchical category operations.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.service.CategoryService"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "categoryService",
+                "type": "CategoryService",
+                "description": "Category service for business logic"
+            }
+        ],
+        "methods": [
+            {
+                "name": "createCategory",
+                "returnType": "ResponseEntity<CategoryDTO>",
+                "parameters": [{"name": "categoryData", "type": "CategoryDTO"}],
+                "description": "Create new category endpoint"
+            },
+            {
+                "name": "updateCategory",
+                "returnType": "ResponseEntity<CategoryDTO>",
+                "parameters": [{"name": "categoryId", "type": "Long"}, {"name": "categoryData", "type": "CategoryDTO"}],
+                "description": "Update category endpoint"
+            },
+            {
+                "name": "deleteCategory",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [{"name": "categoryId", "type": "Long"}],
+                "description": "Delete category endpoint"
+            },
+            {
+                "name": "getCategoryById",
+                "returnType": "ResponseEntity<CategoryDTO>",
+                "parameters": [{"name": "categoryId", "type": "Long"}],
+                "description": "Get category by ID endpoint"
+            },
+            {
+                "name": "getRootCategories",
+                "returnType": "ResponseEntity<List<CategoryDTO>>",
+                "parameters": [],
+                "description": "Get root categories endpoint"
+            },
+            {
+                "name": "getChildCategories",
+                "returnType": "ResponseEntity<List<CategoryDTO>>",
+                "parameters": [{"name": "parentId", "type": "Long"}],
+                "description": "Get child categories endpoint"
+            },
+            {
+                "name": "getCategoryTree",
+                "returnType": "ResponseEntity<List<CategoryDTO>>",
+                "parameters": [],
+                "description": "Get category tree endpoint"
+            }
+        ]
+    },
+    {
+        "name": "InventoryController",
+        "package": "com.gradlehigh211100.productcatalog.controller",
+        "type": "controller",
+        "description": "REST controller providing API endpoints for inventory management operations including stock level updates and queries.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.service.InventoryService"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "inventoryService",
+                "type": "InventoryService",
+                "description": "Inventory service for business logic"
+            }
+        ],
+        "methods": [
+            {
+                "name": "updateStock",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "quantity", "type": "Integer"}],
+                "description": "Update stock quantity endpoint"
+            },
+            {
+                "name": "checkStockAvailability",
+                "returnType": "ResponseEntity<Integer>",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "variantId", "type": "Long"}],
+                "description": "Check stock availability endpoint"
+            },
+            {
+                "name": "reserveStock",
+                "returnType": "ResponseEntity<Boolean>",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "variantId", "type": "Long"}, {"name": "quantity", "type": "Integer"}],
+                "description": "Reserve stock endpoint"
+            },
+            {
+                "name": "releaseReservedStock",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "variantId", "type": "Long"}, {"name": "quantity", "type": "Integer"}],
+                "description": "Release reserved stock endpoint"
+            },
+            {
+                "name": "getLowStockItems",
+                "returnType": "ResponseEntity<List<InventoryDTO>>",
+                "parameters": [],
+                "description": "Get low stock items endpoint"
+            },
+            {
+                "name": "bulkUpdateInventory",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [{"name": "inventoryUpdates", "type": "List<InventoryDTO>"}],
+                "description": "Bulk update inventory endpoint"
+            }
+        ]
+    },
+    {
+        "name": "ProductController",
+        "package": "com.gradlehigh211100.productcatalog.controller",
+        "type": "controller",
+        "description": "REST controller providing API endpoints for product management operations including CRUD, search, and bulk operations.",
+        "dependencies": ["com.gradlehigh211100.productcatalog.service.ProductService", "com.gradlehigh211100.productcatalog.service.SearchService"],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "productService",
+                "type": "ProductService",
+                "description": "Product service for business logic"
+            },
+            {
+                "name": "searchService",
+                "type": "SearchService",
+                "description": "Search service for product search"
+            }
+        ],
+        "methods": [
+            {
+                "name": "createProduct",
+                "returnType": "ResponseEntity<ProductDTO>",
+                "parameters": [{"name": "productData", "type": "ProductDTO"}],
+                "description": "Create product endpoint"
+            },
+            {
+                "name": "updateProduct",
+                "returnType": "ResponseEntity<ProductDTO>",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "productData", "type": "ProductDTO"}],
+                "description": "Update product endpoint"
+            },
+            {
+                "name": "deleteProduct",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [{"name": "productId", "type": "Long"}],
+                "description": "Delete product endpoint"
+            },
+            {
+                "name": "getProductById",
+                "returnType": "ResponseEntity<ProductDTO>",
+                "parameters": [{"name": "productId", "type": "Long"}],
+                "description": "Get product by ID endpoint"
+            },
+            {
+                "name": "getProductBySku",
+                "returnType": "ResponseEntity<ProductDTO>",
+                "parameters": [{"name": "sku", "type": "String"}],
+                "description": "Get product by SKU endpoint"
+            },
+            {
+                "name": "searchProducts",
+                "returnType": "ResponseEntity<ProductSearchResponse>",
+                "parameters": [{"name": "searchRequest", "type": "ProductSearchRequest"}],
+                "description": "Search products endpoint"
+            },
+            {
+                "name": "getProductsByCategory",
+                "returnType": "ResponseEntity<List<ProductDTO>>",
+                "parameters": [{"name": "categoryId", "type": "Long"}],
+                "description": "Get products by category endpoint"
+            },
+            {
+                "name": "bulkCreateProducts",
+                "returnType": "ResponseEntity<List<ProductDTO>>",
+                "parameters": [{"name": "products", "type": "List<ProductDTO>"}],
+                "description": "Bulk create products endpoint"
+            },
+            {
+                "name": "bulkUpdateProducts",
+                "returnType": "ResponseEntity<Void>",
+                "parameters": [{"name": "updates", "type": "List<ProductDTO>"}],
+                "description": "Bulk update products endpoint"
+            },
+            {
+                "name": "getRelatedProducts",
+                "returnType": "ResponseEntity<List<ProductDTO>>",
+                "parameters": [{"name": "productId", "type": "Long"}, {"name": "relationType", "type": "String"}],
+                "description": "Get related products endpoint"
+            }
+        ]
+    }
+]

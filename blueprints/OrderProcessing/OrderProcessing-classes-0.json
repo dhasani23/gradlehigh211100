@@ -1,0 +1,846 @@
+[
+    {
+        "name": "OrderState",
+        "package": "com.gradlehigh211100.orderprocessing.model.enums",
+        "type": "enum",
+        "description": "Enumeration defining all possible states in the order lifecycle state machine including PENDING, VALIDATED, PAYMENT_PROCESSING, PAID, INVENTORY_RESERVED, SHIPPED, DELIVERED, CANCELLED, REFUNDED",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "PENDING",
+                "type": "OrderState",
+                "description": "Order has been created but not yet validated"
+            },
+            {
+                "name": "VALIDATED",
+                "type": "OrderState",
+                "description": "Order has passed validation checks"
+            },
+            {
+                "name": "PAYMENT_PROCESSING",
+                "type": "OrderState",
+                "description": "Payment is currently being processed"
+            },
+            {
+                "name": "PAID",
+                "type": "OrderState",
+                "description": "Payment has been successfully processed"
+            },
+            {
+                "name": "INVENTORY_RESERVED",
+                "type": "OrderState",
+                "description": "Inventory has been reserved for this order"
+            },
+            {
+                "name": "SHIPPED",
+                "type": "OrderState",
+                "description": "Order has been shipped to customer"
+            },
+            {
+                "name": "DELIVERED",
+                "type": "OrderState",
+                "description": "Order has been delivered to customer"
+            },
+            {
+                "name": "CANCELLED",
+                "type": "OrderState",
+                "description": "Order has been cancelled"
+            },
+            {
+                "name": "REFUNDED",
+                "type": "OrderState",
+                "description": "Order has been refunded"
+            }
+        ],
+        "methods": [
+            {
+                "name": "values",
+                "returnType": "OrderState[]",
+                "parameters": [],
+                "description": "Returns all enum values"
+            },
+            {
+                "name": "valueOf",
+                "returnType": "OrderState",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "type": "String"
+                    }
+                ],
+                "description": "Returns enum value by name"
+            }
+        ]
+    },
+    {
+        "name": "OrderEvent",
+        "package": "com.gradlehigh211100.orderprocessing.model.enums",
+        "type": "enum",
+        "description": "Enumeration defining all possible events that can trigger state transitions in the order state machine including CREATE, VALIDATE, PROCESS_PAYMENT, RESERVE_INVENTORY, SHIP, DELIVER, CANCEL, REFUND",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "CREATE",
+                "type": "OrderEvent",
+                "description": "Event triggered when creating a new order"
+            },
+            {
+                "name": "VALIDATE",
+                "type": "OrderEvent",
+                "description": "Event triggered to validate an order"
+            },
+            {
+                "name": "PROCESS_PAYMENT",
+                "type": "OrderEvent",
+                "description": "Event triggered to process payment"
+            },
+            {
+                "name": "RESERVE_INVENTORY",
+                "type": "OrderEvent",
+                "description": "Event triggered to reserve inventory"
+            },
+            {
+                "name": "SHIP",
+                "type": "OrderEvent",
+                "description": "Event triggered when order is shipped"
+            },
+            {
+                "name": "DELIVER",
+                "type": "OrderEvent",
+                "description": "Event triggered when order is delivered"
+            },
+            {
+                "name": "CANCEL",
+                "type": "OrderEvent",
+                "description": "Event triggered to cancel an order"
+            },
+            {
+                "name": "REFUND",
+                "type": "OrderEvent",
+                "description": "Event triggered to refund an order"
+            }
+        ],
+        "methods": [
+            {
+                "name": "values",
+                "returnType": "OrderEvent[]",
+                "parameters": [],
+                "description": "Returns all enum values"
+            },
+            {
+                "name": "valueOf",
+                "returnType": "OrderEvent",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "type": "String"
+                    }
+                ],
+                "description": "Returns enum value by name"
+            }
+        ]
+    },
+    {
+        "name": "PaymentMethod",
+        "package": "com.gradlehigh211100.orderprocessing.model.enums",
+        "type": "enum",
+        "description": "Enumeration defining supported payment methods including CREDIT_CARD, DEBIT_CARD, PAYPAL, BANK_TRANSFER, CASH_ON_DELIVERY",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "CREDIT_CARD",
+                "type": "PaymentMethod",
+                "description": "Payment via credit card"
+            },
+            {
+                "name": "DEBIT_CARD",
+                "type": "PaymentMethod",
+                "description": "Payment via debit card"
+            },
+            {
+                "name": "PAYPAL",
+                "type": "PaymentMethod",
+                "description": "Payment via PayPal"
+            },
+            {
+                "name": "BANK_TRANSFER",
+                "type": "PaymentMethod",
+                "description": "Payment via bank transfer"
+            },
+            {
+                "name": "CASH_ON_DELIVERY",
+                "type": "PaymentMethod",
+                "description": "Cash payment on delivery"
+            }
+        ],
+        "methods": [
+            {
+                "name": "values",
+                "returnType": "PaymentMethod[]",
+                "parameters": [],
+                "description": "Returns all enum values"
+            },
+            {
+                "name": "valueOf",
+                "returnType": "PaymentMethod",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "type": "String"
+                    }
+                ],
+                "description": "Returns enum value by name"
+            }
+        ]
+    },
+    {
+        "name": "OrderItem",
+        "package": "com.gradlehigh211100.orderprocessing.model.entity",
+        "type": "entity",
+        "description": "Entity representing individual items within an order including product reference, quantity, unit price, discounts, and total amount calculations",
+        "dependencies": ["com.gradlehigh211100.common.model.BaseEntity"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.model.BaseEntity",
+        "fields": [
+            {
+                "name": "productId",
+                "type": "Long",
+                "description": "Reference to the product being ordered"
+            },
+            {
+                "name": "productName",
+                "type": "String",
+                "description": "Name of the product at time of order"
+            },
+            {
+                "name": "productSku",
+                "type": "String",
+                "description": "SKU of the product at time of order"
+            },
+            {
+                "name": "quantity",
+                "type": "Integer",
+                "description": "Quantity of the product ordered"
+            },
+            {
+                "name": "unitPrice",
+                "type": "BigDecimal",
+                "description": "Unit price of the product at time of order"
+            },
+            {
+                "name": "discountAmount",
+                "type": "BigDecimal",
+                "description": "Discount amount applied to this item"
+            },
+            {
+                "name": "totalPrice",
+                "type": "BigDecimal",
+                "description": "Total price for this item (quantity * unitPrice - discount)"
+            },
+            {
+                "name": "order",
+                "type": "Order",
+                "description": "Reference to the parent order"
+            }
+        ],
+        "methods": [
+            {
+                "name": "calculateTotalPrice",
+                "returnType": "BigDecimal",
+                "parameters": [],
+                "description": "Calculates and returns the total price for this order item"
+            },
+            {
+                "name": "applyDiscount",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "discount",
+                        "type": "BigDecimal"
+                    }
+                ],
+                "description": "Applies discount to this order item"
+            },
+            {
+                "name": "updateQuantity",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "newQuantity",
+                        "type": "Integer"
+                    }
+                ],
+                "description": "Updates the quantity and recalculates total price"
+            }
+        ]
+    },
+    {
+        "name": "CartItem",
+        "package": "com.gradlehigh211100.orderprocessing.model.entity",
+        "type": "entity",
+        "description": "Entity representing individual items in a shopping cart with product reference, quantity, and temporary pricing information",
+        "dependencies": ["com.gradlehigh211100.common.model.BaseEntity"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.model.BaseEntity",
+        "fields": [
+            {
+                "name": "productId",
+                "type": "Long",
+                "description": "Reference to the product in cart"
+            },
+            {
+                "name": "quantity",
+                "type": "Integer",
+                "description": "Quantity of the product in cart"
+            },
+            {
+                "name": "addedDate",
+                "type": "Date",
+                "description": "Date when item was added to cart"
+            },
+            {
+                "name": "sessionId",
+                "type": "String",
+                "description": "Session identifier for anonymous users"
+            },
+            {
+                "name": "shoppingCart",
+                "type": "ShoppingCart",
+                "description": "Reference to the parent shopping cart"
+            }
+        ],
+        "methods": [
+            {
+                "name": "updateQuantity",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "newQuantity",
+                        "type": "Integer"
+                    }
+                ],
+                "description": "Updates the quantity of this cart item"
+            },
+            {
+                "name": "isExpired",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "expirationHours",
+                        "type": "int"
+                    }
+                ],
+                "description": "Checks if the cart item has expired based on added date"
+            }
+        ]
+    },
+    {
+        "name": "PaymentDetails",
+        "package": "com.gradlehigh211100.orderprocessing.model.entity",
+        "type": "entity",
+        "description": "Entity containing payment information including payment method, transaction details, payment status, and financial calculations",
+        "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.orderprocessing.model.enums.PaymentMethod"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.model.BaseEntity",
+        "fields": [
+            {
+                "name": "paymentMethod",
+                "type": "PaymentMethod",
+                "description": "Method used for payment"
+            },
+            {
+                "name": "transactionId",
+                "type": "String",
+                "description": "External transaction identifier"
+            },
+            {
+                "name": "paymentStatus",
+                "type": "String",
+                "description": "Current status of payment processing"
+            },
+            {
+                "name": "amount",
+                "type": "BigDecimal",
+                "description": "Total payment amount"
+            },
+            {
+                "name": "currency",
+                "type": "String",
+                "description": "Currency code for the payment"
+            },
+            {
+                "name": "paymentDate",
+                "type": "Date",
+                "description": "Date when payment was processed"
+            },
+            {
+                "name": "authorizationCode",
+                "type": "String",
+                "description": "Authorization code from payment processor"
+            },
+            {
+                "name": "gatewayResponse",
+                "type": "String",
+                "description": "Response from payment gateway"
+            }
+        ],
+        "methods": [
+            {
+                "name": "isSuccessful",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if payment was successfully processed"
+            },
+            {
+                "name": "isPending",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if payment is still pending"
+            },
+            {
+                "name": "markAsPaid",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "transactionId",
+                        "type": "String"
+                    },
+                    {
+                        "name": "authCode",
+                        "type": "String"
+                    }
+                ],
+                "description": "Marks payment as successfully processed"
+            },
+            {
+                "name": "markAsFailed",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "reason",
+                        "type": "String"
+                    }
+                ],
+                "description": "Marks payment as failed with reason"
+            }
+        ]
+    },
+    {
+        "name": "ShippingDetails",
+        "package": "com.gradlehigh211100.orderprocessing.model.entity",
+        "type": "entity",
+        "description": "Entity containing shipping information including delivery address, shipping method, tracking number, and delivery status",
+        "dependencies": ["com.gradlehigh211100.common.model.BaseEntity"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.model.BaseEntity",
+        "fields": [
+            {
+                "name": "shippingAddress",
+                "type": "String",
+                "description": "Complete shipping address"
+            },
+            {
+                "name": "city",
+                "type": "String",
+                "description": "Shipping city"
+            },
+            {
+                "name": "state",
+                "type": "String",
+                "description": "Shipping state/province"
+            },
+            {
+                "name": "zipCode",
+                "type": "String",
+                "description": "Shipping postal code"
+            },
+            {
+                "name": "country",
+                "type": "String",
+                "description": "Shipping country"
+            },
+            {
+                "name": "shippingMethod",
+                "type": "String",
+                "description": "Selected shipping method"
+            },
+            {
+                "name": "shippingCost",
+                "type": "BigDecimal",
+                "description": "Cost of shipping"
+            },
+            {
+                "name": "trackingNumber",
+                "type": "String",
+                "description": "Tracking number for shipment"
+            },
+            {
+                "name": "carrierName",
+                "type": "String",
+                "description": "Name of shipping carrier"
+            },
+            {
+                "name": "estimatedDeliveryDate",
+                "type": "Date",
+                "description": "Estimated delivery date"
+            },
+            {
+                "name": "actualDeliveryDate",
+                "type": "Date",
+                "description": "Actual delivery date"
+            }
+        ],
+        "methods": [
+            {
+                "name": "calculateShippingCost",
+                "returnType": "BigDecimal",
+                "parameters": [
+                    {
+                        "name": "weight",
+                        "type": "BigDecimal"
+                    },
+                    {
+                        "name": "distance",
+                        "type": "BigDecimal"
+                    }
+                ],
+                "description": "Calculates shipping cost based on weight and distance"
+            },
+            {
+                "name": "updateTrackingInfo",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "trackingNumber",
+                        "type": "String"
+                    },
+                    {
+                        "name": "carrier",
+                        "type": "String"
+                    }
+                ],
+                "description": "Updates tracking information for the shipment"
+            },
+            {
+                "name": "markAsDelivered",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "deliveryDate",
+                        "type": "Date"
+                    }
+                ],
+                "description": "Marks the shipment as delivered"
+            }
+        ]
+    },
+    {
+        "name": "ShoppingCart",
+        "package": "com.gradlehigh211100.orderprocessing.model.entity",
+        "type": "entity",
+        "description": "Entity representing a user's shopping cart with cart items, session management, and cart persistence capabilities",
+        "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.orderprocessing.model.entity.CartItem"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.model.BaseEntity",
+        "fields": [
+            {
+                "name": "userId",
+                "type": "Long",
+                "description": "Reference to the user who owns this cart"
+            },
+            {
+                "name": "sessionId",
+                "type": "String",
+                "description": "Session identifier for anonymous users"
+            },
+            {
+                "name": "cartItems",
+                "type": "List<CartItem>",
+                "description": "List of items in the shopping cart"
+            },
+            {
+                "name": "createdDate",
+                "type": "Date",
+                "description": "Date when cart was created"
+            },
+            {
+                "name": "lastModifiedDate",
+                "type": "Date",
+                "description": "Date when cart was last modified"
+            },
+            {
+                "name": "isActive",
+                "type": "Boolean",
+                "description": "Whether the cart is currently active"
+            }
+        ],
+        "methods": [
+            {
+                "name": "addItem",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "quantity",
+                        "type": "Integer"
+                    }
+                ],
+                "description": "Adds an item to the cart or updates quantity if already exists"
+            },
+            {
+                "name": "removeItem",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Removes an item from the cart"
+            },
+            {
+                "name": "updateItemQuantity",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "productId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "quantity",
+                        "type": "Integer"
+                    }
+                ],
+                "description": "Updates the quantity of a specific item"
+            },
+            {
+                "name": "clearCart",
+                "returnType": "void",
+                "parameters": [],
+                "description": "Removes all items from the cart"
+            },
+            {
+                "name": "getTotalItems",
+                "returnType": "Integer",
+                "parameters": [],
+                "description": "Returns the total number of items in cart"
+            },
+            {
+                "name": "isEmpty",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if the cart is empty"
+            }
+        ]
+    },
+    {
+        "name": "Order",
+        "package": "com.gradlehigh211100.orderprocessing.model.entity",
+        "type": "entity",
+        "description": "Main order entity containing order details, customer information, order items, payment details, shipping information, and state tracking",
+        "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.orderprocessing.model.entity.OrderItem", "com.gradlehigh211100.orderprocessing.model.enums.OrderState", "com.gradlehigh211100.orderprocessing.model.enums.PaymentMethod"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.model.BaseEntity",
+        "fields": [
+            {
+                "name": "orderNumber",
+                "type": "String",
+                "description": "Unique order number"
+            },
+            {
+                "name": "customerId",
+                "type": "Long",
+                "description": "Reference to the customer who placed the order"
+            },
+            {
+                "name": "orderItems",
+                "type": "List<OrderItem>",
+                "description": "List of items in this order"
+            },
+            {
+                "name": "orderState",
+                "type": "OrderState",
+                "description": "Current state of the order"
+            },
+            {
+                "name": "subtotal",
+                "type": "BigDecimal",
+                "description": "Subtotal before taxes and discounts"
+            },
+            {
+                "name": "taxAmount",
+                "type": "BigDecimal",
+                "description": "Total tax amount"
+            },
+            {
+                "name": "discountAmount",
+                "type": "BigDecimal",
+                "description": "Total discount amount"
+            },
+            {
+                "name": "shippingCost",
+                "type": "BigDecimal",
+                "description": "Shipping cost"
+            },
+            {
+                "name": "totalAmount",
+                "type": "BigDecimal",
+                "description": "Total order amount"
+            },
+            {
+                "name": "orderDate",
+                "type": "Date",
+                "description": "Date when order was placed"
+            },
+            {
+                "name": "paymentDetails",
+                "type": "PaymentDetails",
+                "description": "Payment information for this order"
+            },
+            {
+                "name": "shippingDetails",
+                "type": "ShippingDetails",
+                "description": "Shipping information for this order"
+            }
+        ],
+        "methods": [
+            {
+                "name": "calculateTotalAmount",
+                "returnType": "BigDecimal",
+                "parameters": [],
+                "description": "Calculates and returns the total order amount"
+            },
+            {
+                "name": "addOrderItem",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "orderItem",
+                        "type": "OrderItem"
+                    }
+                ],
+                "description": "Adds an order item to this order"
+            },
+            {
+                "name": "removeOrderItem",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "orderItem",
+                        "type": "OrderItem"
+                    }
+                ],
+                "description": "Removes an order item from this order"
+            },
+            {
+                "name": "updateOrderState",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "newState",
+                        "type": "OrderState"
+                    }
+                ],
+                "description": "Updates the order state"
+            },
+            {
+                "name": "canBeCancelled",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if the order can be cancelled based on current state"
+            },
+            {
+                "name": "canBeModified",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if the order can be modified based on current state"
+            }
+        ]
+    },
+    {
+        "name": "OrderHistory",
+        "package": "com.gradlehigh211100.orderprocessing.model.entity",
+        "type": "entity",
+        "description": "Entity tracking the complete history and state transitions of orders including timestamps, state changes, and audit information",
+        "dependencies": ["com.gradlehigh211100.common.model.BaseEntity", "com.gradlehigh211100.orderprocessing.model.entity.Order", "com.gradlehigh211100.orderprocessing.model.enums.OrderState"],
+        "implements": [],
+        "extends": "com.gradlehigh211100.common.model.BaseEntity",
+        "fields": [
+            {
+                "name": "order",
+                "type": "Order",
+                "description": "Reference to the order being tracked"
+            },
+            {
+                "name": "previousState",
+                "type": "OrderState",
+                "description": "Previous state of the order"
+            },
+            {
+                "name": "newState",
+                "type": "OrderState",
+                "description": "New state of the order"
+            },
+            {
+                "name": "stateChangeDate",
+                "type": "Date",
+                "description": "Date when state change occurred"
+            },
+            {
+                "name": "changeReason",
+                "type": "String",
+                "description": "Reason for the state change"
+            },
+            {
+                "name": "changedBy",
+                "type": "String",
+                "description": "User or system that initiated the change"
+            },
+            {
+                "name": "notes",
+                "type": "String",
+                "description": "Additional notes about the state change"
+            }
+        ],
+        "methods": [
+            {
+                "name": "recordStateChange",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "type": "Order"
+                    },
+                    {
+                        "name": "fromState",
+                        "type": "OrderState"
+                    },
+                    {
+                        "name": "toState",
+                        "type": "OrderState"
+                    },
+                    {
+                        "name": "reason",
+                        "type": "String"
+                    }
+                ],
+                "description": "Records a state change in order history"
+            },
+            {
+                "name": "getStateChangeDuration",
+                "returnType": "long",
+                "parameters": [],
+                "description": "Calculates the duration since state change in milliseconds"
+            }
+        ]
+    }
+]
