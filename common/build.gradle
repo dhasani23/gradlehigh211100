@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.gradlehigh211100'
+version = '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // No external dependencies required for this module
+    
+    // Test dependencies
+    testImplementation 'junit:junit:4.13.2'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
