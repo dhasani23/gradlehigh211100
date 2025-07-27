@@ -2,14 +2,13 @@ package com.ecommerce.root;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.retry.annotation.EnableRetry;
 
 /**
- * Main application class for the E-Commerce microservice.
- * Enables service discovery via Eureka.
+ * Main application class for E-Commerce application
  */
 @SpringBootApplication
-@EnableDiscoveryClient
+@EnableRetry
 public class ECommerceApplication {
 
     public static void main(String[] args) {
