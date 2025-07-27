@@ -1,341 +1,231 @@
 package com.gradlehigh211100.userservice.service;
 
-import com.gradlehigh211100.userservice.dto.LoginDto;
-import com.gradlehigh211100.userservice.entity.UserEntity;
-import com.gradlehigh211100.userservice.exception.AuthenticationException;
-import com.gradlehigh211100.userservice.exception.TokenExpiredException;
-import com.gradlehigh211100.userservice.exception.UserNotFoundException;
-import com.gradlehigh211100.userservice.model.UserPrincipal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Service handling user authentication, JWT token management, session control, and security validations.
- * This service provides comprehensive authentication functionalities with high security measures.
+ * Service interface for authentication operations
  */
-@Service
-public class AuthenticationService {
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
+public interface AuthenticationService {
     
-    // In-memory blacklist for invalidated tokens (should be replaced with Redis in production)
-    private static final Map<String, LocalDateTime> TOKEN_BLACKLIST = new ConcurrentHashMap<>();
-    
-    // Threshold for failed login attempts before temporary lockout
-    private static final int MAX_FAILED_ATTEMPTS = 5;
-    
-    // In-memory storage for tracking failed login attempts (should be replaced with persistent storage in production)
-    private static final Map<String, Integer> FAILED_LOGIN_ATTEMPTS = new ConcurrentHashMap<>();
-    
-    @Value("${jwt.token.expiration:3600}")
-    private long tokenExpirationSeconds;
-    
-    private final UserService userService;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final UserAuditService userAuditService;
-
-    @Autowired
-    public AuthenticationService(UserService userService, 
-                               JwtService jwtService, 
-                               AuthenticationManager authenticationManager, 
-                               BCryptPasswordEncoder passwordEncoder,
-                               UserAuditService userAuditService) {
-        this.userService = userService;
-        this.jwtService = jwtService;
-        this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
-        this.userAuditService = userAuditService;
-    }
-
     /**
-     * Authenticates user credentials and returns JWT token.
+     * Validates user credentials
      * 
-     * @param loginDto Data transfer object containing login credentials
-     * @return JWT token for authenticated user
-     * @throws AuthenticationException If authentication fails
-     * @throws UserNotFoundException If user does not exist
+     * @param username username or email
+     * @param password user password
+     * @return true if credentials are valid
      */
-    public String authenticate(LoginDto loginDto) {
-        String username = loginDto.getUsername();
-        String password = loginDto.getPassword();
-        String ipAddress = loginDto.getIpAddress();
-        
-        if (!StringUtils.hasText(username) || !StringUtils.hasText(password)) {
-            throw new AuthenticationException("Username and password cannot be empty");
-        }
-        
-        // Check for account lockout due to too many failed attempts
-        checkAccountLockout(username);
-        
-        try {
-            // Perform authentication through Spring Security
-            Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
-            );
-            
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            
-            // Get user details
-            UserEntity user = userService.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
-            
-            // Generate custom claims for the JWT token
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("userId", user.getId());
-            claims.put("roles", user.getRoles());
-            claims.put("email", user.getEmail());
-            
-            // Generate JWT token
-            String token = jwtService.generateToken(username, claims);
-            
-            // Reset failed login attempts counter on successful login
-            FAILED_LOGIN_ATTEMPTS.remove(username);
-            
-            // Record successful login
-            recordSuccessfulLogin(user, ipAddress);
-            
-            return token;
-        } catch (BadCredentialsException e) {
-            // Record failed login attempt
-            recordFailedLogin(username, ipAddress);
-            
-            // Increment failed login counter
-            int failedAttempts = FAILED_LOGIN_ATTEMPTS.getOrDefault(username, 0) + 1;
-            FAILED_LOGIN_ATTEMPTS.put(username, failedAttempts);
-            
-            logger.warn("Failed login attempt for user: {}, attempt #{}, IP: {}", 
-                    username, failedAttempts, ipAddress);
-            
-            throw new AuthenticationException("Invalid username or password");
-        } catch (Exception e) {
-            logger.error("Authentication error for user: " + username, e);
-            throw new AuthenticationException("Authentication failed: " + e.getMessage());
-        }
-    }
+    boolean validateCredentials(String username, String password);
     
     /**
-     * Validates JWT token authenticity and expiration.
+     * Generates JWT access token
      * 
-     * @param token JWT token to validate
-     * @return true if token is valid, false otherwise
+     * @param username username
+     * @return JWT access token
      */
-    public boolean validateToken(String token) {
-        if (token == null || token.isEmpty()) {
-            logger.warn("Empty token provided for validation");
-            return false;
-        }
-        
-        // Check if token is blacklisted (logged out)
-        if (TOKEN_BLACKLIST.containsKey(token)) {
-            logger.warn("Attempt to use invalidated token");
-            return false;
-        }
-        
-        try {
-            // Validate token signature and expiration
-            if (!jwtService.validateToken(token)) {
-                logger.warn("Invalid or expired token detected");
-                return false;
-            }
-            
-            // Verify user still exists and is active
-            String username = jwtService.extractUsername(token);
-            UserEntity user = userService.findByUsername(username)
-                .orElse(null);
-                
-            if (user == null || !user.isActive()) {
-                logger.warn("Token validation failed - user does not exist or is inactive: {}", username);
-                return false;
-            }
-            
-            return true;
-        } catch (Exception e) {
-            logger.error("Token validation error", e);
-            return false;
-        }
-    }
+    String generateAccessToken(String username);
     
     /**
-     * Refreshes an existing JWT token.
+     * Generates refresh token
      * 
-     * @param token Current valid JWT token
-     * @return New refreshed JWT token
-     * @throws AuthenticationException If token refresh fails
-     * @throws TokenExpiredException If token is expired beyond refresh window
+     * @param username username
+     * @return refresh token
      */
-    public String refreshToken(String token) {
-        if (!validateToken(token)) {
-            throw new TokenExpiredException("Cannot refresh invalid or expired token");
-        }
-        
-        try {
-            // Extract user details from existing token
-            String username = jwtService.extractUsername(token);
-            UserEntity user = getUserFromToken(token);
-            
-            // Add token to blacklist
-            invalidateToken(token);
-            
-            // Generate new claims
-            Map<String, Object> claims = new HashMap<>();
-            claims.put("userId", user.getId());
-            claims.put("roles", user.getRoles());
-            claims.put("email", user.getEmail());
-            claims.put("refreshed", LocalDateTime.now().toString());
-            
-            // Generate new token
-            return jwtService.generateToken(username, claims);
-            
-        } catch (Exception e) {
-            logger.error("Token refresh error", e);
-            throw new AuthenticationException("Failed to refresh token: " + e.getMessage());
-        }
-    }
+    String generateRefreshToken(String username);
     
     /**
-     * Invalidates user session and JWT token.
+     * Records failed login attempt
      * 
-     * @param token JWT token to invalidate
+     * @param username username
+     * @param ipAddress IP address of client
      */
-    public void logout(String token) {
-        if (token == null || token.isEmpty()) {
-            logger.warn("Attempt to logout with empty token");
-            return;
-        }
-        
-        try {
-            // Add to blacklist if token is valid
-            if (jwtService.validateToken(token)) {
-                invalidateToken(token);
-                
-                // Get user for logging purposes
-                String username = jwtService.extractUsername(token);
-                logger.info("User logged out successfully: {}", username);
-                
-                // Clear security context
-                SecurityContextHolder.clearContext();
-            }
-        } catch (Exception e) {
-            // Log but don't throw - logout should always succeed
-            logger.warn("Error during logout", e);
-        }
-    }
+    void recordFailedLoginAttempt(String username, String ipAddress);
     
     /**
-     * Extracts user information from JWT token.
+     * Resets failed attempts counter
      * 
-     * @param token JWT token containing user information
-     * @return UserEntity containing user details
-     * @throws AuthenticationException If user extraction fails
+     * @param username username
      */
-    public UserEntity getUserFromToken(String token) {
-        if (!validateToken(token)) {
-            throw new AuthenticationException("Cannot extract user from invalid token");
-        }
-        
-        try {
-            String username = jwtService.extractUsername(token);
-            return userService.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
-        } catch (Exception e) {
-            logger.error("Error extracting user from token", e);
-            throw new AuthenticationException("Failed to extract user details: " + e.getMessage());
-        }
-    }
+    void resetFailedAttempts(String username);
     
     /**
-     * Records failed login attempts for security tracking.
+     * Records successful login
      * 
-     * @param username Username that failed authentication
-     * @param ipAddress IP address of the request
+     * @param username username
+     * @param ipAddress IP address of client
+     * @param userAgent user agent string
      */
-    public void recordFailedLogin(String username, String ipAddress) {
-        try {
-            // Log to audit service
-            userAuditService.logFailedLogin(username, ipAddress, LocalDateTime.now());
-            
-            logger.warn("Failed login recorded - Username: {}, IP: {}", username, ipAddress);
-            
-            // Check for potential brute force attacks
-            int recentFailures = userAuditService.getRecentFailedLoginCount(username, 10); // Last 10 minutes
-            
-            if (recentFailures > 10) {
-                // FIXME: Implement proper notification system for security alerts
-                logger.error("SECURITY ALERT: Possible brute force attack detected for user: {}", username);
-            }
-        } catch (Exception e) {
-            // Just log errors, don't disrupt the authentication flow for logging failures
-            logger.error("Error recording failed login", e);
-        }
-    }
+    void recordSuccessfulLogin(String username, String ipAddress, String userAgent);
     
     /**
-     * Records successful login for audit purposes.
+     * Gets access token expiration time in seconds
      * 
-     * @param user User entity that successfully authenticated
-     * @param ipAddress IP address of the request
+     * @return expiration time in seconds
      */
-    public void recordSuccessfulLogin(UserEntity user, String ipAddress) {
-        try {
-            // Set last login time on user entity
-            user.setLastLoginDate(LocalDateTime.now());
-            userService.updateUser(user);
-            
-            // Log to audit service
-            userAuditService.logSuccessfulLogin(
-                user.getUsername(), 
-                ipAddress, 
-                LocalDateTime.now()
-            );
-            
-            logger.info("Successful login recorded - User: {}, IP: {}", user.getUsername(), ipAddress);
-        } catch (Exception e) {
-            // Just log errors, don't disrupt the authentication flow
-            logger.error("Error recording successful login", e);
-        }
-    }
+    long getAccessTokenExpiration();
     
     /**
-     * Helper method to add a token to the blacklist.
+     * Validates refresh token
+     * 
+     * @param refreshToken refresh token
+     * @return true if token is valid
      */
-    private void invalidateToken(String token) {
-        // Store token in blacklist with expiration time
-        TOKEN_BLACKLIST.put(token, LocalDateTime.now().plusSeconds(tokenExpirationSeconds));
-        
-        // TODO: Implement a cleanup task to remove expired tokens from blacklist
-    }
+    boolean validateRefreshToken(String refreshToken);
     
     /**
-     * Checks if the account is locked out due to too many failed login attempts.
+     * Extracts username from refresh token
+     * 
+     * @param refreshToken refresh token
+     * @return username
      */
-    private void checkAccountLockout(String username) {
-        Integer attempts = FAILED_LOGIN_ATTEMPTS.get(username);
-        
-        if (attempts != null && attempts >= MAX_FAILED_ATTEMPTS) {
-            // Calculate lockout end time based on exponential backoff
-            int lockoutMinutes = Math.min(Math.pow(2, attempts - MAX_FAILED_ATTEMPTS), 60);
-            
-            logger.warn("Account temporarily locked out due to too many failed attempts: {}", username);
-            throw new AuthenticationException(
-                String.format("Account temporarily locked due to too many failed attempts. Please try again in %d minutes.", 
-                    lockoutMinutes));
-        }
-    }
+    String getUsernameFromRefreshToken(String refreshToken);
+    
+    /**
+     * Checks if user is active
+     * 
+     * @param username username
+     * @return true if user is active
+     */
+    boolean isUserActive(String username);
+    
+    /**
+     * Invalidates all tokens for a user
+     * 
+     * @param username username
+     */
+    void invalidateUserTokens(String username);
+    
+    /**
+     * Invalidates a specific refresh token
+     * 
+     * @param refreshToken refresh token to invalidate
+     */
+    void invalidateRefreshToken(String refreshToken);
+    
+    /**
+     * Checks if access token is valid
+     * 
+     * @param token access token
+     * @return true if token is valid
+     */
+    boolean isValidAccessToken(String token);
+    
+    /**
+     * Gets username from access token
+     * 
+     * @param token access token
+     * @return username
+     */
+    String getUsernameFromToken(String token);
+    
+    /**
+     * Logs security event
+     * 
+     * @param eventType type of event
+     * @param message event message
+     * @param ipAddress client IP address
+     * @param username username
+     */
+    void logSecurityEvent(String eventType, String message, String ipAddress, String username);
+    
+    /**
+     * Invalidates access token
+     * 
+     * @param token access token to invalidate
+     */
+    void invalidateAccessToken(String token);
+    
+    /**
+     * Gets token expiration time
+     * 
+     * @param token access token
+     * @return expiration time in milliseconds
+     */
+    long getTokenExpiration(String token);
+    
+    /**
+     * Gets user details
+     * 
+     * @param username username
+     * @return map of user details
+     */
+    Map<String, Object> getUserDetails(String username);
+    
+    /**
+     * Checks if user exists
+     * 
+     * @param email user email
+     * @return true if user exists
+     */
+    boolean doesUserExist(String email);
+    
+    /**
+     * Checks if password reset is rate limited
+     * 
+     * @param email user email
+     * @return true if rate limited
+     */
+    boolean isResetRateLimited(String email);
+    
+    /**
+     * Generates password reset token
+     * 
+     * @param email user email
+     * @return password reset token
+     */
+    String generatePasswordResetToken(String email);
+    
+    /**
+     * Sends password reset email
+     * 
+     * @param email user email
+     * @param resetToken password reset token
+     */
+    void sendPasswordResetEmail(String email, String resetToken);
+    
+    /**
+     * Validates password reset token
+     * 
+     * @param token password reset token
+     * @return true if token is valid
+     */
+    boolean isValidPasswordResetToken(String token);
+    
+    /**
+     * Gets email from reset token
+     * 
+     * @param token password reset token
+     * @return user email
+     */
+    String getEmailFromResetToken(String token);
+    
+    /**
+     * Checks if password has been used before
+     * 
+     * @param email user email
+     * @param newPassword new password
+     * @return true if password has been used before
+     */
+    boolean isPasswordReused(String email, String newPassword);
+    
+    /**
+     * Resets user password
+     * 
+     * @param email user email
+     * @param newPassword new password
+     */
+    void resetPassword(String email, String newPassword);
+    
+    /**
+     * Invalidates password reset token
+     * 
+     * @param token password reset token
+     */
+    void invalidatePasswordResetToken(String token);
+    
+    /**
+     * Invalidates all tokens for a user
+     * 
+     * @param email user email
+     */
+    void invalidateAllUserTokens(String email);
 }
