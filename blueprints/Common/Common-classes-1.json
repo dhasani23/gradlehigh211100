@@ -1,0 +1,778 @@
+[
+    {
+        "name": "ValidationUtil",
+        "package": "com.gradlehigh211100.common.util",
+        "type": "utility",
+        "description": "Comprehensive validation utility for input sanitization and business rule validation",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [],
+        "methods": [
+            {
+                "name": "isValidEmail",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "type": "String"
+                    }
+                ],
+                "description": "Validates email address format using regex pattern"
+            },
+            {
+                "name": "isValidPhoneNumber",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "phoneNumber",
+                        "type": "String"
+                    }
+                ],
+                "description": "Validates phone number format for various international formats"
+            },
+            {
+                "name": "isStrongPassword",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "password",
+                        "type": "String"
+                    }
+                ],
+                "description": "Validates password strength based on complexity requirements"
+            },
+            {
+                "name": "validateRequired",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "value",
+                        "type": "Object"
+                    }
+                ],
+                "description": "Validates that required field is not null or empty"
+            },
+            {
+                "name": "validateLength",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "str",
+                        "type": "String"
+                    },
+                    {
+                        "name": "minLength",
+                        "type": "int"
+                    },
+                    {
+                        "name": "maxLength",
+                        "type": "int"
+                    }
+                ],
+                "description": "Validates string length is within specified bounds"
+            },
+            {
+                "name": "validateRange",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "value",
+                        "type": "double"
+                    },
+                    {
+                        "name": "min",
+                        "type": "double"
+                    },
+                    {
+                        "name": "max",
+                        "type": "double"
+                    }
+                ],
+                "description": "Validates numeric value is within specified range"
+            },
+            {
+                "name": "sanitizeInput",
+                "returnType": "String",
+                "parameters": [
+                    {
+                        "name": "input",
+                        "type": "String"
+                    }
+                ],
+                "description": "Sanitizes user input to prevent injection attacks"
+            },
+            {
+                "name": "validateBusinessRule",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "type": "Object"
+                    },
+                    {
+                        "name": "ruleName",
+                        "type": "String"
+                    }
+                ],
+                "description": "Validates entity against specified business rule"
+            },
+            {
+                "name": "buildValidationErrors",
+                "returnType": "Map<String, String>",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "type": "Object"
+                    }
+                ],
+                "description": "Builds comprehensive validation error map for entity"
+            }
+        ]
+    },
+    {
+        "name": "ApiResponse",
+        "package": "com.gradlehigh211100.common.dto",
+        "type": "dto",
+        "description": "Standardized API response wrapper providing consistent response format across all endpoints",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "success",
+                "type": "boolean",
+                "description": "Indicates if the operation was successful"
+            },
+            {
+                "name": "message",
+                "type": "String",
+                "description": "Human-readable message about the operation result"
+            },
+            {
+                "name": "data",
+                "type": "T",
+                "description": "Generic data payload for successful responses"
+            },
+            {
+                "name": "errors",
+                "type": "Map<String, String>",
+                "description": "Field-specific error messages for validation failures"
+            },
+            {
+                "name": "timestamp",
+                "type": "LocalDateTime",
+                "description": "Response timestamp"
+            },
+            {
+                "name": "statusCode",
+                "type": "int",
+                "description": "HTTP status code"
+            }
+        ],
+        "methods": [
+            {
+                "name": "success",
+                "returnType": "ApiResponse<T>",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "type": "T"
+                    }
+                ],
+                "description": "Creates successful response with data"
+            },
+            {
+                "name": "success",
+                "returnType": "ApiResponse<T>",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "type": "T"
+                    },
+                    {
+                        "name": "message",
+                        "type": "String"
+                    }
+                ],
+                "description": "Creates successful response with data and message"
+            },
+            {
+                "name": "error",
+                "returnType": "ApiResponse<T>",
+                "parameters": [
+                    {
+                        "name": "message",
+                        "type": "String"
+                    }
+                ],
+                "description": "Creates error response with message"
+            },
+            {
+                "name": "error",
+                "returnType": "ApiResponse<T>",
+                "parameters": [
+                    {
+                        "name": "errors",
+                        "type": "Map<String, String>"
+                    }
+                ],
+                "description": "Creates error response with field-specific errors"
+            },
+            {
+                "name": "isSuccess",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if response indicates success"
+            },
+            {
+                "name": "hasErrors",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if response has validation errors"
+            },
+            {
+                "name": "getData",
+                "returnType": "T",
+                "parameters": [],
+                "description": "Returns response data"
+            },
+            {
+                "name": "getMessage",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Returns response message"
+            },
+            {
+                "name": "getErrors",
+                "returnType": "Map<String, String>",
+                "parameters": [],
+                "description": "Returns validation errors"
+            }
+        ]
+    },
+    {
+        "name": "PageableRequest",
+        "package": "com.gradlehigh211100.common.dto",
+        "type": "dto",
+        "description": "Data transfer object for paginated request parameters with sorting and filtering",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "page",
+                "type": "int",
+                "description": "Zero-based page number"
+            },
+            {
+                "name": "size",
+                "type": "int",
+                "description": "Number of items per page"
+            },
+            {
+                "name": "sortBy",
+                "type": "String",
+                "description": "Field name to sort by"
+            },
+            {
+                "name": "sortDirection",
+                "type": "String",
+                "description": "Sort direction (ASC or DESC)"
+            },
+            {
+                "name": "searchTerm",
+                "type": "String",
+                "description": "Global search term for filtering"
+            },
+            {
+                "name": "filters",
+                "type": "Map<String, Object>",
+                "description": "Field-specific filters"
+            }
+        ],
+        "methods": [
+            {
+                "name": "PageableRequest",
+                "returnType": "",
+                "parameters": [],
+                "description": "Default constructor with default pagination values"
+            },
+            {
+                "name": "PageableRequest",
+                "returnType": "",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "type": "int"
+                    },
+                    {
+                        "name": "size",
+                        "type": "int"
+                    }
+                ],
+                "description": "Constructor with page and size parameters"
+            },
+            {
+                "name": "getOffset",
+                "returnType": "int",
+                "parameters": [],
+                "description": "Calculates offset for database queries"
+            },
+            {
+                "name": "hasSort",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if sorting is specified"
+            },
+            {
+                "name": "hasSearch",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if search term is provided"
+            },
+            {
+                "name": "hasFilters",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if filters are applied"
+            },
+            {
+                "name": "addFilter",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "field",
+                        "type": "String"
+                    },
+                    {
+                        "name": "value",
+                        "type": "Object"
+                    }
+                ],
+                "description": "Adds a field-specific filter"
+            },
+            {
+                "name": "validateRequest",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Validates pagination request parameters"
+            }
+        ]
+    },
+    {
+        "name": "PageableResponse",
+        "package": "com.gradlehigh211100.common.dto",
+        "type": "dto",
+        "description": "Paginated response container with metadata for pagination controls",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "content",
+                "type": "List<T>",
+                "description": "List of items for current page"
+            },
+            {
+                "name": "page",
+                "type": "int",
+                "description": "Current page number (zero-based)"
+            },
+            {
+                "name": "size",
+                "type": "int",
+                "description": "Number of items per page"
+            },
+            {
+                "name": "totalElements",
+                "type": "long",
+                "description": "Total number of elements across all pages"
+            },
+            {
+                "name": "totalPages",
+                "type": "int",
+                "description": "Total number of pages"
+            },
+            {
+                "name": "first",
+                "type": "boolean",
+                "description": "Indicates if this is the first page"
+            },
+            {
+                "name": "last",
+                "type": "boolean",
+                "description": "Indicates if this is the last page"
+            },
+            {
+                "name": "numberOfElements",
+                "type": "int",
+                "description": "Number of elements in current page"
+            },
+            {
+                "name": "sortBy",
+                "type": "String",
+                "description": "Field used for sorting"
+            },
+            {
+                "name": "sortDirection",
+                "type": "String",
+                "description": "Sort direction applied"
+            }
+        ],
+        "methods": [
+            {
+                "name": "PageableResponse",
+                "returnType": "",
+                "parameters": [
+                    {
+                        "name": "content",
+                        "type": "List<T>"
+                    },
+                    {
+                        "name": "request",
+                        "type": "PageableRequest"
+                    },
+                    {
+                        "name": "totalElements",
+                        "type": "long"
+                    }
+                ],
+                "description": "Constructor with content, request, and total elements"
+            },
+            {
+                "name": "hasContent",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if response has content"
+            },
+            {
+                "name": "isEmpty",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if response is empty"
+            },
+            {
+                "name": "hasNext",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if there is a next page"
+            },
+            {
+                "name": "hasPrevious",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if there is a previous page"
+            },
+            {
+                "name": "getContent",
+                "returnType": "List<T>",
+                "parameters": [],
+                "description": "Returns the content list"
+            },
+            {
+                "name": "getMetadata",
+                "returnType": "Map<String, Object>",
+                "parameters": [],
+                "description": "Returns pagination metadata as map"
+            }
+        ]
+    },
+    {
+        "name": "BaseEntity",
+        "package": "com.gradlehigh211100.common.entity",
+        "type": "entity",
+        "description": "Base entity class providing common audit fields and functionality for all domain entities",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "id",
+                "type": "Long",
+                "description": "Unique identifier for the entity"
+            },
+            {
+                "name": "createdAt",
+                "type": "LocalDateTime",
+                "description": "Timestamp when entity was created"
+            },
+            {
+                "name": "updatedAt",
+                "type": "LocalDateTime",
+                "description": "Timestamp when entity was last updated"
+            },
+            {
+                "name": "createdBy",
+                "type": "String",
+                "description": "User who created the entity"
+            },
+            {
+                "name": "updatedBy",
+                "type": "String",
+                "description": "User who last updated the entity"
+            },
+            {
+                "name": "version",
+                "type": "Long",
+                "description": "Version number for optimistic locking"
+            },
+            {
+                "name": "active",
+                "type": "boolean",
+                "description": "Indicates if entity is active (soft delete flag)"
+            }
+        ],
+        "methods": [
+            {
+                "name": "prePersist",
+                "returnType": "void",
+                "parameters": [],
+                "description": "JPA callback method executed before entity persistence"
+            },
+            {
+                "name": "preUpdate",
+                "returnType": "void",
+                "parameters": [],
+                "description": "JPA callback method executed before entity update"
+            },
+            {
+                "name": "getId",
+                "returnType": "Long",
+                "parameters": [],
+                "description": "Returns entity ID"
+            },
+            {
+                "name": "setId",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "type": "Long"
+                    }
+                ],
+                "description": "Sets entity ID"
+            },
+            {
+                "name": "getCreatedAt",
+                "returnType": "LocalDateTime",
+                "parameters": [],
+                "description": "Returns creation timestamp"
+            },
+            {
+                "name": "getUpdatedAt",
+                "returnType": "LocalDateTime",
+                "parameters": [],
+                "description": "Returns last update timestamp"
+            },
+            {
+                "name": "isActive",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if entity is active"
+            },
+            {
+                "name": "setActive",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "active",
+                        "type": "boolean"
+                    }
+                ],
+                "description": "Sets entity active status"
+            },
+            {
+                "name": "softDelete",
+                "returnType": "void",
+                "parameters": [],
+                "description": "Performs soft delete by setting active to false"
+            },
+            {
+                "name": "equals",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "obj",
+                        "type": "Object"
+                    }
+                ],
+                "description": "Compares entities based on ID"
+            },
+            {
+                "name": "hashCode",
+                "returnType": "int",
+                "parameters": [],
+                "description": "Returns hash code based on ID"
+            }
+        ]
+    },
+    {
+        "name": "AuditTrail",
+        "package": "com.gradlehigh211100.common.audit",
+        "type": "service",
+        "description": "Audit trail service for tracking entity changes, user actions, and system events",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "auditRepository",
+                "type": "AuditRepository",
+                "description": "Repository for persisting audit records"
+            },
+            {
+                "name": "objectMapper",
+                "type": "ObjectMapper",
+                "description": "JSON mapper for serializing audit data"
+            },
+            {
+                "name": "asyncExecutor",
+                "type": "TaskExecutor",
+                "description": "Async executor for non-blocking audit operations"
+            }
+        ],
+        "methods": [
+            {
+                "name": "auditEntityChange",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "entity",
+                        "type": "BaseEntity"
+                    },
+                    {
+                        "name": "action",
+                        "type": "String"
+                    },
+                    {
+                        "name": "userId",
+                        "type": "String"
+                    }
+                ],
+                "description": "Audits entity changes with action and user context"
+            },
+            {
+                "name": "auditUserAction",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "type": "String"
+                    },
+                    {
+                        "name": "action",
+                        "type": "String"
+                    },
+                    {
+                        "name": "details",
+                        "type": "Map<String, Object>"
+                    }
+                ],
+                "description": "Audits user actions with detailed context"
+            },
+            {
+                "name": "auditSystemEvent",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "eventType",
+                        "type": "String"
+                    },
+                    {
+                        "name": "message",
+                        "type": "String"
+                    },
+                    {
+                        "name": "metadata",
+                        "type": "Map<String, Object>"
+                    }
+                ],
+                "description": "Audits system-level events and changes"
+            },
+            {
+                "name": "getAuditHistory",
+                "returnType": "List<AuditRecord>",
+                "parameters": [
+                    {
+                        "name": "entityId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "entityType",
+                        "type": "String"
+                    }
+                ],
+                "description": "Retrieves audit history for specific entity"
+            },
+            {
+                "name": "getUserActivityLog",
+                "returnType": "List<AuditRecord>",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "type": "String"
+                    },
+                    {
+                        "name": "fromDate",
+                        "type": "LocalDateTime"
+                    },
+                    {
+                        "name": "toDate",
+                        "type": "LocalDateTime"
+                    }
+                ],
+                "description": "Retrieves user activity log for date range"
+            },
+            {
+                "name": "createAuditRecord",
+                "returnType": "AuditRecord",
+                "parameters": [
+                    {
+                        "name": "action",
+                        "type": "String"
+                    },
+                    {
+                        "name": "entityType",
+                        "type": "String"
+                    },
+                    {
+                        "name": "entityId",
+                        "type": "Long"
+                    },
+                    {
+                        "name": "userId",
+                        "type": "String"
+                    },
+                    {
+                        "name": "details",
+                        "type": "Object"
+                    }
+                ],
+                "description": "Creates standardized audit record"
+            },
+            {
+                "name": "persistAuditRecord",
+                "returnType": "void",
+                "parameters": [
+                    {
+                        "name": "record",
+                        "type": "AuditRecord"
+                    }
+                ],
+                "description": "Persists audit record to database"
+            },
+            {
+                "name": "serializeAuditData",
+                "returnType": "String",
+                "parameters": [
+                    {
+                        "name": "data",
+                        "type": "Object"
+                    }
+                ],
+                "description": "Serializes audit data to JSON string"
+            }
+        ]
+    }
+]

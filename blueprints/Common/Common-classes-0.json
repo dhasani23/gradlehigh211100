@@ -1,0 +1,855 @@
+[
+    {
+        "name": "Constants",
+        "package": "com.gradlehigh211100.common.constants",
+        "type": "utility",
+        "description": "Application-wide constants including system defaults, configuration keys, and magic numbers",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "DEFAULT_PAGE_SIZE",
+                "type": "int",
+                "description": "Default page size for paginated requests"
+            },
+            {
+                "name": "MAX_PAGE_SIZE",
+                "type": "int",
+                "description": "Maximum allowed page size for security"
+            },
+            {
+                "name": "DATE_FORMAT",
+                "type": "String",
+                "description": "Standard date format used across the application"
+            },
+            {
+                "name": "TIMESTAMP_FORMAT",
+                "type": "String",
+                "description": "Standard timestamp format with timezone"
+            },
+            {
+                "name": "DEFAULT_TIMEZONE",
+                "type": "String",
+                "description": "Default timezone for date calculations"
+            },
+            {
+                "name": "SUCCESS_CODE",
+                "type": "String",
+                "description": "Standard success response code"
+            },
+            {
+                "name": "ERROR_CODE",
+                "type": "String",
+                "description": "Generic error response code"
+            }
+        ],
+        "methods": []
+    },
+    {
+        "name": "ApplicationStatus",
+        "package": "com.gradlehigh211100.common.enums",
+        "type": "enum",
+        "description": "Enumeration defining various application status values used across modules",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "ACTIVE",
+                "type": "ApplicationStatus",
+                "description": "Active status indicating entity is operational"
+            },
+            {
+                "name": "INACTIVE",
+                "type": "ApplicationStatus",
+                "description": "Inactive status indicating entity is disabled"
+            },
+            {
+                "name": "PENDING",
+                "type": "ApplicationStatus",
+                "description": "Pending status for entities awaiting approval"
+            },
+            {
+                "name": "SUSPENDED",
+                "type": "ApplicationStatus",
+                "description": "Suspended status for temporarily disabled entities"
+            },
+            {
+                "name": "DELETED",
+                "type": "ApplicationStatus",
+                "description": "Soft delete status for removed entities"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getDisplayName",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Returns human-readable display name for the status"
+            },
+            {
+                "name": "isActive",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if the status represents an active state"
+            }
+        ]
+    },
+    {
+        "name": "UserRole",
+        "package": "com.gradlehigh211100.common.enums",
+        "type": "enum",
+        "description": "Enumeration defining user roles and permissions levels in the system",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [
+            {
+                "name": "ADMIN",
+                "type": "UserRole",
+                "description": "Administrator role with full system access"
+            },
+            {
+                "name": "CUSTOMER",
+                "type": "UserRole",
+                "description": "Customer role for regular users"
+            },
+            {
+                "name": "MERCHANT",
+                "type": "UserRole",
+                "description": "Merchant role for product sellers"
+            },
+            {
+                "name": "MODERATOR",
+                "type": "UserRole",
+                "description": "Moderator role with limited administrative privileges"
+            },
+            {
+                "name": "GUEST",
+                "type": "UserRole",
+                "description": "Guest role for unauthenticated users"
+            }
+        ],
+        "methods": [
+            {
+                "name": "getPermissionLevel",
+                "returnType": "int",
+                "parameters": [],
+                "description": "Returns numeric permission level for role comparison"
+            },
+            {
+                "name": "hasPermission",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "requiredRole",
+                        "type": "UserRole"
+                    }
+                ],
+                "description": "Checks if current role has permission level of required role"
+            },
+            {
+                "name": "getDisplayName",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Returns human-readable role name"
+            }
+        ]
+    },
+    {
+        "name": "BaseException",
+        "package": "com.gradlehigh211100.common.exception",
+        "type": "exception",
+        "description": "Base exception class providing common exception handling functionality and error codes",
+        "dependencies": [],
+        "implements": [],
+        "extends": "RuntimeException",
+        "fields": [
+            {
+                "name": "errorCode",
+                "type": "String",
+                "description": "Unique error code for exception categorization"
+            },
+            {
+                "name": "timestamp",
+                "type": "LocalDateTime",
+                "description": "Timestamp when exception occurred"
+            },
+            {
+                "name": "context",
+                "type": "Map<String, Object>",
+                "description": "Additional context information for debugging"
+            }
+        ],
+        "methods": [
+            {
+                "name": "BaseException",
+                "returnType": "",
+                "parameters": [
+                    {
+                        "name": "message",
+                        "type": "String"
+                    }
+                ],
+                "description": "Constructor with error message"
+            },
+            {
+                "name": "BaseException",
+                "returnType": "",
+                "parameters": [
+                    {
+                        "name": "message",
+                        "type": "String"
+                    },
+                    {
+                        "name": "errorCode",
+                        "type": "String"
+                    }
+                ],
+                "description": "Constructor with message and error code"
+            },
+            {
+                "name": "BaseException",
+                "returnType": "",
+                "parameters": [
+                    {
+                        "name": "message",
+                        "type": "String"
+                    },
+                    {
+                        "name": "cause",
+                        "type": "Throwable"
+                    }
+                ],
+                "description": "Constructor with message and cause"
+            },
+            {
+                "name": "addContext",
+                "returnType": "BaseException",
+                "parameters": [
+                    {
+                        "name": "key",
+                        "type": "String"
+                    },
+                    {
+                        "name": "value",
+                        "type": "Object"
+                    }
+                ],
+                "description": "Adds contextual information to the exception"
+            },
+            {
+                "name": "getErrorCode",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Returns the error code"
+            },
+            {
+                "name": "getTimestamp",
+                "returnType": "LocalDateTime",
+                "parameters": [],
+                "description": "Returns the timestamp when exception occurred"
+            },
+            {
+                "name": "getContext",
+                "returnType": "Map<String, Object>",
+                "parameters": [],
+                "description": "Returns the context information"
+            }
+        ]
+    },
+    {
+        "name": "ValidationException",
+        "package": "com.gradlehigh211100.common.exception",
+        "type": "exception",
+        "description": "Specialized exception for validation errors with detailed field-level error information",
+        "dependencies": ["BaseException"],
+        "implements": [],
+        "extends": "BaseException",
+        "fields": [
+            {
+                "name": "fieldErrors",
+                "type": "Map<String, String>",
+                "description": "Map of field names to their validation error messages"
+            },
+            {
+                "name": "globalErrors",
+                "type": "List<String>",
+                "description": "List of global validation errors not tied to specific fields"
+            }
+        ],
+        "methods": [
+            {
+                "name": "ValidationException",
+                "returnType": "",
+                "parameters": [
+                    {
+                        "name": "message",
+                        "type": "String"
+                    }
+                ],
+                "description": "Constructor with validation message"
+            },
+            {
+                "name": "ValidationException",
+                "returnType": "",
+                "parameters": [
+                    {
+                        "name": "fieldErrors",
+                        "type": "Map<String, String>"
+                    }
+                ],
+                "description": "Constructor with field-specific errors"
+            },
+            {
+                "name": "addFieldError",
+                "returnType": "ValidationException",
+                "parameters": [
+                    {
+                        "name": "field",
+                        "type": "String"
+                    },
+                    {
+                        "name": "error",
+                        "type": "String"
+                    }
+                ],
+                "description": "Adds a field-specific validation error"
+            },
+            {
+                "name": "addGlobalError",
+                "returnType": "ValidationException",
+                "parameters": [
+                    {
+                        "name": "error",
+                        "type": "String"
+                    }
+                ],
+                "description": "Adds a global validation error"
+            },
+            {
+                "name": "hasFieldErrors",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if there are field-specific errors"
+            },
+            {
+                "name": "hasGlobalErrors",
+                "returnType": "boolean",
+                "parameters": [],
+                "description": "Checks if there are global errors"
+            },
+            {
+                "name": "getFieldErrors",
+                "returnType": "Map<String, String>",
+                "parameters": [],
+                "description": "Returns all field errors"
+            },
+            {
+                "name": "getGlobalErrors",
+                "returnType": "List<String>",
+                "parameters": [],
+                "description": "Returns all global errors"
+            }
+        ]
+    },
+    {
+        "name": "BusinessLogicException",
+        "package": "com.gradlehigh211100.common.exception",
+        "type": "exception",
+        "description": "Exception for business rule violations and domain-specific errors",
+        "dependencies": ["BaseException"],
+        "implements": [],
+        "extends": "BaseException",
+        "fields": [
+            {
+                "name": "businessRule",
+                "type": "String",
+                "description": "Name or identifier of the violated business rule"
+            },
+            {
+                "name": "entityType",
+                "type": "String",
+                "description": "Type of entity involved in the business logic violation"
+            },
+            {
+                "name": "entityId",
+                "type": "String",
+                "description": "Identifier of the specific entity involved"
+            }
+        ],
+        "methods": [
+            {
+                "name": "BusinessLogicException",
+                "returnType": "",
+                "parameters": [
+                    {
+                        "name": "message",
+                        "type": "String"
+                    }
+                ],
+                "description": "Constructor with business logic error message"
+            },
+            {
+                "name": "BusinessLogicException",
+                "returnType": "",
+                "parameters": [
+                    {
+                        "name": "message",
+                        "type": "String"
+                    },
+                    {
+                        "name": "businessRule",
+                        "type": "String"
+                    }
+                ],
+                "description": "Constructor with message and violated business rule"
+            },
+            {
+                "name": "BusinessLogicException",
+                "returnType": "",
+                "parameters": [
+                    {
+                        "name": "message",
+                        "type": "String"
+                    },
+                    {
+                        "name": "businessRule",
+                        "type": "String"
+                    },
+                    {
+                        "name": "entityType",
+                        "type": "String"
+                    },
+                    {
+                        "name": "entityId",
+                        "type": "String"
+                    }
+                ],
+                "description": "Full constructor with all business context information"
+            },
+            {
+                "name": "getBusinessRule",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Returns the violated business rule identifier"
+            },
+            {
+                "name": "getEntityType",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Returns the type of entity involved"
+            },
+            {
+                "name": "getEntityId",
+                "returnType": "String",
+                "parameters": [],
+                "description": "Returns the entity identifier"
+            }
+        ]
+    },
+    {
+        "name": "DateTimeUtil",
+        "package": "com.gradlehigh211100.common.util",
+        "type": "utility",
+        "description": "Utility class providing comprehensive date and time manipulation operations",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [],
+        "methods": [
+            {
+                "name": "getCurrentTimestamp",
+                "returnType": "LocalDateTime",
+                "parameters": [],
+                "description": "Returns current timestamp in system timezone"
+            },
+            {
+                "name": "formatDate",
+                "returnType": "String",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "type": "LocalDate"
+                    },
+                    {
+                        "name": "pattern",
+                        "type": "String"
+                    }
+                ],
+                "description": "Formats date according to specified pattern"
+            },
+            {
+                "name": "formatDateTime",
+                "returnType": "String",
+                "parameters": [
+                    {
+                        "name": "dateTime",
+                        "type": "LocalDateTime"
+                    },
+                    {
+                        "name": "pattern",
+                        "type": "String"
+                    }
+                ],
+                "description": "Formats datetime according to specified pattern"
+            },
+            {
+                "name": "parseDate",
+                "returnType": "LocalDate",
+                "parameters": [
+                    {
+                        "name": "dateString",
+                        "type": "String"
+                    },
+                    {
+                        "name": "pattern",
+                        "type": "String"
+                    }
+                ],
+                "description": "Parses string into LocalDate using specified pattern"
+            },
+            {
+                "name": "parseDateTime",
+                "returnType": "LocalDateTime",
+                "parameters": [
+                    {
+                        "name": "dateTimeString",
+                        "type": "String"
+                    },
+                    {
+                        "name": "pattern",
+                        "type": "String"
+                    }
+                ],
+                "description": "Parses string into LocalDateTime using specified pattern"
+            },
+            {
+                "name": "addDays",
+                "returnType": "LocalDate",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "type": "LocalDate"
+                    },
+                    {
+                        "name": "days",
+                        "type": "long"
+                    }
+                ],
+                "description": "Adds specified number of days to date"
+            },
+            {
+                "name": "daysBetween",
+                "returnType": "long",
+                "parameters": [
+                    {
+                        "name": "startDate",
+                        "type": "LocalDate"
+                    },
+                    {
+                        "name": "endDate",
+                        "type": "LocalDate"
+                    }
+                ],
+                "description": "Calculates number of days between two dates"
+            },
+            {
+                "name": "isWeekend",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "type": "LocalDate"
+                    }
+                ],
+                "description": "Checks if given date falls on weekend"
+            },
+            {
+                "name": "getStartOfDay",
+                "returnType": "LocalDateTime",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "type": "LocalDate"
+                    }
+                ],
+                "description": "Returns start of day for given date"
+            },
+            {
+                "name": "getEndOfDay",
+                "returnType": "LocalDateTime",
+                "parameters": [
+                    {
+                        "name": "date",
+                        "type": "LocalDate"
+                    }
+                ],
+                "description": "Returns end of day for given date"
+            }
+        ]
+    },
+    {
+        "name": "StringUtil",
+        "package": "com.gradlehigh211100.common.util",
+        "type": "utility",
+        "description": "Utility class for string manipulation, validation, and formatting operations",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [],
+        "methods": [
+            {
+                "name": "isBlank",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "str",
+                        "type": "String"
+                    }
+                ],
+                "description": "Checks if string is null, empty, or contains only whitespace"
+            },
+            {
+                "name": "isNotBlank",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "str",
+                        "type": "String"
+                    }
+                ],
+                "description": "Checks if string is not null, not empty, and contains non-whitespace"
+            },
+            {
+                "name": "truncate",
+                "returnType": "String",
+                "parameters": [
+                    {
+                        "name": "str",
+                        "type": "String"
+                    },
+                    {
+                        "name": "maxLength",
+                        "type": "int"
+                    }
+                ],
+                "description": "Truncates string to specified maximum length"
+            },
+            {
+                "name": "capitalize",
+                "returnType": "String",
+                "parameters": [
+                    {
+                        "name": "str",
+                        "type": "String"
+                    }
+                ],
+                "description": "Capitalizes first letter of string"
+            },
+            {
+                "name": "toCamelCase",
+                "returnType": "String",
+                "parameters": [
+                    {
+                        "name": "str",
+                        "type": "String"
+                    }
+                ],
+                "description": "Converts string to camelCase format"
+            },
+            {
+                "name": "toSnakeCase",
+                "returnType": "String",
+                "parameters": [
+                    {
+                        "name": "str",
+                        "type": "String"
+                    }
+                ],
+                "description": "Converts string to snake_case format"
+            },
+            {
+                "name": "sanitize",
+                "returnType": "String",
+                "parameters": [
+                    {
+                        "name": "str",
+                        "type": "String"
+                    }
+                ],
+                "description": "Sanitizes string by removing potentially harmful characters"
+            },
+            {
+                "name": "maskSensitiveData",
+                "returnType": "String",
+                "parameters": [
+                    {
+                        "name": "str",
+                        "type": "String"
+                    },
+                    {
+                        "name": "visibleChars",
+                        "type": "int"
+                    }
+                ],
+                "description": "Masks sensitive data showing only specified number of characters"
+            },
+            {
+                "name": "generateRandomString",
+                "returnType": "String",
+                "parameters": [
+                    {
+                        "name": "length",
+                        "type": "int"
+                    }
+                ],
+                "description": "Generates random alphanumeric string of specified length"
+            },
+            {
+                "name": "containsIgnoreCase",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "str",
+                        "type": "String"
+                    },
+                    {
+                        "name": "searchStr",
+                        "type": "String"
+                    }
+                ],
+                "description": "Case-insensitive string contains check"
+            }
+        ]
+    },
+    {
+        "name": "MathUtil",
+        "package": "com.gradlehigh211100.common.util",
+        "type": "utility",
+        "description": "Mathematical utility functions for common calculations and number formatting",
+        "dependencies": [],
+        "implements": [],
+        "extends": "",
+        "fields": [],
+        "methods": [
+            {
+                "name": "calculatePercentage",
+                "returnType": "double",
+                "parameters": [
+                    {
+                        "name": "value",
+                        "type": "double"
+                    },
+                    {
+                        "name": "total",
+                        "type": "double"
+                    }
+                ],
+                "description": "Calculates percentage of value from total"
+            },
+            {
+                "name": "roundToDecimalPlaces",
+                "returnType": "double",
+                "parameters": [
+                    {
+                        "name": "value",
+                        "type": "double"
+                    },
+                    {
+                        "name": "decimalPlaces",
+                        "type": "int"
+                    }
+                ],
+                "description": "Rounds number to specified decimal places"
+            },
+            {
+                "name": "formatCurrency",
+                "returnType": "String",
+                "parameters": [
+                    {
+                        "name": "amount",
+                        "type": "double"
+                    },
+                    {
+                        "name": "currencyCode",
+                        "type": "String"
+                    }
+                ],
+                "description": "Formats number as currency with proper symbols"
+            },
+            {
+                "name": "calculateTax",
+                "returnType": "double",
+                "parameters": [
+                    {
+                        "name": "amount",
+                        "type": "double"
+                    },
+                    {
+                        "name": "taxRate",
+                        "type": "double"
+                    }
+                ],
+                "description": "Calculates tax amount for given amount and rate"
+            },
+            {
+                "name": "calculateDiscount",
+                "returnType": "double",
+                "parameters": [
+                    {
+                        "name": "originalPrice",
+                        "type": "double"
+                    },
+                    {
+                        "name": "discountPercentage",
+                        "type": "double"
+                    }
+                ],
+                "description": "Calculates discount amount from original price"
+            },
+            {
+                "name": "isPositive",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "value",
+                        "type": "double"
+                    }
+                ],
+                "description": "Checks if number is positive"
+            },
+            {
+                "name": "isZero",
+                "returnType": "boolean",
+                "parameters": [
+                    {
+                        "name": "value",
+                        "type": "double"
+                    }
+                ],
+                "description": "Checks if number is zero with precision tolerance"
+            },
+            {
+                "name": "clamp",
+                "returnType": "double",
+                "parameters": [
+                    {
+                        "name": "value",
+                        "type": "double"
+                    },
+                    {
+                        "name": "min",
+                        "type": "double"
+                    },
+                    {
+                        "name": "max",
+                        "type": "double"
+                    }
+                ],
+                "description": "Clamps value between minimum and maximum bounds"
+            }
+        ]
+    }
+]

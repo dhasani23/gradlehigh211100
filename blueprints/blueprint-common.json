@@ -1,0 +1,181 @@
+{
+    "module": "Common",
+    "description": "The foundational module providing shared utilities, common data transfer objects, exception handling, validation annotations, logging configuration, and base classes used across all other modules. This module establishes the core architectural patterns and shared contracts that ensure consistency throughout the application. It includes common enums, constants, utility classes for date/time handling, string manipulation, and mathematical operations. The module also provides standardized response wrappers, pagination utilities, and audit trail functionality.",
+    "file_count": 15,
+    "module_path": "common",
+    "internal_dependencies": [],
+    "external_dependencies": {
+        "spring-boot-starter": "1.5.22.RELEASE",
+        "spring-boot-starter-validation": "1.5.22.RELEASE",
+        "jackson-databind": "2.8.11.6",
+        "slf4j-api": "1.7.25",
+        "logback-classic": "1.2.3",
+        "commons-lang3": "3.7",
+        "junit": "4.12",
+        "mockito-core": "2.23.4"
+    },
+    "classes": [
+        {
+            "name": "Constants",
+            "package": "com.gradlehigh211100.common.constants",
+            "type": "utility",
+            "description": "Application-wide constants including system defaults, configuration keys, and magic numbers",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ApplicationStatus",
+            "package": "com.gradlehigh211100.common.enums",
+            "type": "enum",
+            "description": "Enumeration defining various application status values used across modules",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "UserRole",
+            "package": "com.gradlehigh211100.common.enums",
+            "type": "enum",
+            "description": "Enumeration defining user roles and permissions levels in the system",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "BaseException",
+            "package": "com.gradlehigh211100.common.exception",
+            "type": "exception",
+            "description": "Base exception class providing common exception handling functionality and error codes",
+            "dependencies": [],
+            "implements": [],
+            "extends": "RuntimeException"
+        },
+        {
+            "name": "ValidationException",
+            "package": "com.gradlehigh211100.common.exception",
+            "type": "exception",
+            "description": "Specialized exception for validation errors with detailed field-level error information",
+            "dependencies": ["BaseException"],
+            "implements": [],
+            "extends": "BaseException"
+        },
+        {
+            "name": "BusinessLogicException",
+            "package": "com.gradlehigh211100.common.exception",
+            "type": "exception",
+            "description": "Exception for business rule violations and domain-specific errors",
+            "dependencies": ["BaseException"],
+            "implements": [],
+            "extends": "BaseException"
+        },
+        {
+            "name": "DateTimeUtil",
+            "package": "com.gradlehigh211100.common.util",
+            "type": "utility",
+            "description": "Utility class providing comprehensive date and time manipulation operations",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "StringUtil",
+            "package": "com.gradlehigh211100.common.util",
+            "type": "utility",
+            "description": "Utility class for string manipulation, validation, and formatting operations",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "MathUtil",
+            "package": "com.gradlehigh211100.common.util",
+            "type": "utility",
+            "description": "Mathematical utility functions for common calculations and number formatting",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ValidationUtil",
+            "package": "com.gradlehigh211100.common.util",
+            "type": "utility",
+            "description": "Comprehensive validation utility for input sanitization and business rule validation",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "ApiResponse",
+            "package": "com.gradlehigh211100.common.dto",
+            "type": "dto",
+            "description": "Standardized API response wrapper providing consistent response format across all endpoints",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "PageableRequest",
+            "package": "com.gradlehigh211100.common.dto",
+            "type": "dto",
+            "description": "Data transfer object for paginated request parameters with sorting and filtering",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "PageableResponse",
+            "package": "com.gradlehigh211100.common.dto",
+            "type": "dto",
+            "description": "Paginated response container with metadata for pagination controls",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "BaseEntity",
+            "package": "com.gradlehigh211100.common.entity",
+            "type": "entity",
+            "description": "Base entity class providing common audit fields and functionality for all domain entities",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        },
+        {
+            "name": "AuditTrail",
+            "package": "com.gradlehigh211100.common.audit",
+            "type": "service",
+            "description": "Audit trail service for tracking entity changes, user actions, and system events",
+            "dependencies": [],
+            "implements": [],
+            "extends": ""
+        }
+    ],
+    "configFiles": [
+        {
+            "path": "common/build.gradle",
+            "description": "Gradle build file for the Common module defining dependencies and build configuration"
+        },
+        {
+            "path": "common/src/main/resources/application-common.properties",
+            "description": "Configuration properties specific to the Common module including logging levels and utility configurations"
+        }
+    ],
+    "generationOrder": [
+        "com.gradlehigh211100.common.constants.Constants",
+        "com.gradlehigh211100.common.enums.ApplicationStatus",
+        "com.gradlehigh211100.common.enums.UserRole",
+        "com.gradlehigh211100.common.exception.BaseException",
+        "com.gradlehigh211100.common.exception.ValidationException",
+        "com.gradlehigh211100.common.exception.BusinessLogicException",
+        "com.gradlehigh211100.common.util.DateTimeUtil",
+        "com.gradlehigh211100.common.util.StringUtil",
+        "com.gradlehigh211100.common.util.MathUtil",
+        "com.gradlehigh211100.common.util.ValidationUtil",
+        "com.gradlehigh211100.common.dto.ApiResponse",
+        "com.gradlehigh211100.common.dto.PageableRequest",
+        "com.gradlehigh211100.common.dto.PageableResponse",
+        "com.gradlehigh211100.common.entity.BaseEntity",
+        "com.gradlehigh211100.common.audit.AuditTrail"
+    ]
+}
