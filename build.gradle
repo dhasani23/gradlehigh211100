@@ -10,15 +10,31 @@ sourceCompatibility = '1.8'
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+ext {
+    set('springCloudVersion', "Hoxton.SR12")
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
     
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // Logging
+    implementation 'org.slf4j:slf4j-api'
+    
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 test {
