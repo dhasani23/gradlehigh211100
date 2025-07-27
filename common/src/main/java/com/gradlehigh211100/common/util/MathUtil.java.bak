@@ -158,9 +158,8 @@ public final class MathUtil {
             if (amount < 0) {
                 // Some locales use parentheses for negative values
                 if (Locale.getDefault().equals(Locale.US)) {
-                    // We'll handle negative formatting with a custom approach if needed
-                    String formattedValue = formatter.format(Math.abs(amount));
-                    return "(" + formattedValue.substring(1) + ")";
+                    formatter.setNegativePrefix("(");
+                    formatter.setNegativeSuffix(")");
                 }
             }
             

@@ -335,8 +335,8 @@ public final class DateTimeUtil {
         Duration duration = Duration.between(startDateTime, endDateTime);
         
         long hours = duration.toHours();
-        long minutes = duration.toMinutes() % 60;
-        long seconds = duration.getSeconds() % 60;
+        long minutes = duration.toMinutesPart();
+        long seconds = duration.toSecondsPart();
         
         StringBuilder result = new StringBuilder();
         

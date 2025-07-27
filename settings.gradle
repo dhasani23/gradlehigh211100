@@ -3,3 +3,8 @@
  */
 
 rootProject.name = 'gradlehigh211100'
+
+include 'common'
+include 'user-service'
+include 'product-catalog'
+include 'order-processing'
