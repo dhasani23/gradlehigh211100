@@ -3,18 +3,22 @@ plugins {
 }
 
 group = 'com.gradlehigh211100'
-version = '1.0-SNAPSHOT'
+version = '1.0.0'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    // This is a common library with minimal dependencies
+    // Add dependencies as needed
     testImplementation 'junit:junit:4.13.2'
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
