@@ -1,134 +1,85 @@
 package com.gradlehigh211100.userservice.repository;
 
-import com.gradlehigh211100.userservice.entity.UserEntity;
-import com.gradlehigh211100.userservice.entity.UserPreferenceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.gradlehigh211100.userservice.model.UserPreference;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository interface for managing user preferences.
- * 
- * This repository provides functionality for user preference management with 
- * category-based and user-specific queries. It extends JpaRepository to leverage
- * Spring Data JPA capabilities.
- * 
- * @since 1.0
+ * Repository interface for accessing and manipulating UserPreference data
  */
 @Repository
-public interface UserPreferenceRepository extends JpaRepository<UserPreferenceEntity, Long> {
+public interface UserPreferenceRepository extends JpaRepository<UserPreference, Long> {
     
     /**
-     * Finds all preferences for a specific user.
+     * Find all preferences for a specific user
      * 
-     * @param user the user entity whose preferences to retrieve
-     * @return list of preference entities belonging to the user
+     * @param userId the ID of the user
+     * @return list of user preferences
      */
-    List<UserPreferenceEntity> findByUser(UserEntity user);
+    List<UserPreference> findByUserId(Long userId);
     
     /**
-     * Finds a specific preference by user and key.
+     * Find a specific preference by user ID and preference key
      * 
-     * @param user the user entity
-     * @param preferenceKey the preference key to search for
-     * @return an Optional containing the preference entity if found
+     * @param userId the ID of the user
+     * @param preferenceKey the preference key
+     * @return optional containing the user preference if found
      */
-    Optional<UserPreferenceEntity> findByUserAndPreferenceKey(UserEntity user, String preferenceKey);
+    Optional<UserPreference> findByUserIdAndPreferenceKey(Long userId, String preferenceKey);
     
     /**
-     * Finds all preferences for a user in a specific category.
+     * Find preferences by user ID and category
      * 
-     * @param user the user entity
-     * @param category the category to filter by
-     * @return list of preference entities matching the user and category
+     * @param userId the ID of the user
+     * @param category the preference category
+     * @return list of user preferences in the specified category
      */
-    List<UserPreferenceEntity> findByUserAndCategory(UserEntity user, String category);
+    List<UserPreference> findByUserIdAndCategory(Long userId, String category);
     
     /**
-     * Deletes a specific preference by user and key.
+     * Delete a specific preference by user ID and preference key
      * 
-     * @param user the user entity
-     * @param preferenceKey the preference key to delete
+     * @param userId the ID of the user
+     * @param preferenceKey the preference key
      */
-    @Modifying
     @Transactional
-    void deleteByUserAndPreferenceKey(UserEntity user, String preferenceKey);
-    
-    /**
-     * Custom query to find preferences with partial key match.
-     * 
-     * @param user the user entity
-     * @param keyPattern the pattern to match against preference keys
-     * @return list of preference entities matching the pattern
-     */
-    @Query("SELECT p FROM UserPreferenceEntity p WHERE p.user = :user AND p.preferenceKey LIKE %:keyPattern%")
-    List<UserPreferenceEntity> findByUserAndPartialKey(@Param("user") UserEntity user, @Param("keyPattern") String keyPattern);
-    
-    /**
-     * Finds preferences by user and value containing a specific string.
-     * 
-     * @param user the user entity
-     * @param valueFragment fragment to search for in preference values
-     * @return list of preferences with values containing the fragment
-     */
-    @Query("SELECT p FROM UserPreferenceEntity p WHERE p.user = :user AND p.preferenceValue LIKE %:valueFragment%")
-    List<UserPreferenceEntity> findByUserAndValueContaining(@Param("user") UserEntity user, @Param("valueFragment") String valueFragment);
-    
-    /**
-     * Counts preferences by category for a specific user.
-     * 
-     * @param user the user entity
-     * @return list of categories with their respective counts
-     */
-    @Query("SELECT p.category, COUNT(p) FROM UserPreferenceEntity p WHERE p.user = :user GROUP BY p.category")
-    List<Object[]> countPreferencesByCategory(@Param("user") UserEntity user);
-    
-    /**
-     * Bulk updates preferences in a specific category.
-     * 
-     * @param user the user entity
-     * @param category the category to update
-     * @param active the new active status
-     * @return number of records updated
-     */
     @Modifying
-    @Transactional
-    @Query("UPDATE UserPreferenceEntity p SET p.active = :active WHERE p.user = :user AND p.category = :category")
-    int bulkUpdateActiveStatusByCategory(@Param("user") UserEntity user, @Param("category") String category, @Param("active") boolean active);
+    @Query("DELETE FROM UserPreference up WHERE up.userId = :userId AND up.preferenceKey = :preferenceKey")
+    void deleteByUserIdAndPreferenceKey(Long userId, String preferenceKey);
     
     /**
-     * Deletes all preferences for a user in a specific category.
+     * Delete all preferences for a user in a specific category
      * 
-     * @param user the user entity
-     * @param category the category to delete preferences from
-     * @return number of records deleted
+     * @param userId the ID of the user
+     * @param category the preference category
      */
+    @Transactional
     @Modifying
-    @Transactional
-    @Query("DELETE FROM UserPreferenceEntity p WHERE p.user = :user AND p.category = :category")
-    int deleteAllByUserAndCategory(@Param("user") UserEntity user, @Param("category") String category);
+    @Query("DELETE FROM UserPreference up WHERE up.userId = :userId AND up.category = :category")
+    void deleteByUserIdAndCategory(Long userId, String category);
     
     /**
-     * Finds all distinct categories for a specific user.
+     * Check if a preference with the given key exists for the user
      * 
-     * @param user the user entity
-     * @return list of distinct category names
+     * @param userId the ID of the user
+     * @param preferenceKey the preference key
+     * @return true if the preference exists, false otherwise
      */
-    @Query("SELECT DISTINCT p.category FROM UserPreferenceEntity p WHERE p.user = :user")
-    List<String> findDistinctCategoriesByUser(@Param("user") UserEntity user);
+    boolean existsByUserIdAndPreferenceKey(Long userId, String preferenceKey);
     
     /**
-     * Checks if a user has any preferences in a specific category.
+     * Count preferences for a user in a specific category
      * 
-     * @param user the user entity
-     * @param category the category to check
-     * @return true if at least one preference exists, false otherwise
+     * @param userId the ID of the user
+     * @param category the preference category
+     * @return count of preferences
      */
-    boolean existsByUserAndCategory(UserEntity user, String category);
+    long countByUserIdAndCategory(Long userId, String category);
 }

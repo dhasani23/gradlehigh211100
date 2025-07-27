@@ -1,32 +1,53 @@
-package com.gradlehigh211100.userservice.dto;
+package com.gradlehigh211100.userservice.model;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
 /**
- * Data Transfer Object for User Preference information
- * Used for transferring preference data between layers
+ * Entity representing a user preference in the system
  */
-public class UserPreferenceDto implements Serializable {
-    private static final long serialVersionUID = 1L;
+@Entity
+@Table(name = "user_preferences", 
+       uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "preference_key"}))
+public class UserPreference implements Serializable {
     
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    @Column(name = "user_id", nullable = false)
     private Long userId;
+    
+    @Column(name = "preference_key", nullable = false, length = 100)
     private String preferenceKey;
+    
+    @Column(name = "preference_value", columnDefinition = "TEXT")
     private String preferenceValue;
+    
+    @Column(name = "category", length = 50)
     private String category;
+    
+    @Column(name = "data_type", length = 20)
     private String dataType;
+    
+    @Column(name = "last_modified")
+    @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified;
+    
+    @Column(name = "is_encrypted")
     private boolean isEncrypted;
     
-    // Default constructor
-    public UserPreferenceDto() {
+    // Default constructor required by JPA
+    public UserPreference() {
     }
     
     // Full constructor
-    public UserPreferenceDto(Long id, Long userId, String preferenceKey, String preferenceValue, 
-                             String category, String dataType, Date lastModified, boolean isEncrypted) {
+    public UserPreference(Long id, Long userId, String preferenceKey, String preferenceValue, 
+                          String category, String dataType, Date lastModified, boolean isEncrypted) {
         this.id = id;
         this.userId = userId;
         this.preferenceKey = preferenceKey;
@@ -38,7 +59,7 @@ public class UserPreferenceDto implements Serializable {
     }
     
     // Minimal constructor
-    public UserPreferenceDto(Long userId, String preferenceKey, String preferenceValue, String category) {
+    public UserPreference(Long userId, String preferenceKey, String preferenceValue, String category) {
         this.userId = userId;
         this.preferenceKey = preferenceKey;
         this.preferenceValue = preferenceValue;
@@ -46,6 +67,12 @@ public class UserPreferenceDto implements Serializable {
         this.lastModified = new Date();
         this.dataType = "STRING";
         this.isEncrypted = false;
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void updateLastModified() {
+        this.lastModified = new Date();
     }
     
     // Getters and setters
@@ -113,43 +140,11 @@ public class UserPreferenceDto implements Serializable {
         isEncrypted = encrypted;
     }
     
-    /**
-     * Parse the preference value based on its data type
-     * @return Object representing the typed preference value
-     */
-    public Object getParsedValue() {
-        if (preferenceValue == null) {
-            return null;
-        }
-        
-        try {
-            switch (dataType.toUpperCase()) {
-                case "INTEGER":
-                    return Integer.parseInt(preferenceValue);
-                case "LONG":
-                    return Long.parseLong(preferenceValue);
-                case "DOUBLE":
-                    return Double.parseDouble(preferenceValue);
-                case "BOOLEAN":
-                    return Boolean.parseBoolean(preferenceValue);
-                case "DATE":
-                    // This is a simplified implementation - real code would use a proper date parser
-                    return new Date(Long.parseLong(preferenceValue));
-                case "STRING":
-                default:
-                    return preferenceValue;
-            }
-        } catch (Exception e) {
-            // FIXME: Add proper exception handling or logging here
-            return preferenceValue;
-        }
-    }
-    
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserPreferenceDto that = (UserPreferenceDto) o;
+        UserPreference that = (UserPreference) o;
         return Objects.equals(userId, that.userId) &&
                Objects.equals(preferenceKey, that.preferenceKey);
     }
@@ -161,7 +156,7 @@ public class UserPreferenceDto implements Serializable {
     
     @Override
     public String toString() {
-        return "UserPreferenceDto{" +
+        return "UserPreference{" +
                 "id=" + id +
                 ", userId=" + userId +
                 ", preferenceKey='" + preferenceKey + '\'' +
