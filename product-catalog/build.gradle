@@ -1,21 +1,33 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '2.5.4'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+group = 'com.gradlehigh211100'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    // No external dependencies required for this basic model class
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     
-    // Test dependencies
-    testImplementation 'junit:junit:4.13.2'
+    // Elasticsearch clients
+    implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client'
+    
+    // Lombok to reduce boilerplate code (optional)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    
+    // Testing dependencies
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.testcontainers:elasticsearch:1.16.0'
 }
 
 test {
-    useJUnit()
+    useJUnitPlatform()
 }
