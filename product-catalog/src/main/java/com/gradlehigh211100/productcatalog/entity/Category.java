@@ -1,35 +1,55 @@
-package com.gradlehigh211100.productcatalog.dto;
+package com.gradlehigh211100.productcatalog.entity;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 import java.util.Objects;
+import javax.persistence.*;
 
 /**
- * Data Transfer Object for Category information
+ * Entity representing a product category in the system
  */
-public class CategoryDTO {
-    private Long id;
-    private String name;
-    private String description;
-    private Long parentId;
-    private Integer displayOrder;
-    private Boolean active;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private Map<String, String> metadata;
-    private List<CategoryDTO> children;
-    private Integer level;
+@Entity
+@Table(name = "categories")
+public class Category {
 
-    public CategoryDTO() {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "name", nullable = false, length = 50)
+    private String name;
+
+    @Column(name = "description", length = 500)
+    private String description;
+
+    @Column(name = "parent_id")
+    private Long parentId;
+
+    @Column(name = "display_order")
+    private Integer displayOrder;
+
+    @Column(name = "active")
+    private Boolean active;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "category_metadata", 
+                    joinColumns = @JoinColumn(name = "category_id"))
+    @MapKeyColumn(name = "metadata_key")
+    @Column(name = "metadata_value")
+    private Map<String, String> metadata = new HashMap<>();
+
+    public Category() {
         this.active = true;
-        this.metadata = new HashMap<>();
-        this.children = new ArrayList<>();
+        this.createdAt = LocalDateTime.now();
     }
 
-    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -74,10 +94,6 @@ public class CategoryDTO {
         return active;
     }
 
-    public Boolean getActive() {
-        return active;
-    }
-
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -106,35 +122,17 @@ public class CategoryDTO {
         this.metadata = metadata != null ? metadata : new HashMap<>();
     }
 
-    public List<CategoryDTO> getChildren() {
-        return children;
-    }
-
-    public void setChildren(List<CategoryDTO> children) {
-        this.children = children != null ? children : new ArrayList<>();
-    }
-
-    public void addChild(CategoryDTO child) {
-        if (this.children == null) {
-            this.children = new ArrayList<>();
-        }
-        this.children.add(child);
-    }
-
-    public Integer getLevel() {
-        return level;
-    }
-
-    public void setLevel(Integer level) {
-        this.level = level;
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CategoryDTO that = (CategoryDTO) o;
-        return Objects.equals(id, that.id);
+        Category category = (Category) o;
+        return Objects.equals(id, category.id);
     }
 
     @Override
@@ -144,13 +142,12 @@ public class CategoryDTO {
 
     @Override
     public String toString() {
-        return "CategoryDTO{" +
+        return "Category{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", parentId=" + parentId +
                 ", displayOrder=" + displayOrder +
                 ", active=" + active +
-                ", childrenCount=" + (children != null ? children.size() : 0) +
                 '}';
     }
 }

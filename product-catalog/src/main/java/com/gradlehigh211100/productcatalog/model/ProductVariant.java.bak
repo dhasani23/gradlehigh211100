@@ -309,15 +309,6 @@ public class ProductVariant extends BaseEntity {
     }
     
     /**
-     * Get name for this variant - convenience method that returns the display name
-     * 
-     * @return The variant name
-     */
-    public String getName() {
-        return getDisplayName();
-    }
-    
-    /**
      * Check if variant is available based on active status and price
      * 
      * @return true if variant is available, false otherwise

@@ -27,14 +27,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findByParentIsNull();
     
     /**
-     * Find all categories that don't have a parent ID
-     * This is an alternative way to find root categories
-     *
-     * @return List of root categories with null parentId
-     */
-    List<Category> findByParentIdIsNull();
-    
-    /**
      * Find all child categories for a given parent ID
      * 
      * @param parentId The ID of the parent category

@@ -23,11 +23,6 @@ dependencies {
     // Password Encryption
     implementation 'at.favre.lib:bcrypt:0.9.0'
     
-    // JWT Support
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.11.2'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.2'
-    
     // Micronaut (for specific microservice features)
     implementation 'io.micronaut:micronaut-core:1.3.7'
     implementation 'io.micronaut:micronaut-http-client:1.3.7'

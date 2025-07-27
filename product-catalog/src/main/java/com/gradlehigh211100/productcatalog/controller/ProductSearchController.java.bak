@@ -106,12 +106,12 @@ public class ProductSearchController {
             @RequestParam(required = false, defaultValue = "false") boolean inStock) {
         
         // Using the implemented searchProducts method with appropriate parameters
-        List<String> categories = null;
-        if (category != null) {
-            categories = new ArrayList<>();
-            categories.add(category);
-        }
-        return ResponseEntity.ok(productSearchService.searchProducts(term, categories, minPrice, maxPrice, null, null));
+        return ResponseEntity.ok(productSearchService.searchProducts(term, 
+                                                               category != null ? List.of(category) : null, 
+                                                               minPrice, 
+                                                               maxPrice, 
+                                                               null, 
+                                                               null));
     }
 
     /**
