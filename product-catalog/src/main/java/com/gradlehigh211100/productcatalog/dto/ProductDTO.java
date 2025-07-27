@@ -2,526 +2,232 @@ package com.gradlehigh211100.productcatalog.dto;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
- * Data transfer object for product information containing core product details,
- * category, variants, and images.
- * 
- * This class represents the complete product information needed for display and
- * manipulation in the product catalog system.
+ * Data transfer object representing product information
+ * Used for transferring product data between layers of the application
  */
 public class ProductDTO {
     
-    // Core product attributes
     private Long id;
-    private String sku;
     private String name;
     private String description;
-    private String brand;
-    private BigDecimal basePrice;
-    
-    // Related product information
-    private CategoryDTO category;
-    private List<ProductVariantDTO> variants;
-    private List<ProductImageDTO> images;
-    
-    // Status fields
-    private Boolean isActive;
-    private Date createdDate;
+    private String sku;
+    private BigDecimal price;
+    private BigDecimal salePrice;
+    private Boolean onSale;
+    private Integer stockQuantity;
+    private List<String> categories;
+    private Map<String, String> attributes;
+    private String imageUrl;
     
     /**
-     * Default constructor initializes collections
+     * Default constructor
      */
     public ProductDTO() {
-        this.variants = new ArrayList<>();
-        this.images = new ArrayList<>();
-        this.isActive = true;
-        this.createdDate = new Date();
+        this.categories = new ArrayList<>();
+        this.attributes = new HashMap<>();
     }
     
     /**
-     * Constructor with essential product attributes
+     * Constructor with essential fields
      * 
      * @param id The product ID
-     * @param sku The stock keeping unit
      * @param name The product name
-     * @param basePrice The base price
+     * @param price The product price
      */
-    public ProductDTO(Long id, String sku, String name, BigDecimal basePrice) {
+    public ProductDTO(Long id, String name, BigDecimal price) {
         this();
         this.id = id;
-        this.sku = sku;
         this.name = name;
-        this.basePrice = basePrice;
+        this.price = price;
     }
     
     /**
-     * Full constructor with all product attributes
+     * Full constructor
      * 
      * @param id The product ID
-     * @param sku The stock keeping unit
      * @param name The product name
      * @param description The product description
-     * @param brand The product brand
-     * @param basePrice The base price
-     * @param category The product category
-     * @param isActive Whether the product is active
-     * @param createdDate The creation date
+     * @param sku The product SKU
+     * @param price The regular price
+     * @param salePrice The sale price
+     * @param onSale Whether the product is on sale
+     * @param stockQuantity Available stock quantity
+     * @param categories List of product categories
+     * @param attributes Map of product attributes
+     * @param imageUrl URL to product image
      */
-    public ProductDTO(Long id, String sku, String name, String description, String brand,
-                    BigDecimal basePrice, CategoryDTO category, Boolean isActive, Date createdDate) {
-        this();
+    public ProductDTO(Long id, String name, String description, String sku, 
+                    BigDecimal price, BigDecimal salePrice, Boolean onSale, 
+                    Integer stockQuantity, List<String> categories, 
+                    Map<String, String> attributes, String imageUrl) {
         this.id = id;
-        this.sku = sku;
         this.name = name;
         this.description = description;
-        this.brand = brand;
-        this.basePrice = basePrice;
-        this.category = category;
-        
-        if (isActive != null) {
-            this.isActive = isActive;
-        }
-        
-        if (createdDate != null) {
-            this.createdDate = createdDate;
-        }
+        this.sku = sku;
+        this.price = price;
+        this.salePrice = salePrice;
+        this.onSale = onSale;
+        this.stockQuantity = stockQuantity;
+        this.categories = categories != null ? categories : new ArrayList<>();
+        this.attributes = attributes != null ? attributes : new HashMap<>();
+        this.imageUrl = imageUrl;
     }
 
-    /**
-     * Get the product ID
-     * 
-     * @return The product ID
-     */
+    // Getters and setters
     public Long getId() {
         return id;
     }
 
-    /**
-     * Set the product ID
-     * 
-     * @param id The product ID to set
-     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /**
-     * Get the stock keeping unit
-     * 
-     * @return The SKU
-     */
-    public String getSku() {
-        return sku;
-    }
-
-    /**
-     * Set the stock keeping unit
-     * 
-     * @param sku The SKU to set
-     */
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
-
-    /**
-     * Get the product name
-     * 
-     * @return The product name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Set the product name
-     * 
-     * @param name The name to set
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * Get the product description
-     * 
-     * @return The product description
-     */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * Set the product description
-     * 
-     * @param description The description to set
-     */
     public void setDescription(String description) {
         this.description = description;
     }
 
-    /**
-     * Get the product brand
-     * 
-     * @return The brand
-     */
-    public String getBrand() {
-        return brand;
+    public String getSku() {
+        return sku;
     }
 
-    /**
-     * Set the product brand
-     * 
-     * @param brand The brand to set
-     */
-    public void setBrand(String brand) {
-        this.brand = brand;
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 
-    /**
-     * Get the base price
-     * 
-     * @return The base price
-     */
-    public BigDecimal getBasePrice() {
-        return basePrice;
+    public BigDecimal getPrice() {
+        return price;
     }
 
-    /**
-     * Set the base price
-     * 
-     * @param basePrice The base price to set
-     */
-    public void setBasePrice(BigDecimal basePrice) {
-        this.basePrice = basePrice;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
-    /**
-     * Get the product category
-     * 
-     * @return The category
-     */
-    public CategoryDTO getCategory() {
-        return category;
+    public BigDecimal getSalePrice() {
+        return salePrice;
     }
 
-    /**
-     * Set the product category
-     * 
-     * @param category The category to set
-     */
-    public void setCategory(CategoryDTO category) {
-        this.category = category;
+    public void setSalePrice(BigDecimal salePrice) {
+        this.salePrice = salePrice;
     }
 
-    /**
-     * Get all product variants
-     * 
-     * @return List of product variants
-     */
-    public List<ProductVariantDTO> getVariants() {
-        return variants;
+    public Boolean getOnSale() {
+        return onSale;
     }
 
-    /**
-     * Set the product variants
-     * 
-     * @param variants The variants to set
-     */
-    public void setVariants(List<ProductVariantDTO> variants) {
-        this.variants = variants != null ? variants : new ArrayList<>();
+    public void setOnSale(Boolean onSale) {
+        this.onSale = onSale;
+    }
+
+    public Integer getStockQuantity() {
+        return stockQuantity;
+    }
+
+    public void setStockQuantity(Integer stockQuantity) {
+        this.stockQuantity = stockQuantity;
+    }
+
+    public List<String> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<String> categories) {
+        this.categories = categories != null ? categories : new ArrayList<>();
+    }
+
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, String> attributes) {
+        this.attributes = attributes != null ? attributes : new HashMap<>();
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
     
     /**
-     * Add a product variant
+     * Add a category to the product
      * 
-     * @param variant The variant to add
+     * @param category The category to add
+     * @return True if the category was added, false if already exists
      */
-    public void addVariant(ProductVariantDTO variant) {
-        if (variant == null) {
-            throw new IllegalArgumentException("Variant cannot be null");
+    public boolean addCategory(String category) {
+        if (category == null) {
+            return false;
         }
         
-        if (this.variants == null) {
-            this.variants = new ArrayList<>();
+        if (categories == null) {
+            categories = new ArrayList<>();
         }
         
-        // Check for duplicate SKU
-        boolean duplicateSku = this.variants.stream()
-                .anyMatch(v -> Objects.equals(v.getSku(), variant.getSku()));
-        
-        if (duplicateSku) {
-            // FIXME: Better duplicate handling strategy needed - currently just ignoring duplicates
-            return;
+        if (!categories.contains(category)) {
+            categories.add(category);
+            return true;
         }
-        
-        this.variants.add(variant);
+        return false;
     }
     
     /**
-     * Get only active variants
+     * Add an attribute to the product
      * 
-     * @return List of active product variants
+     * @param key Attribute key
+     * @param value Attribute value
+     * @return The previous value or null if none
      */
-    public List<ProductVariantDTO> getActiveVariants() {
-        if (this.variants == null) {
-            return new ArrayList<>();
+    public String addAttribute(String key, String value) {
+        if (key == null) {
+            return null;
         }
         
-        // Filter variants where isActive is true
-        return this.variants.stream()
-                .filter(variant -> variant.getIsActive() != null && variant.getIsActive())
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Get all product images
-     * 
-     * @return List of product images
-     */
-    public List<ProductImageDTO> getImages() {
-        return images;
-    }
-
-    /**
-     * Set the product images
-     * 
-     * @param images The images to set
-     */
-    public void setImages(List<ProductImageDTO> images) {
-        this.images = images != null ? images : new ArrayList<>();
+        if (attributes == null) {
+            attributes = new HashMap<>();
+        }
+        
+        return attributes.put(key, value);
     }
     
     /**
-     * Add a product image
+     * Calculate the current price (sale price if on sale, regular price otherwise)
      * 
-     * @param image The image to add
+     * @return The current price
      */
-    public void addImage(ProductImageDTO image) {
-        if (image == null) {
-            throw new IllegalArgumentException("Image cannot be null");
+    public BigDecimal getCurrentPrice() {
+        if (Boolean.TRUE.equals(onSale) && salePrice != null) {
+            return salePrice;
         }
-        
-        if (this.images == null) {
-            this.images = new ArrayList<>();
-        }
-        
-        // Check if we already have an image with the same URL
-        boolean duplicateImage = this.images.stream()
-                .anyMatch(img -> Objects.equals(img.getUrl(), image.getUrl()));
-        
-        if (duplicateImage) {
-            // TODO: Implement proper duplicate image handling strategy
-            return;
-        }
-        
-        this.images.add(image);
-        
-        // Sort images based on priority if available
-        this.images.sort((img1, img2) -> {
-            if (img1.getPriority() == null && img2.getPriority() == null) {
-                return 0;
-            } else if (img1.getPriority() == null) {
-                return 1;
-            } else if (img2.getPriority() == null) {
-                return -1;
-            }
-            return img1.getPriority().compareTo(img2.getPriority());
-        });
-    }
-
-    /**
-     * Check if product is active
-     * 
-     * @return True if active, false otherwise
-     */
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    /**
-     * Set product active status
-     * 
-     * @param isActive The active status to set
-     */
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
-
-    /**
-     * Get product creation date
-     * 
-     * @return The creation date
-     */
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    /**
-     * Set product creation date
-     * 
-     * @param createdDate The creation date to set
-     */
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+        return price;
     }
     
     /**
-     * Validates if the product is ready for publication
+     * Check if the product is in stock
      * 
-     * @return true if the product is valid for publication
+     * @return True if the product is in stock, false otherwise
      */
-    public boolean isValidForPublication() {
-        // Complex validation logic with high cyclomatic complexity
-        if (id == null || id <= 0) {
-            return false;
-        }
-        
-        if (sku == null || sku.trim().isEmpty()) {
-            return false;
-        }
-        
-        if (name == null || name.trim().isEmpty()) {
-            return false;
-        }
-        
-        if (basePrice == null || basePrice.compareTo(BigDecimal.ZERO) <= 0) {
-            return false;
-        }
-        
-        if (category == null || category.getId() == null) {
-            return false;
-        }
-        
-        // Must have at least one active variant
-        boolean hasActiveVariant = false;
-        if (variants != null && !variants.isEmpty()) {
-            for (ProductVariantDTO variant : variants) {
-                if (variant.getIsActive() != null && variant.getIsActive()) {
-                    if (variant.getSku() != null && !variant.getSku().trim().isEmpty()) {
-                        if (variant.getPrice() != null && variant.getPrice().compareTo(BigDecimal.ZERO) > 0) {
-                            hasActiveVariant = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        
-        if (!hasActiveVariant) {
-            return false;
-        }
-        
-        // Must have at least one image
-        if (images == null || images.isEmpty()) {
-            return false;
-        }
-        
-        // Check that there's at least one primary image
-        boolean hasPrimaryImage = false;
-        for (ProductImageDTO image : images) {
-            if (image.getUrl() != null && !image.getUrl().trim().isEmpty()) {
-                if (image.getPriority() != null && image.getPriority() == 1) {
-                    hasPrimaryImage = true;
-                    break;
-                }
-            }
-        }
-        
-        if (!hasPrimaryImage) {
-            return false;
-        }
-        
-        // Product must be active
-        if (isActive == null || !isActive) {
-            return false;
-        }
-        
-        return true;
-    }
-    
-    /**
-     * Calculate the minimum price across all variants
-     * 
-     * @return The minimum price or base price if no variants
-     */
-    public BigDecimal getMinimumPrice() {
-        if (variants == null || variants.isEmpty()) {
-            return basePrice;
-        }
-        
-        BigDecimal minPrice = basePrice;
-        boolean foundActiveVariant = false;
-        
-        for (ProductVariantDTO variant : variants) {
-            // Skip inactive variants
-            if (variant.getIsActive() == null || !variant.getIsActive()) {
-                continue;
-            }
-            
-            // Skip variants without price
-            if (variant.getPrice() == null) {
-                continue;
-            }
-            
-            // Initialize minPrice with first active variant price
-            if (!foundActiveVariant) {
-                minPrice = variant.getPrice();
-                foundActiveVariant = true;
-                continue;
-            }
-            
-            // Compare with current minimum
-            if (variant.getPrice().compareTo(minPrice) < 0) {
-                minPrice = variant.getPrice();
-            }
-        }
-        
-        return minPrice;
-    }
-    
-    /**
-     * Calculate the maximum price across all variants
-     * 
-     * @return The maximum price or base price if no variants
-     */
-    public BigDecimal getMaximumPrice() {
-        if (variants == null || variants.isEmpty()) {
-            return basePrice;
-        }
-        
-        BigDecimal maxPrice = basePrice;
-        boolean foundActiveVariant = false;
-        
-        for (ProductVariantDTO variant : variants) {
-            // Skip inactive variants
-            if (variant.getIsActive() == null || !variant.getIsActive()) {
-                continue;
-            }
-            
-            // Skip variants without price
-            if (variant.getPrice() == null) {
-                continue;
-            }
-            
-            // Initialize maxPrice with first active variant price
-            if (!foundActiveVariant) {
-                maxPrice = variant.getPrice();
-                foundActiveVariant = true;
-                continue;
-            }
-            
-            // Compare with current maximum
-            if (variant.getPrice().compareTo(maxPrice) > 0) {
-                maxPrice = variant.getPrice();
-            }
-        }
-        
-        return maxPrice;
+    public boolean isInStock() {
+        return stockQuantity != null && stockQuantity > 0;
     }
 
     @Override
@@ -531,29 +237,24 @@ public class ProductDTO {
         
         ProductDTO that = (ProductDTO) o;
         
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        return sku != null ? sku.equals(that.sku) : that.sku == null;
+        return Objects.equals(id, that.id) &&
+               Objects.equals(sku, that.sku);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (sku != null ? sku.hashCode() : 0);
-        return result;
+        return Objects.hash(id, sku);
     }
 
     @Override
     public String toString() {
         return "ProductDTO{" +
-                "id=" + id +
-                ", sku='" + sku + '\'' +
-                ", name='" + name + '\'' +
-                ", brand='" + brand + '\'' +
-                ", basePrice=" + basePrice +
-                ", category=" + (category != null ? category.getName() : null) +
-                ", variants=" + (variants != null ? variants.size() : 0) +
-                ", images=" + (images != null ? images.size() : 0) +
-                ", isActive=" + isActive +
-                '}';
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", sku='" + sku + '\'' +
+               ", price=" + price +
+               ", onSale=" + onSale +
+               ", stockQuantity=" + stockQuantity +
+               '}';
     }
 }
