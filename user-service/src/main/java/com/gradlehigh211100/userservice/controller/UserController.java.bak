@@ -1,8 +1,5 @@
 package com.gradlehigh211100.userservice.controller;
 
-import com.gradlehigh211100.userservice.dto.UserDto;
-import com.gradlehigh211100.userservice.dto.UserRegistrationDto;
-import com.gradlehigh211100.userservice.dto.UserPreferenceDto;
 import com.gradlehigh211100.userservice.service.UserService;
 import com.gradlehigh211100.userservice.service.UserPreferenceService;
 import org.springframework.beans.factory.annotation.Autowired;
