@@ -3,7 +3,7 @@ package com.ecommerce.root;
 /**
  * Main application class
  */
-public class EcommerceApplication {
+public class ECommerceApplication {
 
     /**
      * Main method
