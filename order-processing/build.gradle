@@ -7,7 +7,6 @@ version = '0.1.0'
 
 repositories {
     mavenCentral()
-    jcenter()
     maven {
         url "https://repo.spring.io/release"
     }
@@ -22,28 +21,36 @@ dependencies {
     implementation project(':product-catalog')
     
     // Spring Boot dependencies
-    implementation 'org.springframework.boot:spring-boot-starter-web:1.5.22.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:1.5.22.RELEASE'
-    implementation 'org.springframework.boot:spring-boot-starter-amqp:1.5.22.RELEASE'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
     
     // Spring State Machine
-    implementation 'org.springframework.statemachine:spring-statemachine-core:1.2.0.RELEASE'
+    implementation 'org.springframework.statemachine:spring-statemachine-core:3.0.1'
     
     // RabbitMQ
-    implementation 'com.rabbitmq:amqp-client:5.4.3'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
     
     // Database dependencies
-    implementation 'com.h2database:h2:1.4.197'
-    implementation 'org.postgresql:postgresql:42.2.5'
+    implementation 'com.h2database:h2'
+    implementation 'org.postgresql:postgresql'
     
     // Testing
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:1.5.22.RELEASE'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'junit:junit:4.13.1'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 17
+targetCompatibility = 17
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
 }
