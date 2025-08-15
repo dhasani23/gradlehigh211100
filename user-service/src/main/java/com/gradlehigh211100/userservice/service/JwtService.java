@@ -4,13 +4,15 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -99,6 +101,7 @@ public class JwtService {
     private String createToken(Map<String, Object> claims, String subject, long expiration) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expiration);
+        Key key = getSigningKey();
         
         try {
             return Jwts.builder()
@@ -106,13 +109,23 @@ public class JwtService {
                 .setSubject(subject)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .signWith(key)
                 .compact();
         } catch (Exception e) {
             // FIXME: Improve error handling for token generation failures
             logger.error("Error generating JWT token", e);
             throw new RuntimeException("Failed to generate token", e);
         }
+    }
+
+    /**
+     * Gets signing key from secret key string
+     * 
+     * @return Key instance for signing
+     */
+    private Key getSigningKey() {
+        byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     /**
@@ -129,7 +142,10 @@ public class JwtService {
         
         try {
             // Verify signature and parse the token
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token);
             
             // Check if token is expired
             if (isTokenExpired(token)) {
@@ -210,8 +226,9 @@ public class JwtService {
      * @return Claims object containing all claims
      */
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(secretKey)
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
                 .parseClaimsJws(token)
                 .getBody();
     }

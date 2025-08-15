@@ -111,11 +111,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      */
     @Override
     public Optional<UserDto> findById(Long id) {
-        UserEntity user = userRepository.findOne(id);
-        if (user != null) {
-            return Optional.of(convertToDto(user));
-        }
-        return Optional.empty();
+        Optional<UserEntity> userOpt = userRepository.findById(id);
+        return userOpt.map(this::convertToDto);
     }
 
     /**
@@ -124,10 +121,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public UserDto updateUser(Long id, UserDto userDto) {
-        UserEntity user = userRepository.findOne(id);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
+        UserEntity user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"));
         
         // Check if email already exists for another user
         Optional<UserEntity> existingUser = userRepository.findByEmail(userDto.getEmail());
@@ -154,10 +149,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public void deleteUser(Long id) {
-        UserEntity user = userRepository.findOne(id);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
+        UserEntity user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"));
         
         userRepository.delete(user);
     }
@@ -168,10 +161,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public void deactivateUser(Long id) {
-        UserEntity user = userRepository.findOne(id);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
+        UserEntity user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"));
         
         user.setActive(false);
         userRepository.save(user);
@@ -182,7 +173,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      */
     @Override
     public boolean existsById(Long id) {
-        return userRepository.exists(id);
+        return userRepository.existsById(id);
     }
 
     /**
@@ -263,12 +254,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
      */
     @Override
     public boolean userHasRole(Long id, String roleName) {
-        UserEntity user = userRepository.findOne(id);
-        if (user == null || user.getRole() == null) {
+        Optional<UserEntity> userOpt = userRepository.findById(id);
+        if (userOpt.isEmpty() || userOpt.get().getRole() == null) {
             return false;
         }
         
-        return user.getRole().getName().equals(roleName);
+        return userOpt.get().getRole().getName().equals(roleName);
     }
 
     /**
@@ -277,10 +268,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public void assignRoleToUser(Long id, String roleName) {
-        UserEntity user = userRepository.findOne(id);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
+        UserEntity user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"));
         
         Role role = roleRepository.findByName(roleName)
                 .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));

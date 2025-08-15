@@ -2,6 +2,7 @@ package com.gradlehigh211100.productcatalog.model;
 
 import com.gradlehigh211100.common.model.BaseEntity;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  * Entity representing relationships between products like cross-sell, upsell, and related products.
@@ -343,7 +344,7 @@ public class ProductRelationship extends BaseEntity {
                 return Boolean.FALSE;
             }
             
-            BigDecimal ratio = targetPrice.divide(sourcePrice, 2, BigDecimal.ROUND_HALF_UP);
+            BigDecimal ratio = targetPrice.divide(sourcePrice, 2, RoundingMode.HALF_UP);
             
             // Different ratio validation based on relationship type
             if (isCrossSell()) {

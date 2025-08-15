@@ -2,6 +2,7 @@ package com.gradlehigh211100.productcatalog.model;
 
 import com.gradlehigh211100.common.model.BaseEntity;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -518,7 +519,7 @@ public class ProductVariant extends BaseEntity {
                 throw new IllegalArgumentException("Discount percentage cannot exceed 100%");
             }
             
-            BigDecimal discountMultiplier = BigDecimal.ONE.subtract(discountPercent.divide(new BigDecimal("100")));
+            BigDecimal discountMultiplier = BigDecimal.ONE.subtract(discountPercent.divide(new BigDecimal("100"), 10, RoundingMode.HALF_UP));
             calculatedPrice = calculatedPrice.multiply(discountMultiplier);
         }
         
@@ -532,17 +533,17 @@ public class ProductVariant extends BaseEntity {
         if (taxPercent != null && taxPercent.compareTo(BigDecimal.ZERO) > 0) {
             if (includesTax) {
                 // Price already includes tax, so we need to extract it first
-                BigDecimal taxMultiplier = BigDecimal.ONE.add(taxPercent.divide(new BigDecimal("100")));
-                calculatedPrice = calculatedPrice.divide(taxMultiplier, 2, BigDecimal.ROUND_HALF_UP);
+                BigDecimal taxMultiplier = BigDecimal.ONE.add(taxPercent.divide(new BigDecimal("100"), 10, RoundingMode.HALF_UP));
+                calculatedPrice = calculatedPrice.divide(taxMultiplier, 2, RoundingMode.HALF_UP);
             }
             
             // Now apply the specified tax
-            BigDecimal taxMultiplier = BigDecimal.ONE.add(taxPercent.divide(new BigDecimal("100")));
+            BigDecimal taxMultiplier = BigDecimal.ONE.add(taxPercent.divide(new BigDecimal("100"), 10, RoundingMode.HALF_UP));
             calculatedPrice = calculatedPrice.multiply(taxMultiplier);
         }
         
         // Round to 2 decimal places
-        calculatedPrice = calculatedPrice.setScale(2, BigDecimal.ROUND_HALF_UP);
+        calculatedPrice = calculatedPrice.setScale(2, RoundingMode.HALF_UP);
         
         return calculatedPrice;
     }

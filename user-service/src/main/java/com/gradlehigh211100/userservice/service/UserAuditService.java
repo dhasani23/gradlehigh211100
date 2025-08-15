@@ -197,7 +197,7 @@ public class UserAuditService {
      * @return List of failed login attempts
      */
     public List<UserAuditEntity> getFailedLoginAttempts(String ipAddress, LocalDateTime timeWindow) {
-        if (StringUtils.isEmpty(ipAddress)) {
+        if (ipAddress == null || ipAddress.trim().isEmpty()) {
             logger.error("Cannot retrieve failed login attempts: IP address is null or empty");
             return Collections.emptyList();
         }
@@ -335,7 +335,7 @@ public class UserAuditService {
         LocalDateTime timeWindow = LocalDateTime.now().minusMinutes(10);
         
         // Check username-based attempts
-        if (!StringUtils.isEmpty(username)) {
+        if (username != null && !username.trim().isEmpty()) {
             List<UserAuditEntity> userFailedAttempts = userAuditRepository
                 .findByUsernameAndTimestampAfterAndSuccessFalseAndActionOrderByTimestampDesc(
                     username, timeWindow, EVENT_LOGIN);
